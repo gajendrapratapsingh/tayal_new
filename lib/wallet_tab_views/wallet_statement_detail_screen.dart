@@ -182,21 +182,21 @@ class _WalletStatementTabScrrenState extends State<WalletStatementTabScrren> {
             ),
             Expanded(
                 child: Padding(
-                    padding: EdgeInsets.only(bottom: 45.0),
-                    child: _txnlist.isEmpty || _txnlist.length == 0
-                        ? Padding(
+              padding: EdgeInsets.only(bottom: 45.0),
+              child: _txnlist.isEmpty || _txnlist.length == 0
+                  ? Padding(
                       padding: EdgeInsets.only(bottom: size.height * 0.08),
                       child: Center(
                         child: Text("Data not found",
                             style:
-                            TextStyle(color: Colors.black, fontSize: 16)),
+                                TextStyle(color: Colors.black, fontSize: 16)),
                       ),
                     )
-                        : ListView.separated(
+                  : ListView.separated(
                       itemCount: _txnlist.length,
                       padding: EdgeInsets.zero,
                       separatorBuilder: (BuildContext context, int index) =>
-                      const Divider(height: 1, color: Colors.grey),
+                          const Divider(height: 1, color: Colors.grey),
                       itemBuilder: (BuildContext context, int index) {
                         if (_txnlist.isEmpty || _txnlist.length == 0) {
                           return Center(
@@ -214,22 +214,21 @@ class _WalletStatementTabScrrenState extends State<WalletStatementTabScrren> {
                                 style: const TextStyle(
                                     color: Colors.grey, fontSize: 12)),
                             trailing: _txnlist[index]['transaction_type']
-                                .toString() ==
-                                "credit"
+                                        .toString() ==
+                                    "credit"
                                 ? Text(
-                                '\u20B9 ${_txnlist[index]['update_balance'].toString()} Credit',
-                                style: const TextStyle(
-                                    color: Colors.green, fontSize: 12))
+                                    '\u20B9 ${_txnlist[index]['update_balance'].toString()} CR.',
+                                    style: const TextStyle(
+                                        color: Colors.green, fontSize: 12))
                                 : Text(
-                                '\u20B9 ${_txnlist[index]['update_balance'].toString()} Debit',
-                                style: const TextStyle(
-                                    color: Colors.red, fontSize: 12)),
+                                    '\u20B9 ${_txnlist[index]['update_balance'].toString()} DR.',
+                                    style: const TextStyle(
+                                        color: Colors.red, fontSize: 12)),
                           );
                         }
                       },
                     ),
-                )
-            ),
+            )),
           ],
         ),
         Positioned(
@@ -275,7 +274,8 @@ class _WalletStatementTabScrrenState extends State<WalletStatementTabScrren> {
                 width: double.infinity,
                 color: Colors.indigo,
                 alignment: Alignment.center,
-                child: const Text("GET STATEMENT", style: TextStyle(color: Colors.white, fontSize: 16)),
+                child: const Text("GET STATEMENT",
+                    style: TextStyle(color: Colors.white, fontSize: 16)),
               ),
             ))
       ],
@@ -372,7 +372,8 @@ class _WalletStatementTabScrrenState extends State<WalletStatementTabScrren> {
   }
 
   bool isLoading = false;
-  Future _gettxndata(String startdate, String enddate, String filtertype) async {
+  Future _gettxndata(
+      String startdate, String enddate, String filtertype) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String mytoken = prefs.getString('token').toString();
     print(jsonEncode({

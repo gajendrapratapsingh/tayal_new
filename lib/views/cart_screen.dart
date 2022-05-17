@@ -475,7 +475,8 @@ class _CartScreenState extends State<CartScreen> {
                             onTap: () {
                               showLaoding(context);
                               setState(() {
-                                data[index]['quantity'] = (int.parse(qty) - 1).toString();
+                                data[index]['quantity'] =
+                                    (int.parse(qty) - 1).toString();
                               });
                               _addtocart(
                                       data[index]['id'].toString(),
@@ -507,33 +508,37 @@ class _CartScreenState extends State<CartScreen> {
                             ),
                           ),
                           const SizedBox(width: 10),
-                          Text("$qty", style: TextStyle(color: Colors.black, fontSize: 14)),
+                          Text("$qty",
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 14)),
                           const SizedBox(width: 10),
                           InkWell(
                             onTap: () {
-                              if(data[index]['quantity'] < data[index]['avaliable_stock']){
+                              if (data[index]['quantity'] <
+                                  data[index]['avaliable_stock']) {
                                 showLaoding(context);
                                 setState(() {
-                                  data[index]['quantity'] = (int.parse(qty) + 1).toString();
+                                  data[index]['quantity'] =
+                                      (int.parse(qty) + 1).toString();
                                 });
                                 _addtocart(
-                                    data[index]['id'].toString(),
-                                    data[index]['offer_price'].toString(),
-                                    data[index]['quantity'].toString(),
-                                    data[index]['amount'].toString())
+                                        data[index]['id'].toString(),
+                                        data[index]['offer_price'].toString(),
+                                        data[index]['quantity'].toString(),
+                                        data[index]['amount'].toString())
                                     .then((value) {
                                   _getCartData();
                                   Navigator.of(context).pop();
                                 });
-                              }
-                              else{
+                              } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
-                                        duration: Duration(seconds: 1, milliseconds: 500),
+                                        duration: Duration(
+                                            seconds: 1, milliseconds: 500),
                                         backgroundColor: Colors.red,
-                                        content: Text('Stock not available', style: TextStyle(color: Colors.white))
-                                    )
-                                );
+                                        content: Text('Stock not available',
+                                            style: TextStyle(
+                                                color: Colors.white))));
                               }
                             },
                             child: Container(
@@ -654,8 +659,10 @@ class _CartScreenState extends State<CartScreen> {
     print(response.body);
     if (json.decode(response.body)['ErrorCode'].toString() == "0") {
       setState(() {
-        prefs.setString('cartcount', json.decode(response.body)['Response']['count'].toString());
-        totalitems = int.parse(json.decode(response.body)['Response']['count'].toString());
+        prefs.setString('cartcount',
+            json.decode(response.body)['Response']['count'].toString());
+        totalitems = int.parse(
+            json.decode(response.body)['Response']['count'].toString());
       });
     } else {
       Fluttertoast.showToast(
@@ -712,9 +719,11 @@ class _CartScreenState extends State<CartScreen> {
         showToast('Item deleted successfully from cart');
         setState(() {
           _getCartData();
-          totalprice = json.decode(response.body)['Response']['total_price'].toString();
+          totalprice =
+              json.decode(response.body)['Response']['total_price'].toString();
           totalitems = json.decode(response.body)['Response']['count'];
-          prefs.setString('cartcount', json.decode(response.body)['Response']['count'].toString());
+          prefs.setString('cartcount',
+              json.decode(response.body)['Response']['count'].toString());
         });
       }
     } else {

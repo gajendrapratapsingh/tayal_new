@@ -16,8 +16,8 @@ class WalletStatementScreen extends StatefulWidget {
   _WalletStatementScreenState createState() => _WalletStatementScreenState();
 }
 
-class _WalletStatementScreenState extends State<WalletStatementScreen> with SingleTickerProviderStateMixin {
-
+class _WalletStatementScreenState extends State<WalletStatementScreen>
+    with SingleTickerProviderStateMixin {
   String mobile;
   String walletblnc;
 
@@ -36,15 +36,12 @@ class _WalletStatementScreenState extends State<WalletStatementScreen> with Sing
     });
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(() => setState(() {}));
-
-
   }
 
   @override
   void dispose() {
     _tabController.dispose();
     super.dispose();
-
   }
 
   @override
@@ -87,7 +84,11 @@ class _WalletStatementScreenState extends State<WalletStatementScreen> with Sing
                                       color: Colors.white,
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500)),
-                              Text('$mobile', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 14))
+                              Text('$mobile',
+                                  style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 14))
                             ],
                           ),
                         ),
@@ -139,40 +140,35 @@ class _WalletStatementScreenState extends State<WalletStatementScreen> with Sing
               labelColor: Colors.white,
               controller: _tabController,
               tabs: [
-                 Tab(
-                   text : "LAST 10 TRANSACTIONS",
-                 ),
-                 Tab(
+                Tab(
+                  text: "LAST 10 TRANSACTIONS",
+                ),
+                Tab(
                   text: "DETAIL STATEMENT",
-                 )
+                )
               ],
             ),
           ),
           Expanded(
               child: TabBarView(
-                controller: _tabController,
-                children: [
-                  TransactionlistScreen(),
-                  WalletStatementTabScrren()
-                ],
-              )
-          )
+            controller: _tabController,
+            children: [TransactionlistScreen(), WalletStatementTabScrren()],
+          ))
         ],
       ),
     );
   }
 
-  Future<List<ProfileResponse>> _getprofile() async{
+  Future<List<ProfileResponse>> _getprofile() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String mytoken = prefs.getString('token').toString();
-    var response = await http.post(Uri.parse(BASE_URL+profile),
-        headers : {'Authorization': 'Bearer $mytoken'}
-    );
-    if (response.statusCode == 200)
-    {
+    var response = await http.post(Uri.parse(BASE_URL + profile),
+        headers: {'Authorization': 'Bearer $mytoken'});
+    if (response.statusCode == 200) {
       print(response.body);
       Iterable list = json.decode(response.body)['Response'];
-      List<ProfileResponse> _list = list.map((m) => ProfileResponse.fromJson(m)).toList();
+      List<ProfileResponse> _list =
+          list.map((m) => ProfileResponse.fromJson(m)).toList();
       return _list;
     } else {
       throw Exception('Failed to get data due to ${response.body}');

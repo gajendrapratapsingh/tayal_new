@@ -243,7 +243,8 @@ class _PaymentOptionsScreenState extends State<PaymentOptionsScreen> {
                               _placeorderonline();
                             },
                             child: Padding(
-                              padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                              padding:
+                                  const EdgeInsets.only(left: 8.0, right: 8.0),
                               child: Container(
                                 height: 55.0,
                                 width: double.infinity,
@@ -593,7 +594,7 @@ class _PaymentOptionsScreenState extends State<PaymentOptionsScreen> {
                                       left: 10.0, right: 10.0, bottom: 10.0),
                                   child: InkWell(
                                     onTap: () {
-                                      _placeorder();
+                                      // _placeorder();
                                     },
                                     child: Container(
                                       height: 55.0,
@@ -698,14 +699,27 @@ class _PaymentOptionsScreenState extends State<PaymentOptionsScreen> {
       _loading = true;
     });
     var response = await http.post(Uri.parse(BASE_URL + placeorderonline),
-        headers: {'Authorization': 'Bearer $mytoken'});
+        headers: {'Authorization': 'Bearer $mytoken'},
+        body: {"use_wallet": "1"});
     print(response.body);
     if (response.statusCode == 200) {
       setState(() {
         _loading = false;
       });
-      if (json.decode(response.body)['ErrorMessage'].toString() == "success") {
-        if (json.decode(response.body)['Response'] != "cart is empty") {
+      if (json.decode(response.body)['ErrorCode'] == 0) {
+        if (json
+            .decode(response.body)['Response']["razorpay_order"]
+            .toString()
+            .isEmpty) {
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ThankuScreen(
+                        orderid: json
+                            .decode(response.body)['Response']['order_id']
+                            .toString(),
+                      )));
+        } else {
           orderid = json
               .decode(response.body)['Response']['razorpay_order']['id']
               .toString();
@@ -722,14 +736,16 @@ class _PaymentOptionsScreenState extends State<PaymentOptionsScreen> {
 
   void startPayment(String orderid, String amount) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    print(orderid + "test");
     try {
       var options = {
         'key': 'rzp_test_MhKrOdDQM8C8PL',
         //'key': 'rzp_test_MhKrOdDQM8C8PL',
         //'key': 'rzp_live_BFMsXWTfZmdTnn',
-        'amount': ((int.parse(amount)) * 100).toString(), //in the smallest currency sub-unit.
+        // 'amount': ((int.parse(amount)) * 100)
+        // .toString(), //in the smallest currency sub-unit.
         'name': 'Tayal',
-        //'order_id' : orderid,
+        'order_id': orderid,
         //"reference_id": orderid.toString(),
         'description': '',
         'timeout': 600, // in seconds
@@ -739,43 +755,45 @@ class _PaymentOptionsScreenState extends State<PaymentOptionsScreen> {
         }
       };
       _razorpay.open(options);
-    } catch (e) {}
-  }
-
-  Future _placeorder() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String mytoken = prefs.getString('token').toString();
-    setState(() {
-      _loading = true;
-    });
-    var response = await http.post(Uri.parse(BASE_URL + placeorder),
-        headers: {'Authorization': 'Bearer $mytoken'});
-    if (response.statusCode == 200) {
-      setState(() {
-        _loading = false;
-      });
-      print(response.body);
-      if (json.decode(response.body)['ErrorCode'].toString() == "0") {
-        if (json.decode(response.body)['ErrorMessage'].toString() ==
-            "success") {
-          prefs.setString("cartcount", "0");
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => ThankuScreen(
-                        orderid: json
-                            .decode(response.body)['Response']['order_id']
-                            .toString(),
-                      )));
-        }
-      }
-    } else {
-      setState(() {
-        _loading = false;
-      });
-      throw Exception('Failed to get data due to ${response.body}');
+    } catch (e) {
+      print("test2-----" + e.toString());
     }
   }
+
+  // Future _placeorder() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String mytoken = prefs.getString('token').toString();
+  //   setState(() {
+  //     _loading = true;
+  //   });
+  //   var response = await http.post(Uri.parse(BASE_URL + placeorder),
+  //       headers: {'Authorization': 'Bearer $mytoken'});
+  //   if (response.statusCode == 200) {
+  //     setState(() {
+  //       _loading = false;
+  //     });
+  //     print(response.body);
+  //     if (json.decode(response.body)['ErrorCode'].toString() == "0") {
+  //       if (json.decode(response.body)['ErrorMessage'].toString() ==
+  //           "success") {
+  //         prefs.setString("cartcount", "0");
+  //         Navigator.pushReplacement(
+  //             context,
+  //             MaterialPageRoute(
+  //                 builder: (context) => ThankuScreen(
+  //                       orderid: json
+  //                           .decode(response.body)['Response']['order_id']
+  //                           .toString(),
+  //                     )));
+  //       }
+  //     }
+  //   } else {
+  //     setState(() {
+  //       _loading = false;
+  //     });
+  //     throw Exception('Failed to get data due to ${response.body}');
+  //   }
+  // }
 
   void _getWalletBalance() {
     if (double.parse(walletAmount) > 0) {
@@ -794,7 +812,7 @@ class _PaymentOptionsScreenState extends State<PaymentOptionsScreen> {
       }
     } else {
       setState(() {
-        _onlineVisibility = true;
+        _onlineVisibility = false;
       });
     }
   }
