@@ -217,23 +217,13 @@ class _WalletStatementTabScrrenState extends State<WalletStatementTabScrren> {
                                         .toString() ==
                                     "credit"
                                 ? Text(
-<<<<<<< HEAD
-                                    '\u20B9 ${_txnlist[index]['update_balance'].toString()} CR.',
+                                    '\u20B9 ${_txnlist[index]['update_balance'].toString()} Cr',
                                     style: const TextStyle(
                                         color: Colors.green, fontSize: 12))
                                 : Text(
-                                    '\u20B9 ${_txnlist[index]['update_balance'].toString()} DR.',
+                                    '\u20B9 ${_txnlist[index]['update_balance'].toString()} Dr',
                                     style: const TextStyle(
                                         color: Colors.red, fontSize: 12)),
-=======
-                                '\u20B9 ${_txnlist[index]['update_balance'].toString()} Cr',
-                                style: const TextStyle(
-                                    color: Colors.green, fontSize: 12))
-                                : Text(
-                                '\u20B9 ${_txnlist[index]['update_balance'].toString()} Dr',
-                                style: const TextStyle(
-                                    color: Colors.red, fontSize: 12)),
->>>>>>> 8f8450c0093c7a5e92ca9f08bd5367825aa224e3
                           );
                         }
                       },

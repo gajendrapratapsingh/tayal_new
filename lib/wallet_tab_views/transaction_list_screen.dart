@@ -38,7 +38,6 @@ class _TransactionlistScreenState extends State<TransactionlistScreen> {
                 child: CircularProgressIndicator(color: Colors.indigo));
           } else {
             return ListTile(
-<<<<<<< HEAD
               title: Text('${_txnlist[index]['created_at'].toString()}',
                   style:
                       TextStyle(color: Colors.indigo.shade400, fontSize: 16)),
@@ -47,16 +46,11 @@ class _TransactionlistScreenState extends State<TransactionlistScreen> {
               trailing: _txnlist[index]['transaction_type'].toString() ==
                       "credit"
                   ? Text(
-                      '\u20B9 ${_txnlist[index]['update_balance'].toString()} CR.',
+                      '\u20B9 ${_txnlist[index]['update_balance'].toString()} Cr',
                       style: TextStyle(color: Colors.green, fontSize: 12))
                   : Text(
-                      '\u20B9 ${_txnlist[index]['update_balance'].toString()} DR.',
+                      '\u20B9 ${_txnlist[index]['update_balance'].toString()} Dr',
                       style: TextStyle(color: Colors.red, fontSize: 12)),
-=======
-              title: Text('${_txnlist[index]['created_at'].toString()}', style: TextStyle(color: Colors.indigo.shade400, fontSize: 16)),
-              subtitle: Text('${_txnlist[index]['description'].toString()}', style: TextStyle(color: Colors.grey, fontSize: 12)),
-              trailing: _txnlist[index]['transaction_type'].toString() == "credit" ? Text('\u20B9 ${_txnlist[index]['update_balance'].toString()} Cr', style: TextStyle(color: Colors.green, fontSize: 12)) : Text('\u20B9 ${_txnlist[index]['update_balance'].toString()} Dr', style: TextStyle(color: Colors.red, fontSize: 12)),
->>>>>>> 8f8450c0093c7a5e92ca9f08bd5367825aa224e3
             );
           }
         },

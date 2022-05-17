@@ -164,158 +164,51 @@ class _LedgerStatementScreenState extends State<LedgerStatementScreen>
           )*/
           Expanded(
               child: Padding(
-<<<<<<< HEAD
-            padding: const EdgeInsets.all(10),
-            child: FutureBuilder(
-                future: _getpaymenttxtstatement(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return ListView.separated(
-                      itemCount: snapshot.data.length,
-                      padding: EdgeInsets.zero,
-                      separatorBuilder: (BuildContext context, int index) =>
-                          const Divider(height: 1, color: Colors.grey),
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: Container(
-                            child: Column(
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                        "Order at ${snapshot.data[index]['created_at'].toString()}",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w700)),
-                                  ],
-                                ),
-                                SizedBox(height: 5.0),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                        "Order id: ${snapshot.data[index]['order_id'].toString()}",
-                                        style: TextStyle(
-                                            color: Colors.black, fontSize: 14)),
-                                    Text(
-                                        "Amount: \u20B9 ${snapshot.data[index]['amount'].toString()}",
-                                        style: TextStyle(
-                                            color: Colors.black, fontSize: 14)),
-                                    //Text("Mobile: ${snapshot.data[index]['mobile_no'].toString()}", style: TextStyle(color: Colors.black, fontSize: 14)),
-                                  ],
-                                ),
-                                SizedBox(height: 5.0),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        snapshot.data[index]['payment_method']
-                                                        .toString() ==
-                                                    "Cash on delivery" ||
-                                                snapshot.data[index]
-                                                            ['payment_method']
-                                                        .toString() ==
-                                                    "Cash"
-                                            ? Image.asset(
-                                                'assets/images/cash_pay.png',
-                                                scale: 2)
-                                            : Image.asset(
-                                                'assets/images/online_pay.png',
-                                                scale: 2),
-                                        SizedBox(width: 5.0),
-                                        Text(
-                                            "${snapshot.data[index]['payment_method'].toString()}",
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 14)),
-                                      ],
-                                    ),
-                                    Container(
-                                      height: 35,
-                                      width: 85,
-                                      alignment: Alignment.center,
-                                      decoration: const BoxDecoration(
-                                          color: Colors.indigo,
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(4.0))),
-                                      child: Text(
-                                          "${snapshot.data[index]['payment_status'].toString().toUpperCase()}",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 14)),
-                                    ),
-                                  ],
-                                )
-                              ],
-                            ),
-                          ),
+            padding: EdgeInsets.only(bottom: 0.0),
+            child: _txnlist.isEmpty || _txnlist.length == 0
+                ? Padding(
+                    padding: EdgeInsets.only(bottom: size.height * 0.08),
+                    child: Center(
+                      child: Text("Data not found",
+                          style: TextStyle(color: Colors.black, fontSize: 16)),
+                    ),
+                  )
+                : ListView.separated(
+                    itemCount: _txnlist.length,
+                    padding: EdgeInsets.zero,
+                    separatorBuilder: (BuildContext context, int index) =>
+                        const Divider(height: 1, color: Colors.grey),
+                    itemBuilder: (BuildContext context, int index) {
+                      if (_txnlist.isEmpty || _txnlist.length == 0) {
+                        return Center(
+                            child: CircularProgressIndicator(
+                                color: Colors.indigo));
+                      } else {
+                        return ListTile(
+                          title: Text(
+                              '${_txnlist[index]['created_at'].toString()}',
+                              style: TextStyle(
+                                  color: Colors.indigo.shade400, fontSize: 16)),
+                          subtitle: Text(
+                              '${_txnlist[index]['description'].toString()}',
+                              style: const TextStyle(
+                                  color: Colors.grey, fontSize: 12)),
+                          trailing: _txnlist[index]['transaction_type']
+                                      .toString() ==
+                                  "credit"
+                              ? Text(
+                                  '\u20B9 ${_txnlist[index]['update_balance'].toString()} Cr',
+                                  style: const TextStyle(
+                                      color: Colors.green, fontSize: 12))
+                              : Text(
+                                  '\u20B9 ${_txnlist[index]['update_balance'].toString()} Dr',
+                                  style: const TextStyle(
+                                      color: Colors.red, fontSize: 12)),
                         );
-                      },
-                    );
-                  } else {
-                    return const Center(
-                      child: CircularProgressIndicator(color: Colors.indigo),
-                    );
-                  }
-                }),
-          ))
-=======
-                padding: EdgeInsets.only(bottom: 0.0),
-                child: _txnlist.isEmpty || _txnlist.length == 0
-                    ? Padding(
-                  padding: EdgeInsets.only(bottom: size.height * 0.08),
-                  child: Center(
-                    child: Text("Data not found",
-                        style:
-                        TextStyle(color: Colors.black, fontSize: 16)),
+                      }
+                    },
                   ),
-                )
-                    : ListView.separated(
-                  itemCount: _txnlist.length,
-                  padding: EdgeInsets.zero,
-                  separatorBuilder: (BuildContext context, int index) =>
-                  const Divider(height: 1, color: Colors.grey),
-                  itemBuilder: (BuildContext context, int index) {
-                    if (_txnlist.isEmpty || _txnlist.length == 0) {
-                      return Center(
-                          child: CircularProgressIndicator(
-                              color: Colors.indigo));
-                    } else {
-                      return ListTile(
-                        title: Text(
-                            '${_txnlist[index]['created_at'].toString()}',
-                            style: TextStyle(
-                                color: Colors.indigo.shade400,
-                                fontSize: 16)),
-                        subtitle: Text(
-                            '${_txnlist[index]['description'].toString()}',
-                            style: const TextStyle(
-                                color: Colors.grey, fontSize: 12)),
-                        trailing: _txnlist[index]['transaction_type']
-                            .toString() ==
-                            "credit"
-                            ? Text(
-                            '\u20B9 ${_txnlist[index]['update_balance'].toString()} Cr',
-                            style: const TextStyle(
-                                color: Colors.green, fontSize: 12))
-                            : Text(
-                            '\u20B9 ${_txnlist[index]['update_balance'].toString()} Dr',
-                            style: const TextStyle(
-                                color: Colors.red, fontSize: 12)),
-                      );
-                    }
-                  },
-                ),
-              )
-          ),
->>>>>>> 8f8450c0093c7a5e92ca9f08bd5367825aa224e3
+          )),
         ],
       ),
     );
@@ -336,15 +229,12 @@ class _LedgerStatementScreenState extends State<LedgerStatementScreen>
     }
   }
 
-<<<<<<< HEAD
-  Future<dynamic> _getpaymenttxtstatement() async {
-=======
   Future _gettxndata() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String mytoken = prefs.getString('token').toString();
     var response = await http.post(Uri.parse(BASE_URL + wallettxn),
         headers: {'Authorization': 'Bearer $mytoken'});
-    if(response.statusCode == 200) {
+    if (response.statusCode == 200) {
       if (json.decode(response.body)['ErrorCode'].toString() == "0") {
         setState(() {
           _txnlist = json.decode(response.body)['Response']['transactions'];
@@ -356,7 +246,6 @@ class _LedgerStatementScreenState extends State<LedgerStatementScreen>
   }
 
   /*Future<dynamic> _getpaymenttxtstatement() async{
->>>>>>> 8f8450c0093c7a5e92ca9f08bd5367825aa224e3
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String mytoken = prefs.getString('token').toString();
     var response = await http.post(Uri.parse(BASE_URL + txnstatement),

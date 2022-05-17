@@ -255,18 +255,12 @@ class _MyBizScreenState extends State<MyBizScreen> {
                             )),
                       ),
                       InkWell(
-<<<<<<< HEAD
                         onTap: () {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => LedgerStatementScreen(
-                                        title: "Payments",
-                                      )));
-=======
-                        onTap : (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentStatementScreen()));
->>>>>>> 8f8450c0093c7a5e92ca9f08bd5367825aa224e3
+                                  builder: (context) =>
+                                      PaymentStatementScreen()));
                         },
                         child: Container(
                             height: size.height * 0.12,
