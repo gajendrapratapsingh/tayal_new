@@ -42,7 +42,7 @@ class _TransactionlistScreenState extends State<TransactionlistScreen> {
             return ListTile(
               title: Text('${_txnlist[index]['created_at'].toString()}', style: TextStyle(color: Colors.indigo.shade400, fontSize: 16)),
               subtitle: Text('${_txnlist[index]['description'].toString()}', style: TextStyle(color: Colors.grey, fontSize: 12)),
-              trailing: _txnlist[index]['transaction_type'].toString() == "credit" ? Text('\u20B9 ${_txnlist[index]['update_balance'].toString()} Credit', style: TextStyle(color: Colors.green, fontSize: 12)) : Text('\u20B9 ${_txnlist[index]['update_balance'].toString()} Debit', style: TextStyle(color: Colors.red, fontSize: 12)),
+              trailing: _txnlist[index]['transaction_type'].toString() == "credit" ? Text('\u20B9 ${_txnlist[index]['update_balance'].toString()} Cr', style: TextStyle(color: Colors.green, fontSize: 12)) : Text('\u20B9 ${_txnlist[index]['update_balance'].toString()} Dr', style: TextStyle(color: Colors.red, fontSize: 12)),
             );
           }
 

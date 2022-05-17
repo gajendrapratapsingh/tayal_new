@@ -5,6 +5,7 @@ import 'package:tayal/views/help_screen.dart';
 import 'package:tayal/views/ledger_screen.dart';
 import 'package:tayal/views/notification_screen.dart';
 import 'package:tayal/views/order_list_screen.dart';
+import 'package:tayal/views/payment_statement_screen.dart';
 import 'package:tayal/views/profile_screen.dart';
 import 'package:tayal/views/wallet_statement_screen.dart';
 import 'package:tayal/widgets/navigation_drawer_widget.dart';
@@ -223,7 +224,7 @@ class _MyBizScreenState extends State<MyBizScreen> {
                       ),
                       InkWell(
                         onTap : (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => LedgerStatementScreen()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentStatementScreen()));
                         },
                         child: Container(
                             height: size.height * 0.12,
