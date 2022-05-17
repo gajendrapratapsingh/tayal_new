@@ -2,7 +2,6 @@
 
 import 'dart:convert';
 import 'dart:isolate';
-import 'dart:math';
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -12,16 +11,11 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tayal/network/api.dart';
 import 'package:tayal/themes/constant.dart';
 import 'package:http/http.dart' as http;
-import 'package:tayal/views/help_screen.dart';
-import 'package:tayal/views/mybiz_screen.dart';
-import 'package:timelines/timelines.dart';
 
 class OrderDetailScreen extends StatefulWidget {
   String orderid;
@@ -197,36 +191,11 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                                 elevation: 0,
                                                 child: Padding(
                                                   padding: EdgeInsets.all(10),
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                    CrossAxisAlignment
-                                                        .start,
+                                                  child: Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                     children: [
-                                                      Text("Order History",
-                                                          style: TextStyle(
-                                                              color:
-                                                              Colors.indigo,
-                                                              fontWeight:
-                                                              FontWeight
-                                                                  .w700)),
-                                                      // SizedBox(height: 1),
-                                                      // RichText(
-                                                      //   text: TextSpan(children: [
-                                                      //     TextSpan(
-                                                      //       text: snapshot.data[
-                                                      //           'liveTrackLink'],
-                                                      //       style: const TextStyle(
-                                                      //           color:
-                                                      //               Colors.indigo,
-                                                      //           fontWeight:
-                                                      //               FontWeight
-                                                      //                   .w500,
-                                                      //           decoration:
-                                                      //               TextDecoration
-                                                      //                   .underline),
-                                                      //     )
-                                                      //   ]),
-                                                      // )
+                                                      Text("Order History", style: TextStyle(color: Colors.indigo, fontWeight: FontWeight.w700)),
+                                                      Icon(Icons.arrow_forward_ios_rounded, color: Colors.indigo.shade400, size: 20)
                                                     ],
                                                   ),
                                                 ),
@@ -781,14 +750,14 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                     CrossAxisAlignment.start,
                                     children: [
                                       Text(label,
-                                          style: GoogleFonts.poppins(
+                                          style: TextStyle(
                                               fontSize: 13,
                                               fontWeight:
                                               FontWeight.w600)),
                                       remarks.isEmpty
                                           ? SizedBox()
                                           : Text(remarks.toString(),
-                                          style: GoogleFonts.poppins(
+                                          style: TextStyle(
                                               fontSize: 12,
                                               fontWeight:
                                               FontWeight.w400)),
@@ -800,7 +769,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                         },
                                         child: Text("Download",
                                             style:
-                                            GoogleFonts.poppins(
+                                            TextStyle(
                                                 fontSize: 12,
                                                 fontWeight:
                                                 FontWeight
@@ -845,7 +814,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                         time
                                             .replaceFirst(" ", "\n")
                                             .replaceAll("-", " "),
-                                        style: GoogleFonts.poppins(
+                                        style: TextStyle(
                                             fontSize: 13,
                                             fontWeight:
                                             FontWeight.w600))),

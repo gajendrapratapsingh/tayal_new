@@ -1,36 +1,30 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:http/http.dart' as http;
-import 'package:image_picker/image_picker.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 import 'package:tayal/models/profiledata.dart';
 import 'package:tayal/network/api.dart';
 import 'package:tayal/themes/constant.dart';
 import 'package:tayal/views/dashboard_screen.dart';
-import 'package:tayal/views/profile_detail_screen.dart';
+import 'package:tayal/views/profile_screen.dart';
 
-class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({Key key}) : super(key: key);
+class ProfileDetailScreen extends StatefulWidget {
+  const ProfileDetailScreen({Key key}) : super(key: key);
 
   @override
-  _ProfileScreenState createState() => _ProfileScreenState();
+  _ProfileDetailScreenState createState() => _ProfileDetailScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
 
   String name, mobile, email, profileimage, address;
-
-  var focusNode = FocusNode();
-
   bool _loading = false;
   String _profilepath = "";
-  
+
   @override
   void initState() {
     // TODO: implement initState
@@ -50,8 +44,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return WillPopScope(
-      child: Scaffold(
+    return Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: kBackgroundShapeColor,
         body: ModalProgressHUD(
@@ -82,18 +75,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               Align(
                                   alignment: Alignment.center,
                                   child: Card(
-                                    shape: RoundedRectangleBorder(
-                                      side: BorderSide(color: Colors.white, width: 1),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Padding(
+                                      shape: RoundedRectangleBorder(
+                                        side: BorderSide(color: Colors.white, width: 1),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Padding(
                                         padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 25.0),
                                         child: Column(
                                           children: [
                                             SizedBox(height: 10.0),
                                             InkWell(
                                               onTap:(){
-                                                _showProfilePicker(context);
+                                                //_showProfilePicker(context);
                                               },
                                               child: _profilepath.toString() == "" || _profilepath.toString() == "null" ? ClipRRect(
                                                 borderRadius: BorderRadius.circular(40),
@@ -108,7 +101,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                   height: 80,
                                                   width: 80,
                                                   decoration: BoxDecoration(
-                                                    image: DecorationImage(fit: BoxFit.cover, image: FileImage(File(_profilepath)))
+                                                      image: DecorationImage(fit: BoxFit.cover, image: FileImage(File(_profilepath)))
                                                   ),
                                                 ),
                                               ),
@@ -120,40 +113,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             )
                                           ],
                                         ),
-                                    )
+                                      )
                                   )
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 10.0),
-                                child: Align(
-                                    alignment: Alignment.center,
-                                    child: InkWell(
-                                      onTap: (){
-                                        Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileDetailScreen()));
-                                        /*setState(() {
-                                          FocusScope.of(context).requestFocus(focusNode);
-                                        });*/
-                                      },
-                                      child: Card(
-                                          shape: RoundedRectangleBorder(
-                                            side: BorderSide(color: Colors.white, width: 1),
-                                            borderRadius: BorderRadius.circular(10),
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              children: const [
-                                                Icon(Icons.edit_outlined, color: Colors.black, size: 24),
-                                                SizedBox(width: 5.0),
-                                                Text("Edit Profile", style: TextStyle(color: Colors.black, fontSize: 18.0, fontWeight: FontWeight.w500))
-                                              ],
-                                            ),
-                                          )
-                                      ),
-                                    )
-                                ),
                               ),
                               Padding(padding: EdgeInsets.all(20.0),
                                 child: Column(
@@ -163,21 +124,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       child: Text("Name", style: TextStyle(color: Colors.grey, fontSize: 14.0)),
                                     ),
                                     TextField(
-                                        keyboardType: TextInputType.text,
-                                        //focusNode: focusNode,
-                                        decoration: InputDecoration(
-                                          hintText: name == "" || name == null ? "" : name,
-                                          enabledBorder: const UnderlineInputBorder(
-                                            borderSide: BorderSide(color: Colors.white),
-                                          ),
-                                          focusedBorder: const UnderlineInputBorder(
-                                            borderSide: BorderSide(color: Colors.blue),
-                                          ),
+                                      keyboardType: TextInputType.text,
+                                      //focusNode: focusNode,
+                                      decoration: InputDecoration(
+                                        hintText: name == "" || name == null ? "" : name,
+                                        enabledBorder: const UnderlineInputBorder(
+                                          borderSide: BorderSide(color: Colors.white),
                                         ),
+                                        focusedBorder: const UnderlineInputBorder(
+                                          borderSide: BorderSide(color: Colors.blue),
+                                        ),
+                                      ),
                                       onChanged: (value){
-                                          setState(() {
-                                            name = value.toString();
-                                          });
+                                        setState(() {
+                                          name = value.toString();
+                                        });
                                       },
                                     ),
                                     const SizedBox(height: 20),
@@ -205,20 +166,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       child: Text("Email", style: TextStyle(color: Colors.grey, fontSize: 14.0)),
                                     ),
                                     TextField(
-                                        keyboardType: TextInputType.emailAddress,
-                                        decoration: InputDecoration(
-                                          hintText: email == "" || email == null ? "" : email,
-                                          enabledBorder: const UnderlineInputBorder(
-                                            borderSide: BorderSide(color: Colors.white),
-                                          ),
-                                          focusedBorder: const UnderlineInputBorder(
-                                            borderSide: BorderSide(color: Colors.blue),
-                                          ),
+                                      keyboardType: TextInputType.emailAddress,
+                                      decoration: InputDecoration(
+                                        hintText: email == "" || email == null ? "" : email,
+                                        enabledBorder: const UnderlineInputBorder(
+                                          borderSide: BorderSide(color: Colors.white),
                                         ),
+                                        focusedBorder: const UnderlineInputBorder(
+                                          borderSide: BorderSide(color: Colors.blue),
+                                        ),
+                                      ),
                                       onChanged: (value){
-                                          setState(() {
-                                            email = value.toString();
-                                          });
+                                        setState(() {
+                                          email = value.toString();
+                                        });
                                       },
                                     ),
                                     const SizedBox(height: 20),
@@ -266,8 +227,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ],
           ),
         ),
-      ),
-      onWillPop: _willPopCallback,
     );
   }
 
@@ -276,12 +235,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: const Text("Save", style: TextStyle(color: Colors.white, fontSize: 18),
       ),
       onPressed: (){
-        if(_profilepath.toString() == "" || _profilepath.toString() == null){
+        /*if(_profilepath.toString() == "" || _profilepath.toString() == null){
           showToast("Please select your profile picture");
         }
         else{
           _updateprofile();
-        }
+        }*/
 
       },
       style: ElevatedButton.styleFrom(
@@ -312,7 +271,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     print(email);
     print(address);
     setState(() {
-       _loading = true;
+      _loading = true;
     });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String mytoken = prefs.getString('token').toString();
@@ -353,7 +312,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             showToast("Profile updated successfully");
             Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => DashBoardScreen()));
             setState(() {
-               _loading = false;
+              _loading = false;
             });
           }
           else{
@@ -368,58 +327,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   }
 
-  void _showProfilePicker(context) {
-    showModalBottomSheet(
-        context: context,
-        builder: (BuildContext bc) {
-          return SafeArea(
-            child: Container(
-              child: Wrap(
-                children: <Widget>[
-                  ListTile(
-                      leading: const Icon(Icons.photo_library),
-                      title: const Text('Gallery'),
-                      onTap: () {
-                        _profileimgFromGallery();
-                        Navigator.of(context).pop();
-                      }),
-                  ListTile(
-                    leading: const Icon(Icons.photo_camera),
-                    title: const Text('Camera'),
-                    onTap: () {
-                      _profileimgFromCamera();
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              ),
-            ),
-          );
-        });
-  }
-
-
-  _profileimgFromCamera() async{
-    final ImagePicker _picker = ImagePicker();
-    final XFile photo = await _picker.pickImage(source: ImageSource.camera, imageQuality: 50);
-    if(photo.path == "" || photo.path == null){
-      setState(() {
-        _profilepath = photo.path;
-      });
-    }
-  }
-
-  _profileimgFromGallery() async {
-    final ImagePicker _picker = ImagePicker();
-    XFile image = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 50);
-    print(image.path);
-    setState(() {
-      _profilepath = image.path;
-    });
-    print(_profilepath);
-  }
-
   Future<bool> _willPopCallback() async {
-    return Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => DashBoardScreen()));
+    return Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ProfileScreen()));
   }
+
 }

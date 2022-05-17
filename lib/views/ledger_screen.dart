@@ -30,7 +30,7 @@ class _LedgerStatementScreenState extends State<LedgerStatementScreen>
   void initState() {
     // TODO: implement initState
     super.initState();
-    _getpaymenttxtstatement();
+    _gettxndata();
     Future<List<ProfileResponse>> temp = _getprofile();
     temp.then((value) {
       setState(() {
@@ -164,6 +164,7 @@ class _LedgerStatementScreenState extends State<LedgerStatementScreen>
           )*/
           Expanded(
               child: Padding(
+<<<<<<< HEAD
             padding: const EdgeInsets.all(10),
             child: FutureBuilder(
                 future: _getpaymenttxtstatement(),
@@ -265,6 +266,56 @@ class _LedgerStatementScreenState extends State<LedgerStatementScreen>
                   }
                 }),
           ))
+=======
+                padding: EdgeInsets.only(bottom: 0.0),
+                child: _txnlist.isEmpty || _txnlist.length == 0
+                    ? Padding(
+                  padding: EdgeInsets.only(bottom: size.height * 0.08),
+                  child: Center(
+                    child: Text("Data not found",
+                        style:
+                        TextStyle(color: Colors.black, fontSize: 16)),
+                  ),
+                )
+                    : ListView.separated(
+                  itemCount: _txnlist.length,
+                  padding: EdgeInsets.zero,
+                  separatorBuilder: (BuildContext context, int index) =>
+                  const Divider(height: 1, color: Colors.grey),
+                  itemBuilder: (BuildContext context, int index) {
+                    if (_txnlist.isEmpty || _txnlist.length == 0) {
+                      return Center(
+                          child: CircularProgressIndicator(
+                              color: Colors.indigo));
+                    } else {
+                      return ListTile(
+                        title: Text(
+                            '${_txnlist[index]['created_at'].toString()}',
+                            style: TextStyle(
+                                color: Colors.indigo.shade400,
+                                fontSize: 16)),
+                        subtitle: Text(
+                            '${_txnlist[index]['description'].toString()}',
+                            style: const TextStyle(
+                                color: Colors.grey, fontSize: 12)),
+                        trailing: _txnlist[index]['transaction_type']
+                            .toString() ==
+                            "credit"
+                            ? Text(
+                            '\u20B9 ${_txnlist[index]['update_balance'].toString()} Cr',
+                            style: const TextStyle(
+                                color: Colors.green, fontSize: 12))
+                            : Text(
+                            '\u20B9 ${_txnlist[index]['update_balance'].toString()} Dr',
+                            style: const TextStyle(
+                                color: Colors.red, fontSize: 12)),
+                      );
+                    }
+                  },
+                ),
+              )
+          ),
+>>>>>>> 8f8450c0093c7a5e92ca9f08bd5367825aa224e3
         ],
       ),
     );
@@ -285,7 +336,27 @@ class _LedgerStatementScreenState extends State<LedgerStatementScreen>
     }
   }
 
+<<<<<<< HEAD
   Future<dynamic> _getpaymenttxtstatement() async {
+=======
+  Future _gettxndata() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String mytoken = prefs.getString('token').toString();
+    var response = await http.post(Uri.parse(BASE_URL + wallettxn),
+        headers: {'Authorization': 'Bearer $mytoken'});
+    if(response.statusCode == 200) {
+      if (json.decode(response.body)['ErrorCode'].toString() == "0") {
+        setState(() {
+          _txnlist = json.decode(response.body)['Response']['transactions'];
+        });
+      }
+    } else {
+      throw Exception('Failed to get data due to ${response.body}');
+    }
+  }
+
+  /*Future<dynamic> _getpaymenttxtstatement() async{
+>>>>>>> 8f8450c0093c7a5e92ca9f08bd5367825aa224e3
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String mytoken = prefs.getString('token').toString();
     var response = await http.post(Uri.parse(BASE_URL + txnstatement),
@@ -298,5 +369,5 @@ class _LedgerStatementScreenState extends State<LedgerStatementScreen>
     } else {
       throw Exception('Failed to get data due to ${response.body}');
     }
-  }
+  }*/
 }
