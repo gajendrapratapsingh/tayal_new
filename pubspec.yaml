@@ -59,6 +59,7 @@ dependencies:
   flutter_downloader: ^1.5.2
   path_provider: ^2.0.9
   permission_handler: ^9.0.0
+  share_plus: ^4.0.4
   syncfusion_flutter_gauges: ^20.1.56
 
 dev_dependencies:

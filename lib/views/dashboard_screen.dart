@@ -10,15 +10,13 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:tayal/models/profiledata.dart';
+import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:tayal/network/api.dart';
 import 'package:tayal/themes/constant.dart';
 import 'package:tayal/views/category_screen.dart';
-import 'package:tayal/views/help_screen.dart';
-import 'package:tayal/views/mybiz_screen.dart';
 import 'package:tayal/views/notification_screen.dart';
-import 'package:tayal/views/product_screen.dart';
+import 'package:tayal/widgets/bottom_appbar.dart';
 import 'package:tayal/widgets/navigation_drawer_widget.dart';
 
 class DashBoardScreen extends StatefulWidget {
@@ -61,9 +59,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       backgroundColor: kBackgroundShapeColor,
       drawer: NavigationDrawerWidget(),
       floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => CategoryScreen()));
+              onPressed: () {
+                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => CategoryScreen()));
           },
           backgroundColor: Colors.indigo,
           child: Icon(Icons.add)),
@@ -71,68 +68,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       bottomNavigationBar: BottomAppBar(
         shape: CircularNotchedRectangle(),
         color: Color(0xffBCBEFD),
-        child: Container(
-            width: size.width,
-            height: 70,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  InkWell(
-                    onTap: () {},
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SvgPicture.asset('assets/icons/home.svg',
-                            fit: BoxFit.fill),
-                        Text("Home")
-                      ],
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => MyBizScreen()));
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SvgPicture.asset('assets/icons/mybiz.svg',
-                            fit: BoxFit.fill),
-                        Text("My Biz")
-                      ],
-                    ),
-                  ),
-                  SizedBox.shrink(),
-                  InkWell(
-                    onTap: () {},
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SvgPicture.asset('assets/icons/reward.svg',
-                            fit: BoxFit.fill),
-                        Text("Campaign")
-                      ],
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => HelpScreen()));
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SvgPicture.asset('assets/icons/help.svg',
-                            fit: BoxFit.fill),
-                        Text("Help")
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            )),
+        child: MyBottomAppBar(),
       ),
       body: Stack(
         children: [
@@ -315,23 +251,14 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                       right: 50),
                                   child: Row(
                                     children: [
-                                      SvgPicture.asset(
-                                          'assets/images/bonus_points.svg',
-                                          fit: BoxFit.fill),
+                                      SvgPicture.asset('assets/images/bonus_points.svg', fit: BoxFit.fill),
                                       SizedBox(width: 7.0),
                                       Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: const [
-                                          Text("Bonus Points",
-                                              style: TextStyle(
-                                                  color: Colors.grey,
-                                                  fontSize: 10)),
-                                          Text("\u20B9 8633.862",
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w500))
+                                          Text("Bonus Points", style: TextStyle(color: Colors.grey, fontSize: 10)),
+                                          Text("\u20B9 8633.862", style: TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.w500))
                                         ],
                                       )
                                     ],

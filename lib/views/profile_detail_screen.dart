@@ -1,11 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:tayal/helper/dialog_helper.dart';
 import 'package:tayal/models/profiledata.dart';
 import 'package:tayal/network/api.dart';
 import 'package:tayal/themes/constant.dart';
@@ -20,10 +24,21 @@ class ProfileDetailScreen extends StatefulWidget {
 }
 
 class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
-
-  String name, mobile, email, profileimage, address;
+  String name,
+      mobile,
+      email,
+      profileimage,
+      panno,
+      gstno,
+      address,
+      pancard,
+      gstcertificate,
+      agriculturelicense;
   bool _loading = false;
   String _profilepath = "";
+  String _gstcertificatepath = "";
+  String _agriculturelicensepath = "";
+  String _pancardpath;
 
   @override
   void initState() {
@@ -36,7 +51,12 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
         name = value[0].username.toString();
         mobile = value[0].mobile.toString();
         email = value[0].email.toString();
+        panno = value[0].panNo.toString();
+        gstno = value[0].gstin.toString();
         address = value[0].address.toString();
+        pancard = value[0].uploadPancard.toString();
+        gstcertificate = value[0].uploadGstCertificate.toString();
+        agriculturelicense = value[0].uploadAgricultureLicense.toString();
       });
     });
   }
@@ -45,228 +65,595 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-        resizeToAvoidBottomInset: false,
-        backgroundColor: kBackgroundShapeColor,
-        body: ModalProgressHUD(
-          color: Colors.indigo,
-          inAsyncCall: _loading,
-          child: Stack(
-            children: [
-              Padding (
-                padding: EdgeInsets.only(top: 30),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        InkWell(
-                          onTap: (){
-                            _willPopCallback();},
-                          child: SvgPicture.asset('assets/images/back.svg', fit: BoxFit.fill),
-                        ),
-                        SizedBox(width: MediaQuery.of(context).size.width * 0.15),
-                        Text("Profile", textAlign: TextAlign.center, style: TextStyle(fontStyle: FontStyle.normal, fontSize: 21, fontWeight: FontWeight.bold)),
-                      ],
-                    ),
-                    Expanded(
-                        child: SingleChildScrollView(
-                          child: Column(
-                            children: <Widget>[
-                              Align(
-                                  alignment: Alignment.center,
-                                  child: Card(
-                                      shape: RoundedRectangleBorder(
-                                        side: BorderSide(color: Colors.white, width: 1),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 25.0),
-                                        child: Column(
-                                          children: [
-                                            SizedBox(height: 10.0),
-                                            InkWell(
-                                              onTap:(){
-                                                //_showProfilePicker(context);
-                                              },
-                                              child: _profilepath.toString() == "" || _profilepath.toString() == "null" ? ClipRRect(
-                                                borderRadius: BorderRadius.circular(40),
+      resizeToAvoidBottomInset: false,
+      backgroundColor: kBackgroundShapeColor,
+      body: ModalProgressHUD(
+        color: Colors.indigo,
+        inAsyncCall: _loading,
+        child: Stack(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(top: 30),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          _willPopCallback();
+                        },
+                        child: SvgPicture.asset('assets/images/back.svg',
+                            fit: BoxFit.fill),
+                      ),
+                      SizedBox(width: MediaQuery.of(context).size.width * 0.15),
+                      const Text("Profile", textAlign: TextAlign.center, style: TextStyle(fontStyle: FontStyle.normal, fontSize: 21, fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                  Expanded(
+                      child: SingleChildScrollView(
+                    child: Column(
+                      children: <Widget>[
+                        Align(
+                            alignment: Alignment.center,
+                            child: Card(
+                                shape: RoundedRectangleBorder(
+                                  side:
+                                      BorderSide(color: Colors.white, width: 1),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 5.0, horizontal: 25.0),
+                                  child: Column(
+                                    children: [
+                                      SizedBox(height: 10.0),
+                                      InkWell(
+                                        onTap: () {
+                                          _showDocPicker(context, "profile");
+                                        },
+                                        child: _profilepath.toString() == "" ||
+                                                _profilepath.toString() ==
+                                                    "null"
+                                            ? ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(40),
                                                 child: Container(
                                                   height: 80,
                                                   width: 80,
-                                                  child: profileimage == "" || profileimage == null ? Image.asset('assets/images/logo_user.png', fit: BoxFit.fill) : Image.network(profileimage, fit: BoxFit.fill),
+                                                  child: profileimage == "" ||
+                                                          profileimage == null
+                                                      ? Image.asset(
+                                                          'assets/images/logo_user.png',
+                                                          fit: BoxFit.fill)
+                                                      : Image.network(
+                                                          profileimage,
+                                                          fit: BoxFit.fill),
                                                 ),
-                                              ) : ClipRRect(
-                                                borderRadius: BorderRadius.circular(40),
+                                              )
+                                            : ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(40),
                                                 child: Container(
                                                   height: 80,
                                                   width: 80,
                                                   decoration: BoxDecoration(
-                                                      image: DecorationImage(fit: BoxFit.cover, image: FileImage(File(_profilepath)))
-                                                  ),
+                                                      image: DecorationImage(
+                                                          fit: BoxFit.cover,
+                                                          image: FileImage(File(
+                                                              _profilepath)))),
                                                 ),
                                               ),
-                                            ),
-                                            SizedBox(height: 15.0),
-                                            Padding(
-                                              padding: EdgeInsets.symmetric(vertical: 3.0, horizontal: 15.0),
-                                              child: name == "" || name == null ? Text("") : Text(name, style: TextStyle(color: Colors.black, fontSize: 18.0, fontWeight: FontWeight.bold)),
-                                            )
-                                          ],
-                                        ),
+                                      ),
+                                      SizedBox(height: 15.0),
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 3.0, horizontal: 15.0),
+                                        child: name == "" || name == null
+                                            ? Text("")
+                                            : Text(name,
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 18.0,
+                                                    fontWeight:
+                                                        FontWeight.bold)),
                                       )
-                                  )
+                                    ],
+                                  ),
+                                ))),
+                        Padding(
+                          padding: EdgeInsets.all(20.0),
+                          child: Column(
+                            children: [
+                              const Align(
+                                alignment: Alignment.topLeft,
+                                child: Text("Name",
+                                    style: TextStyle(
+                                        color: Colors.grey, fontSize: 14.0)),
                               ),
-                              Padding(padding: EdgeInsets.all(20.0),
-                                child: Column(
+                              TextField(
+                                keyboardType: TextInputType.text,
+                                //focusNode: focusNode,
+                                decoration: InputDecoration(
+                                  hintText:
+                                      name == "" || name == null ? "" : name,
+                                  enabledBorder: const UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.white),
+                                  ),
+                                  focusedBorder: const UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.blue),
+                                  ),
+                                ),
+                                onChanged: (value) {
+                                  setState(() {
+                                    name = value.toString();
+                                  });
+                                },
+                              ),
+                              const SizedBox(height: 20),
+                              const Align(
+                                alignment: Alignment.topLeft,
+                                child: Text("Phone Number",
+                                    style: TextStyle(
+                                        color: Colors.grey, fontSize: 14.0)),
+                              ),
+                              TextField(
+                                  keyboardType: TextInputType.number,
+                                  readOnly: true,
+                                  decoration: InputDecoration(
+                                    hintText: mobile == "" || mobile == null
+                                        ? ""
+                                        : mobile,
+                                    //suffix: Text("Edit", style: TextStyle(color: Colors.grey, fontSize: 14)),
+                                    enabledBorder: const UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.white),
+                                    ),
+                                    focusedBorder: const UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.blue),
+                                    ),
+                                  )),
+                              const SizedBox(height: 20),
+                              const Align(
+                                alignment: Alignment.topLeft,
+                                child: Text("Email",
+                                    style: TextStyle(
+                                        color: Colors.grey, fontSize: 14.0)),
+                              ),
+                              TextField(
+                                keyboardType: TextInputType.emailAddress,
+                                decoration: InputDecoration(
+                                  hintText:
+                                      email == "" || email == null ? "" : email,
+                                  enabledBorder: const UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.white),
+                                  ),
+                                  focusedBorder: const UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.blue),
+                                  ),
+                                ),
+                                onChanged: (value) {
+                                  setState(() {
+                                    email = value.toString();
+                                  });
+                                },
+                              ),
+                              const SizedBox(height: 20),
+                              const Align(
+                                alignment: Alignment.topLeft,
+                                child: Text("Pan No.",
+                                    style: TextStyle(
+                                        color: Colors.grey, fontSize: 14.0)),
+                              ),
+                              TextField(
+                                decoration: InputDecoration(
+                                  hintText:
+                                      panno == "" || panno == null ? "" : panno,
+                                  //suffix: Text("Change", style: TextStyle(fontSize: 14)),
+                                  enabledBorder: const UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.white),
+                                  ),
+                                  focusedBorder: const UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.blue),
+                                  ),
+                                ),
+                                onChanged: (value) {
+                                  setState(() {
+                                    panno = value.toString();
+                                  });
+                                },
+                              ),
+                              const SizedBox(height: 20),
+                              const Align(
+                                alignment: Alignment.topLeft,
+                                child: Text("GST No.",
+                                    style: TextStyle(
+                                        color: Colors.grey, fontSize: 14.0)),
+                              ),
+                              TextField(
+                                decoration: InputDecoration(
+                                  hintText:
+                                      gstno == "" || gstno == null ? "" : gstno,
+                                  //suffix: Text("Change", style: TextStyle(fontSize: 14)),
+                                  enabledBorder: const UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.white),
+                                  ),
+                                  focusedBorder: const UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.blue),
+                                  ),
+                                ),
+                                onChanged: (value) {
+                                  setState(() {
+                                    gstno = value.toString();
+                                  });
+                                },
+                              ),
+                              const SizedBox(height: 20),
+                              const Align(
+                                alignment: Alignment.topLeft,
+                                child: Text("Address",
+                                    style: TextStyle(
+                                        color: Colors.grey, fontSize: 14.0)),
+                              ),
+                              TextField(
+                                decoration: InputDecoration(
+                                  hintText: address == "" || address == null
+                                      ? ""
+                                      : address,
+                                  //suffix: Text("Change", style: TextStyle(fontSize: 14)),
+                                  enabledBorder: const UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.white),
+                                  ),
+                                  focusedBorder: const UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.blue),
+                                  ),
+                                ),
+                                onChanged: (value) {
+                                  setState(() {
+                                    address = value.toString();
+                                  });
+                                },
+                              ),
+                              const SizedBox(height: 20),
+                              const Align(
+                                alignment: Alignment.topLeft,
+                                child: Text("GST Certificate",
+                                    style: TextStyle(
+                                        color: Colors.grey, fontSize: 14.0)),
+                              ),
+                              const SizedBox(height: 20),
+                              Container(
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
-                                    const Align(
-                                      alignment: Alignment.topLeft,
-                                      child: Text("Name", style: TextStyle(color: Colors.grey, fontSize: 14.0)),
-                                    ),
-                                    TextField(
-                                      keyboardType: TextInputType.text,
-                                      //focusNode: focusNode,
-                                      decoration: InputDecoration(
-                                        hintText: name == "" || name == null ? "" : name,
-                                        enabledBorder: const UnderlineInputBorder(
-                                          borderSide: BorderSide(color: Colors.white),
-                                        ),
-                                        focusedBorder: const UnderlineInputBorder(
-                                          borderSide: BorderSide(color: Colors.blue),
-                                        ),
-                                      ),
-                                      onChanged: (value){
-                                        setState(() {
-                                          name = value.toString();
-                                        });
+                                    InkWell(
+                                      onTap: () {
+                                        DialogHelper.viewimagedialog(
+                                            gstcertificate.toString(), context);
                                       },
-                                    ),
-                                    const SizedBox(height: 20),
-                                    const Align(
-                                      alignment: Alignment.topLeft,
-                                      child: Text("Phone Number", style: TextStyle(color: Colors.grey, fontSize: 14.0)),
-                                    ),
-                                    TextField(
-                                        keyboardType: TextInputType.number,
-                                        readOnly: true,
-                                        decoration: InputDecoration(
-                                          hintText: mobile == "" || mobile == null ? "" : mobile,
-                                          //suffix: Text("Edit", style: TextStyle(color: Colors.grey, fontSize: 14)),
-                                          enabledBorder: const UnderlineInputBorder(
-                                            borderSide: BorderSide(color: Colors.white),
+                                      child:  _gstcertificatepath.toString() == "" ||
+                                          _gstcertificatepath.toString() ==
+                                              "null"
+                                          ? Container(
+                                            height: 45,
+                                            width: 45,
+                                            child: gstcertificate == "" ||
+                                                gstcertificate == null
+                                                ? Image.asset(
+                                                'assets/images/no_image.jpg', fit: BoxFit.fill)
+                                                : Image.network(
+                                                gstcertificate,
+                                                fit: BoxFit.fill),
+                                          )
+                                          : Container(
+                                            height: 45,
+                                            width: 45,
+                                            decoration: BoxDecoration(
+                                                image: DecorationImage(
+                                                    fit: BoxFit.cover,
+                                                    image: FileImage(File(
+                                                        _gstcertificatepath)))),
                                           ),
-                                          focusedBorder: const UnderlineInputBorder(
-                                            borderSide: BorderSide(color: Colors.blue),
-                                          ),
-                                        )
                                     ),
-                                    const SizedBox(height: 20),
-                                    const Align(
-                                      alignment: Alignment.topLeft,
-                                      child: Text("Email", style: TextStyle(color: Colors.grey, fontSize: 14.0)),
-                                    ),
-                                    TextField(
-                                      keyboardType: TextInputType.emailAddress,
-                                      decoration: InputDecoration(
-                                        hintText: email == "" || email == null ? "" : email,
-                                        enabledBorder: const UnderlineInputBorder(
-                                          borderSide: BorderSide(color: Colors.white),
-                                        ),
-                                        focusedBorder: const UnderlineInputBorder(
-                                          borderSide: BorderSide(color: Colors.blue),
-                                        ),
-                                      ),
-                                      onChanged: (value){
-                                        setState(() {
-                                          email = value.toString();
-                                        });
+                                    InkWell(
+                                      onTap: () {
+                                        _showDocPicker(
+                                            context, "gstcertificate");
                                       },
-                                    ),
-                                    const SizedBox(height: 20),
-                                    const Align(
-                                      alignment: Alignment.topLeft,
-                                      child: Text("Address", style: TextStyle(color: Colors.grey, fontSize: 14.0)),
-                                    ),
-                                    TextField(
-                                      decoration: InputDecoration(
-                                        hintText: address == "" || address == null ? "" : address,
-                                        //suffix: Text("Change", style: TextStyle(fontSize: 14)),
-                                        enabledBorder: const UnderlineInputBorder(
-                                          borderSide: BorderSide(color: Colors.white),
-                                        ),
-                                        focusedBorder: const UnderlineInputBorder(
-                                          borderSide: BorderSide(color: Colors.blue),
-                                        ),
+                                      child: Container(
+                                        height: 35,
+                                        width: 95,
+                                        alignment: Alignment.center,
+                                        decoration: BoxDecoration(
+                                            color: Colors.indigo.shade300,
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(8.0))),
+                                        child: Text("Browse",
+                                            style:
+                                                TextStyle(color: Colors.white)),
                                       ),
-                                      onChanged: (value){
-                                        setState(() {
-                                          address = value.toString();
-                                        });
-                                      },
-                                    ),
-                                    const SizedBox(height: 20),
-                                    Container(
-                                      margin: EdgeInsets.symmetric(vertical: 10),
-                                      width: size.width * 0.9,
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(29),
-                                        child: newElevatedButton(),
-                                      ),
-                                    ),
+                                    )
                                   ],
                                 ),
-                              )
-
+                              ),
+                              const SizedBox(height: 10),
+                              Divider(
+                                  height: 1,
+                                  thickness: 1.2,
+                                  color: Colors.white),
+                              const SizedBox(height: 20),
+                              const Align(
+                                alignment: Alignment.topLeft,
+                                child: Text("Pan Card",
+                                    style: TextStyle(
+                                        color: Colors.grey, fontSize: 14.0)),
+                              ),
+                              const SizedBox(height: 20),
+                              Container(
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        DialogHelper.viewimagedialog(
+                                            pancard.toString(), context);
+                                      },
+                                      child:  _pancardpath.toString() == "" ||
+                                          _pancardpath.toString() ==
+                                              "null"
+                                          ? Container(
+                                        height: 45,
+                                        width: 45,
+                                        child: pancard == "" ||
+                                            pancard == null
+                                            ? Image.asset(
+                                            'assets/images/no_image.jpg', fit: BoxFit.fill)
+                                            : Image.network(
+                                            pancard,
+                                            fit: BoxFit.fill),
+                                      )
+                                          : Container(
+                                        height: 45,
+                                        width: 45,
+                                        decoration: BoxDecoration(
+                                            image: DecorationImage(
+                                                fit: BoxFit.cover,
+                                                image: FileImage(File(
+                                                    _pancardpath)))),
+                                      ),
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        _showDocPicker(context, "pancard");
+                                      },
+                                      child: Container(
+                                        height: 35,
+                                        width: 95,
+                                        alignment: Alignment.center,
+                                        decoration: BoxDecoration(
+                                            color: Colors.indigo.shade300,
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(8.0))),
+                                        child: Text("Browse",
+                                            style:
+                                                TextStyle(color: Colors.white)),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Divider(
+                                  height: 1,
+                                  thickness: 1.2,
+                                  color: Colors.white),
+                              const SizedBox(height: 20),
+                              const Align(
+                                alignment: Alignment.topLeft,
+                                child: Text("Agriculture license",
+                                    style: TextStyle(
+                                        color: Colors.grey, fontSize: 14.0)),
+                              ),
+                              const SizedBox(height: 20),
+                              Container(
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        DialogHelper.viewimagedialog(
+                                            agriculturelicense.toString(),
+                                            context);
+                                      },
+                                      child: _agriculturelicensepath.toString() == "" ||
+                                          _agriculturelicensepath.toString() ==
+                                              "null"
+                                          ? Container(
+                                        height: 45,
+                                        width: 45,
+                                        child: agriculturelicense == "" ||
+                                            agriculturelicense == null
+                                            ? Image.asset(
+                                            'assets/images/no_image.jpg', fit: BoxFit.fill)
+                                            : Image.network(
+                                            agriculturelicense,
+                                            fit: BoxFit.fill),
+                                      )
+                                          : Container(
+                                        height: 45,
+                                        width: 45,
+                                        decoration: BoxDecoration(
+                                            image: DecorationImage(
+                                                fit: BoxFit.cover,
+                                                image: FileImage(File(
+                                                    _agriculturelicensepath)))),
+                                      ),
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        _showDocPicker(context, "Agriculture");
+                                      },
+                                      child: Container(
+                                        height: 35,
+                                        width: 95,
+                                        alignment: Alignment.center,
+                                        decoration: BoxDecoration(
+                                            color: Colors.indigo.shade300,
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(8.0))),
+                                        child: Text("Browse",
+                                            style:
+                                                TextStyle(color: Colors.white)),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Divider(
+                                  height: 1,
+                                  thickness: 1.2,
+                                  color: Colors.white),
+                              const SizedBox(height: 20),
+                              Container(
+                                margin: EdgeInsets.symmetric(vertical: 10),
+                                width: size.width * 0.9,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(29),
+                                  child: newElevatedButton(),
+                                ),
+                              ),
                             ],
                           ),
                         )
+                      ],
                     ),
-                  ],
-                ),
-              )
-            ],
-          ),
+                  )),
+                ],
+              ),
+            )
+          ],
         ),
+      ),
     );
   }
 
   Widget newElevatedButton() {
     return ElevatedButton(
-      child: const Text("Save", style: TextStyle(color: Colors.white, fontSize: 18),
-      ),
-      onPressed: (){
-        /*if(_profilepath.toString() == "" || _profilepath.toString() == null){
-          showToast("Please select your profile picture");
-        }
-        else{
-          _updateprofile();
-        }*/
-
+      child: const Text("Save",
+          style: TextStyle(color: Colors.white, fontSize: 18)),
+      onPressed: () {
+        _updateprofile();
       },
       style: ElevatedButton.styleFrom(
           primary: Colors.indigo,
           padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-          textStyle: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500)),
+          textStyle: const TextStyle(
+              color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500)),
     );
   }
 
-  Future<List<ProfileResponse>> _getprofile() async{
+  Future<List<ProfileResponse>> _getprofile() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String mytoken = prefs.getString('token').toString();
-    var response = await http.post(Uri.parse(BASE_URL+profile),
-        headers : {'Authorization': 'Bearer $mytoken'}
-    );
-    if (response.statusCode == 200)
-    {
+    var response = await http.post(Uri.parse(BASE_URL + profile),
+        headers: {'Authorization': 'Bearer $mytoken'});
+    if (response.statusCode == 200) {
       Iterable list = json.decode(response.body)['Response'];
-      List<ProfileResponse> _list = list.map((m) => ProfileResponse.fromJson(m)).toList();
+      List<ProfileResponse> _list =
+          list.map((m) => ProfileResponse.fromJson(m)).toList();
       return _list;
     } else {
       throw Exception('Failed to get data due to ${response.body}');
     }
   }
 
-  Future<List<ProfileResponse>> _updateprofile() async{
+  void _showDocPicker(context, doctype) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return SafeArea(
+            child: Container(
+              child: Wrap(
+                children: <Widget>[
+                  ListTile(
+                      leading: const Icon(Icons.photo_library),
+                      title: const Text('Gallery'),
+                      onTap: () {
+                        _docimgFromGallery(doctype.toString());
+                        Navigator.of(context).pop();
+                      }),
+                  ListTile(
+                    leading: const Icon(Icons.photo_camera),
+                    title: const Text('Camera'),
+                    onTap: () {
+                      _docimgFromCamera(doctype.toString());
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  _docimgFromCamera(doctype) async {
+    final ImagePicker _picker = ImagePicker();
+    final XFile photo =
+        await _picker.pickImage(source: ImageSource.camera, imageQuality: 50);
+    if (photo.path == "" || photo.path == null) {
+      if (doctype.toString() == "gstcertificate") {
+        setState(() {
+          _gstcertificatepath = photo.path;
+        });
+      } else if (doctype.toString() == "Agriculture") {
+        setState(() {
+          _agriculturelicensepath = photo.path;
+        });
+      } else if (doctype.toString() == "pancard") {
+        setState(() {
+          _pancardpath = photo.path;
+        });
+      } else {
+        print(photo.path);
+        setState(() {
+          _profilepath = photo.path;
+        });
+        print(_profilepath);
+      }
+    }
+  }
+
+  _docimgFromGallery(doctype) async {
+    final ImagePicker _picker = ImagePicker();
+    XFile image = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 50);
+    if (doctype.toString() == "gstcertificate") {
+      print("gst us here");
+      setState(() {
+        _gstcertificatepath = image.path;
+      });
+      print(_gstcertificatepath);
+    } else if (doctype.toString() == "Agriculture") {
+      setState(() {
+        _agriculturelicensepath = image.path;
+      });
+    } else if (doctype.toString() == "pancard") {
+      setState(() {
+        _pancardpath = image.path;
+      });
+    } else {
+      setState(() {
+        _profilepath = image.path;
+      });
+    }
+  }
+
+  Future<List<ProfileResponse>> _updateprofile() async {
     print(name);
     print(email);
     print(address);
@@ -276,46 +663,48 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String mytoken = prefs.getString('token').toString();
     print(json.encode({
-      "name" : name,
-      "email" : email,
+      "name": name,
+      "email": email,
       "business_name": "",
       "gst_no": "",
       "address": address,
       "pan_no": "",
-      "upload_photo" : "",
+      "upload_photo": "",
       "upload_gst_certificate": "",
       "upload_agriculture_license": "",
-      "upload_pancard" : ""
+      "upload_pancard": ""
     }));
-    var requestMulti = http.MultipartRequest('POST', Uri.parse(BASE_URL+updateprofile));
+    var requestMulti =
+        http.MultipartRequest('POST', Uri.parse(BASE_URL + updateprofile));
     requestMulti.headers['authorization'] = 'Bearer $mytoken';
     requestMulti.fields["name"] = name;
     requestMulti.fields["address"] = address;
     requestMulti.fields["email"] = email;
+    requestMulti.fields["gst_no"] = gstno;
+    requestMulti.fields["pan_no"] = panno;
 
-    requestMulti.fields["upload_gst_certificate"] = "";
-    requestMulti.fields["upload_agriculture_license"] = "";
-    requestMulti.fields["upload_pancard"] = "";
-
+    //requestMulti.fields["upload_gst_certificate"] = "";
+    //requestMulti.fields["upload_agriculture_license"] = "";
+    //requestMulti.fields["upload_pancard"] = "";
 
     requestMulti.files.add(await http.MultipartFile.fromPath('upload_photo', _profilepath));
-    //requestMulti.files.add(await http.MultipartFile.fromPath('upload_gst_certificate', ""));
-    //requestMulti.files.add(await http.MultipartFile.fromPath('upload_agriculture_license', ""));
-    //requestMulti.files.add(await http.MultipartFile.fromPath('upload_pancard', ""));
+    requestMulti.files.add(await http.MultipartFile.fromPath('upload_gst_certificate', _gstcertificatepath));
+    requestMulti.files.add(await http.MultipartFile.fromPath('upload_agriculture_license', _agriculturelicensepath));
+    requestMulti.files.add(await http.MultipartFile.fromPath('upload_pancard', _pancardpath));
 
     requestMulti.send().then((response) {
       response.stream.toBytes().then((value) {
         try {
           var responseString = String.fromCharCodes(value);
           var jsonData = jsonDecode(responseString);
-          if(jsonData['ErrorMessage'] == "success"){
+          if (jsonData['ErrorMessage'] == "success") {
             showToast("Profile updated successfully");
-            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => DashBoardScreen()));
+            Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => DashBoardScreen()));
             setState(() {
               _loading = false;
             });
-          }
-          else{
+          } else {
             showToast("Failed");
             setState(() {
               _loading = false;
@@ -324,11 +713,10 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
         } catch (e) {}
       });
     });
-
   }
 
   Future<bool> _willPopCallback() async {
-    return Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ProfileScreen()));
+    return Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => ProfileScreen()));
   }
-
 }

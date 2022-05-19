@@ -48,7 +48,6 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
 
   @override
   Widget build(BuildContext context) {
-
     return Drawer(
       child: Material(
         color: Color.fromRGBO(50, 75, 205, 1),
