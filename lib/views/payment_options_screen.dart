@@ -594,7 +594,7 @@ class _PaymentOptionsScreenState extends State<PaymentOptionsScreen> {
                                       left: 10.0, right: 10.0, bottom: 10.0),
                                   child: InkWell(
                                     onTap: () {
-                                      // _placeorder();
+                                      _placeorder();
                                     },
                                     child: Container(
                                       height: 55.0,
@@ -760,40 +760,40 @@ class _PaymentOptionsScreenState extends State<PaymentOptionsScreen> {
     }
   }
 
-  // Future _placeorder() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   String mytoken = prefs.getString('token').toString();
-  //   setState(() {
-  //     _loading = true;
-  //   });
-  //   var response = await http.post(Uri.parse(BASE_URL + placeorder),
-  //       headers: {'Authorization': 'Bearer $mytoken'});
-  //   if (response.statusCode == 200) {
-  //     setState(() {
-  //       _loading = false;
-  //     });
-  //     print(response.body);
-  //     if (json.decode(response.body)['ErrorCode'].toString() == "0") {
-  //       if (json.decode(response.body)['ErrorMessage'].toString() ==
-  //           "success") {
-  //         prefs.setString("cartcount", "0");
-  //         Navigator.pushReplacement(
-  //             context,
-  //             MaterialPageRoute(
-  //                 builder: (context) => ThankuScreen(
-  //                       orderid: json
-  //                           .decode(response.body)['Response']['order_id']
-  //                           .toString(),
-  //                     )));
-  //       }
-  //     }
-  //   } else {
-  //     setState(() {
-  //       _loading = false;
-  //     });
-  //     throw Exception('Failed to get data due to ${response.body}');
-  //   }
-  // }
+  Future _placeorder() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String mytoken = prefs.getString('token').toString();
+    setState(() {
+      _loading = true;
+    });
+    var response = await http.post(Uri.parse(BASE_URL + placeorder),
+        headers: {'Authorization': 'Bearer $mytoken'});
+    if (response.statusCode == 200) {
+      setState(() {
+        _loading = false;
+      });
+      print(response.body);
+      if (json.decode(response.body)['ErrorCode'].toString() == "0") {
+        if (json.decode(response.body)['ErrorMessage'].toString() ==
+            "success") {
+          prefs.setString("cartcount", "0");
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ThankuScreen(
+                        orderid: json
+                            .decode(response.body)['Response']['order_id']
+                            .toString(),
+                      )));
+        }
+      }
+    } else {
+      setState(() {
+        _loading = false;
+      });
+      throw Exception('Failed to get data due to ${response.body}');
+    }
+  }
 
   void _getWalletBalance() {
     if (double.parse(walletAmount) > 0) {

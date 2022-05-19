@@ -1,9 +1,16 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:convert';
+
+import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tayal/network/api.dart';
 import 'package:tayal/themes/constant.dart';
+import 'package:http/http.dart' as http;
+import 'package:tayal/views/report_issue.dart';
 
 class HelpScreen extends StatefulWidget {
   const HelpScreen({Key key}) : super(key: key);
@@ -13,15 +20,30 @@ class HelpScreen extends StatefulWidget {
 }
 
 class _HelpScreenState extends State<HelpScreen> {
-  List<String> helplist = [
-    "Getting Started with Tayal App",
-    "Is it safe to connect my bank account with Tayal App",
-    "Can't connect? Switching to?",
-    "All about currencies",
-    "Hot to create an AUTOMATIC RULE?",
-    "How do I create a Budget?",
-    "How to add a Credit Card?"
-  ];
+  List helplist = [];
+
+  Future<List> getFaq() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String mytoken = prefs.getString('token').toString();
+    var response = await http.post(Uri.parse(BASE_URL + faqs),
+        headers: {'Authorization': 'Bearer $mytoken'});
+
+    if (jsonDecode(response.body)['ErrorCode'] == 0) {
+      return jsonDecode(response.body)['Response']['Faqs'];
+    }
+    return [];
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getFaq().then((value) {
+      setState(() {
+        helplist.addAll(value);
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,162 +76,145 @@ class _HelpScreenState extends State<HelpScreen> {
                   ],
                 ),
                 Expanded(
-                  child: ListView.separated(
-                      itemCount: helplist.length,
-                      padding: EdgeInsets.zero,
-                      separatorBuilder: (BuildContext context, int index) =>
-                          const Divider(color: Colors.blue),
-                      itemBuilder: (BuildContext context, int index) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 8.0, horizontal: 20.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              SizedBox(
-                                width: size.width * 0.80,
-                                child: Text(helplist[index],
-                                    style: TextStyle(
-                                        color: Colors.black, fontSize: 16)),
-                              ),
-                              Icon(Icons.arrow_forward_ios,
-                                  size: 16, color: Colors.black)
-                            ],
-                          ),
-                        );
-                      }),
-                )
+                  child: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: ListView.separated(
+                        itemCount: helplist.length,
+                        padding: EdgeInsets.zero,
+                        separatorBuilder: (BuildContext context, int index) =>
+                            const Divider(color: Colors.blue),
+                        itemBuilder: (BuildContext context, int index) {
+                          return ExpandableNotifier(
+                              child: ExpandablePanel(
+                                  header: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                        helplist[index]['question'].toString(),
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        )),
+                                  ),
+                                  expanded: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        // Text(
+                                        //     helplist[index]['created_at']
+                                        //         .toString()
+                                        //         .split(" ")[0],
+                                        //     style: TextStyle(
+                                        //         fontWeight: FontWeight.bold)),
+                                        Divider(
+                                          thickness: 1,
+                                          height: 10,
+                                        ),
+                                        Text(
+                                          helplist[index]['answer'].toString(),
+                                          textAlign: TextAlign.justify,
+                                        )
+                                      ],
+                                    ),
+                                  )));
+
+                          // Padding(
+                          //   padding: const EdgeInsets.symmetric(
+                          //       vertical: 8.0, horizontal: 20.0),
+                          //   child: Row(
+                          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          //     children: [
+                          //       SizedBox(
+                          //         width: size.width * 0.80,
+                          //         child: Text(
+                          //             helplist[index]['question'].toString(),
+                          //             style: TextStyle(
+                          //                 color: Colors.black, fontSize: 16)),
+                          //       ),
+                          //       Icon(Icons.arrow_forward_ios,
+                          //           size: 16, color: Colors.black)
+                          //     ],
+                          //   ),
+                          // );
+                        }),
+                  ),
+                ),
               ],
             ),
           ),
-          Positioned(
-            left: 25,
-            right: 25,
-            bottom: 90,
-            child: InkWell(
-              onTap: () {
-                showOrderTracking();
-              },
-              child: Container(
-                height: 55,
-                width: double.infinity,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                    color: Colors.indigo,
-                    borderRadius: BorderRadius.circular(29.0)),
-                child: const Text("Report and Issue",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18)),
-              ),
-            ),
-          ),
-          Positioned(
-            left: 25,
-            right: 25,
-            bottom: 20,
-            child: InkWell(
-              onTap: () {
-                Navigator.of(context).pop();
-              },
-              child: Container(
-                height: 55,
-                width: double.infinity,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(29.0),
-                    border: Border.all(color: Colors.indigo, width: 1)),
-                child: Text("Close",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        color: Colors.indigo,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18)),
-              ),
-            ),
-          ),
+          // Positioned(
+          //   left: 25,
+          //   right: 25,
+          //   bottom: 90,
+          //   child: InkWell(
+          //     onTap: () {
+          //       showOrderTracking();
+          //     },
+          //     child: Container(
+          //       height: 55,
+          //       width: double.infinity,
+          //       alignment: Alignment.center,
+          //       decoration: BoxDecoration(
+          //           color: Colors.indigo,
+          //           borderRadius: BorderRadius.circular(29.0)),
+          //       child: const Text("Report and Issue",
+          //           textAlign: TextAlign.center,
+          //           style: TextStyle(
+          //               color: Colors.white,
+          //               fontWeight: FontWeight.bold,
+          //               fontSize: 18)),
+          //     ),
+          //   ),
+          // ),
+          // Positioned(
+          //   left: 25,
+          //   right: 25,
+          //   bottom: 20,
+          //   child: InkWell(
+          //     onTap: () {
+          //       Navigator.of(context).pop();
+          //     },
+          //     child: Container(
+          //       height: 55,
+          //       width: double.infinity,
+          //       alignment: Alignment.center,
+          //       decoration: BoxDecoration(
+          //           color: Colors.white,
+          //           borderRadius: BorderRadius.circular(29.0),
+          //           border: Border.all(color: Colors.indigo, width: 1)),
+          //       child: Text("Close",
+          //           textAlign: TextAlign.center,
+          //           style: TextStyle(
+          //               color: Colors.indigo,
+          //               fontWeight: FontWeight.bold,
+          //               fontSize: 18)),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
+      bottomSheet: InkWell(
+        onTap: () {
+          // showOrderTracking();
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => ReportIssues()));
+        },
+        child: Container(
+          height: 55,
+          // width: double.infinity,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: Colors.indigo,
+          ),
+          child: const Text("Report and Issue",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18)),
+        ),
+      ),
     );
-  }
-
-  Future<void> showOrderTracking() async {
-    await showModalBottomSheet(
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20.0))),
-        backgroundColor: Colors.white,
-        context: context,
-        enableDrag: false,
-        isDismissible: false,
-        isScrollControlled: true,
-        builder: (context) => Padding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        TextButton.icon(
-                            onPressed: () {},
-                            icon: Icon(Icons.attachment),
-                            label: Text("Attachment")),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: IconButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              icon: Icon(
-                                Icons.clear,
-                                color: Colors.red,
-                              )),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    TextFormField(
-                      maxLines: 5,
-                      autofocus: true,
-                      decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20)),
-                          labelText: "Report Issue"),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    InkWell(
-                      onTap: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Container(
-                        height: 55,
-                        width: double.infinity,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(29.0),
-                            border: Border.all(color: Colors.indigo, width: 1)),
-                        child: Text("SUBMIT",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                color: Colors.indigo,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14)),
-                      ),
-                    ),
-                  ]),
-            )));
   }
 }

@@ -189,16 +189,16 @@ class _FavouriteProductScreenState extends State<FavouriteProductScreen> {
                                             left: 10,
                                             bottom: 5,
                                             right: 10,
-                                            child: _searchResult[index]['is_stock'].toString() == "0"  || _searchResult[index]['is_stock'].toString() == null ? Container(
-                                              height: 35.0,
-                                              width: 85.0,
-                                              alignment: Alignment.center,
-                                              decoration: BoxDecoration(
-                                                  color: Colors.grey,
-                                                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                                                  border: Border.all(width: 1, color: Colors.black)
+                                            child: _searchResult[index]['is_stock'].toString() == "0"  || _searchResult[index]['is_stock'].toString() == null ? Center(
+                                              child: Text(
+                                                "Out of Stock",
+                                                style: TextStyle(
+                                                    color: Colors
+                                                        .red,
+                                                    fontWeight:
+                                                    FontWeight
+                                                        .w600),
                                               ),
-                                              child: Text("Stock not available", textAlign: TextAlign.center, style: TextStyle(fontSize: 10, color: Colors.black)),
                                             ) : _searchResult[index]['quantity'] == 0 ? InkWell(
                                               onTap: (){
                                                 setState(() {

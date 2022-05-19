@@ -11,7 +11,9 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tayal/network/api.dart';
 import 'package:tayal/themes/constant.dart';
@@ -60,23 +62,38 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   static void downloadCallback(
       String id, DownloadTaskStatus status, int progress) {
     final SendPort send =
-    IsolateNameServer.lookupPortByName('downloader_send_port');
+        IsolateNameServer.lookupPortByName('downloader_send_port');
     send.send([id, status, progress]);
   }
 
   void _setPath(String filepath) async {
-    // if (await Permission.storage.request().isGranted) {
-    print(filepath);
-    final externalDir = await getApplicationDocumentsDirectory();
-    print(externalDir);
-    String fileName = DateTime.now().toString() + ".pdf";
-    final id = await FlutterDownloader.enqueue(
-        url: filepath,
-        savedDir: externalDir.path,
-        fileName: fileName,
-        showNotification: true,
-        openFileFromNotification: true);
-    // }
+    bool permissionAccess = false;
+    if (await Permission.storage.request().isGranted) {
+      setState(() {
+        permissionAccess = true;
+      });
+    }
+    if (await Permission.manageExternalStorage.request().isGranted) {
+      setState(() {
+        permissionAccess = true;
+      });
+    }
+
+    if (permissionAccess) {
+      final externalDir = await getExternalStorageDirectory();
+      String fileName = DateTime.now().toString() + ".pdf";
+      final id = await FlutterDownloader.enqueue(
+          url: filepath,
+          savedDir: externalDir.path,
+          fileName: fileName,
+          showNotification: true,
+          openFileFromNotification: true);
+
+      print(id.toString());
+
+      print(externalDir.path + "/" + fileName);
+      Fluttertoast.showToast(msg: "File Downloaded");
+    }
   }
 
   @override
@@ -133,10 +150,10 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                               elevation: 0,
                                               child: Padding(
                                                 padding:
-                                                const EdgeInsets.all(8.0),
+                                                    const EdgeInsets.all(8.0),
                                                 child: Column(
                                                   crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                                      CrossAxisAlignment.start,
                                                   children: [
                                                     Text(
                                                         "Order on ${snapshot.data['created_at'].toString()}",
@@ -148,29 +165,29 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                                         "Order Status : ${snapshot.data['order_status'].toString()}",
                                                         style: TextStyle(
                                                             color:
-                                                            Colors.indigo,
+                                                                Colors.indigo,
                                                             fontSize: 14,
                                                             fontWeight:
-                                                            FontWeight
-                                                                .w500)),
+                                                                FontWeight
+                                                                    .w500)),
                                                     SizedBox(height: 5.0),
                                                     Row(
                                                       children: [
                                                         snapshot.data['payment_mode']
-                                                            .toString() ==
-                                                            "Cash On Delivery"
+                                                                    .toString() ==
+                                                                "Cash On Delivery"
                                                             ? Image.asset(
-                                                            'assets/images/cash_pay.png',
-                                                            scale: 2)
+                                                                'assets/images/cash_pay.png',
+                                                                scale: 2)
                                                             : Image.asset(
-                                                            'assets/images/online_pay.png',
-                                                            scale: 2),
+                                                                'assets/images/online_pay.png',
+                                                                scale: 2),
                                                         SizedBox(width: 5),
                                                         Text(
                                                             "${snapshot.data['payment_mode'].toString()}",
                                                             style: TextStyle(
                                                                 color:
-                                                                Colors.grey,
+                                                                    Colors.grey,
                                                                 fontSize: 12))
                                                       ],
                                                     )
@@ -192,10 +209,23 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                                 child: Padding(
                                                   padding: EdgeInsets.all(10),
                                                   child: Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
                                                     children: [
-                                                      Text("Order History", style: TextStyle(color: Colors.indigo, fontWeight: FontWeight.w700)),
-                                                      Icon(Icons.arrow_forward_ios_rounded, color: Colors.indigo.shade400, size: 20)
+                                                      Text("Order History",
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.indigo,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w700)),
+                                                      Icon(
+                                                          Icons
+                                                              .arrow_forward_ios_rounded,
+                                                          color: Colors
+                                                              .indigo.shade400,
+                                                          size: 20)
                                                     ],
                                                   ),
                                                 ),
@@ -212,7 +242,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                                     horizontal: 10),
                                                 child: Column(
                                                   crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                                      CrossAxisAlignment.start,
                                                   children: [
                                                     Row(
                                                       children: [
@@ -220,7 +250,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                                             "${snapshot.data['items'].length} items",
                                                             style: TextStyle(
                                                                 color:
-                                                                Colors.grey,
+                                                                    Colors.grey,
                                                                 fontSize: 10)),
                                                         const SizedBox(
                                                             width: 15),
@@ -231,25 +261,25 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                                                     color: Colors
                                                                         .grey,
                                                                     fontSize:
-                                                                    10))),
+                                                                        10))),
                                                         Container(
                                                           height: 30,
                                                           width: 80,
                                                           alignment:
-                                                          Alignment.center,
+                                                              Alignment.center,
                                                           decoration: BoxDecoration(
                                                               color:
-                                                              Colors.indigo,
+                                                                  Colors.indigo,
                                                               borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                  5)),
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          5)),
                                                           child: Text("reorder",
                                                               style: TextStyle(
                                                                   color: Colors
                                                                       .white,
                                                                   fontSize:
-                                                                  10)),
+                                                                      10)),
                                                         )
                                                       ],
                                                     ),
@@ -259,18 +289,18 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                                       width: size.width * 0.45,
                                                       decoration: BoxDecoration(
                                                           borderRadius:
-                                                          BorderRadius
-                                                              .circular(5),
+                                                              BorderRadius
+                                                                  .circular(5),
                                                           border: Border.all(
                                                               color:
-                                                              Colors.indigo,
+                                                                  Colors.indigo,
                                                               width: 1)),
                                                       child: Padding(
                                                         padding:
-                                                        const EdgeInsets
-                                                            .only(
-                                                            left: 5.0,
-                                                            right: 5.0),
+                                                            const EdgeInsets
+                                                                    .only(
+                                                                left: 5.0,
+                                                                right: 5.0),
                                                         child: Row(
                                                           children: const [
                                                             Icon(
@@ -286,7 +316,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                                                     color: Colors
                                                                         .indigo,
                                                                     fontSize:
-                                                                    12))
+                                                                        12))
                                                           ],
                                                         ),
                                                       ),
@@ -299,40 +329,40 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                                               .data['items']
                                                               .length,
                                                           padding:
-                                                          EdgeInsets.zero,
+                                                              EdgeInsets.zero,
                                                           shrinkWrap: true,
                                                           separatorBuilder:
                                                               (BuildContext
-                                                          context,
-                                                              int
-                                                              index) =>
-                                                              Divider(
-                                                                height: 1,
-                                                                color: Colors
-                                                                    .grey[
-                                                                300],
-                                                              ),
+                                                                          context,
+                                                                      int
+                                                                          index) =>
+                                                                  Divider(
+                                                                    height: 1,
+                                                                    color: Colors
+                                                                            .grey[
+                                                                        300],
+                                                                  ),
                                                           itemBuilder:
                                                               (context, index) {
                                                             return Container(
                                                               child: Padding(
                                                                 padding:
-                                                                EdgeInsets
-                                                                    .all(5),
+                                                                    EdgeInsets
+                                                                        .all(5),
                                                                 child: Row(
                                                                   children: [
                                                                     ClipRRect(
                                                                       borderRadius:
-                                                                      BorderRadius.circular(
-                                                                          10),
+                                                                          BorderRadius.circular(
+                                                                              10),
                                                                       child:
-                                                                      Container(
+                                                                          Container(
                                                                         height:
-                                                                        80,
+                                                                            80,
                                                                         width:
-                                                                        80,
+                                                                            80,
                                                                         child:
-                                                                        CachedNetworkImage(
+                                                                            CachedNetworkImage(
                                                                           imageUrl: snapshot
                                                                               .data['items'][index]['product_image']
                                                                               .toString(),
@@ -345,15 +375,15 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                                                     ),
                                                                     SizedBox(
                                                                         width:
-                                                                        10),
+                                                                            10),
                                                                     Column(
                                                                       crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .start,
+                                                                          CrossAxisAlignment
+                                                                              .start,
                                                                       children: [
                                                                         Row(
                                                                           mainAxisAlignment:
-                                                                          MainAxisAlignment.spaceBetween,
+                                                                              MainAxisAlignment.spaceBetween,
                                                                           children: [
                                                                             Text("${snapshot.data['items'][index]['product_name'].toString()}",
                                                                                 style: TextStyle(color: Colors.grey, fontSize: 12)),
@@ -364,14 +394,14 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                                                         ),
                                                                         SizedBox(
                                                                             height:
-                                                                            5.0),
+                                                                                5.0),
                                                                         Text(
                                                                             "Quantity : ${snapshot.data['items'][index]['quantity'].toString()}",
                                                                             style:
-                                                                            TextStyle(color: Colors.grey, fontSize: 12)),
+                                                                                TextStyle(color: Colors.grey, fontSize: 12)),
                                                                         SizedBox(
                                                                             height:
-                                                                            5.0),
+                                                                                5.0),
                                                                         Row(
                                                                           children: [
                                                                             Text("\u20B9 ${snapshot.data['items'][index]['price'].toString()}",
@@ -403,63 +433,63 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                                       height: 20,
                                                       width: double.infinity,
                                                       color:
-                                                      Colors.grey.shade100,
+                                                          Colors.grey.shade100,
                                                       child: Text(
                                                           "Payment Summary",
                                                           textAlign:
-                                                          TextAlign.center,
+                                                              TextAlign.center,
                                                           style: TextStyle(
                                                               color:
-                                                              Colors.grey,
+                                                                  Colors.grey,
                                                               fontSize: 12))),
                                                   Padding(
                                                     padding: EdgeInsets.all(10),
                                                     child: Row(
                                                       mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
                                                       children: [
                                                         Text("Total",
                                                             style: TextStyle(
                                                                 color:
-                                                                Colors.grey,
+                                                                    Colors.grey,
                                                                 fontSize: 14)),
                                                         Text(
                                                             "\u20B9 ${snapshot.data['total'].toString()}",
                                                             style: TextStyle(
                                                                 color:
-                                                                Colors.grey,
+                                                                    Colors.grey,
                                                                 fontSize: 14))
                                                       ],
                                                     ),
                                                   ),
                                                   Padding(
                                                     padding:
-                                                    EdgeInsets.symmetric(
-                                                        horizontal: 10),
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 10),
                                                     child: Row(
                                                       mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
                                                       children: const [
                                                         Text("Delivery charges",
                                                             style: TextStyle(
                                                                 color:
-                                                                Colors.grey,
+                                                                    Colors.grey,
                                                                 fontSize: 14)),
                                                         Text("\u20B9 0.0",
                                                             style: TextStyle(
                                                                 color:
-                                                                Colors.grey,
+                                                                    Colors.grey,
                                                                 fontSize: 14))
                                                       ],
                                                     ),
                                                   ),
                                                   const Padding(
                                                     padding:
-                                                    const EdgeInsets.only(
-                                                        left: 10.0,
-                                                        right: 10.0),
+                                                        const EdgeInsets.only(
+                                                            left: 10.0,
+                                                            right: 10.0),
                                                     child: Divider(
                                                         height: 1,
                                                         color: Colors.grey),
@@ -468,8 +498,8 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                                     padding: EdgeInsets.all(10),
                                                     child: Row(
                                                       mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
                                                       children: [
                                                         Text(
                                                             "Final paid amount",
@@ -478,8 +508,8 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                                                     .black,
                                                                 fontSize: 14,
                                                                 fontWeight:
-                                                                FontWeight
-                                                                    .w500)),
+                                                                    FontWeight
+                                                                        .w500)),
                                                         Text(
                                                             "\u20B9 ${snapshot.data['total'].toString()}",
                                                             style: TextStyle(
@@ -487,8 +517,8 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                                                     .black,
                                                                 fontSize: 14,
                                                                 fontWeight:
-                                                                FontWeight
-                                                                    .w500))
+                                                                    FontWeight
+                                                                        .w500))
                                                       ],
                                                     ),
                                                   ),
@@ -636,8 +666,8 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                       height: MediaQuery.of(context).size.height / 2.5,
                       child: ListView.separated(
                           separatorBuilder: (context, index) => SizedBox(
-                            height: 0,
-                          ),
+                                height: 0,
+                              ),
                           itemCount: listItems.length,
                           itemBuilder: (context, index) {
                             String label = "";
@@ -649,7 +679,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                               case "order_placed_at":
                                 label = listItems[index]['label'].toString();
                                 time = orderTimeliveData[
-                                listItems[index]['id'].toString()]
+                                        listItems[index]['id'].toString()]
                                     .toString();
                                 url = "";
                                 remarks = "";
@@ -658,7 +688,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                               case "accepted_at":
                                 label = listItems[index]['label'].toString();
                                 time = orderTimeliveData[
-                                listItems[index]['id'].toString()]
+                                        listItems[index]['id'].toString()]
                                     .toString();
                                 url = "";
                                 remarks = "";
@@ -666,21 +696,21 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                               case "invoice":
                                 label = listItems[index]['label'].toString();
                                 time = orderTimeliveData[listItems[index]['id']
-                                    .toString()]['invoiced_at']
+                                        .toString()]['invoiced_at']
                                     .toString();
 
                                 url = orderTimeliveData[listItems[index]['id']
-                                    .toString()]['invoice_url']
+                                        .toString()]['invoice_url']
                                     .toString();
                                 remarks = orderTimeliveData[
-                                listItems[index]['id'].toString()]
-                                ['invoice_remark']
+                                            listItems[index]['id'].toString()]
+                                        ['invoice_remark']
                                     .toString();
                                 break;
                               case "cancelled_at":
                                 label = listItems[index]['label'].toString();
                                 time = orderTimeliveData[
-                                listItems[index]['id'].toString()]
+                                        listItems[index]['id'].toString()]
                                     .toString();
                                 url = "";
                                 remarks = "";
@@ -688,7 +718,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                               case "rejected_at":
                                 label = listItems[index]['label'].toString();
                                 time = orderTimeliveData[
-                                listItems[index]['id'].toString()]
+                                        listItems[index]['id'].toString()]
                                     .toString();
                                 url = "";
                                 remarks = "";
@@ -696,20 +726,20 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                               case "shipping":
                                 label = listItems[index]['label'].toString();
                                 time = orderTimeliveData[listItems[index]['id']
-                                    .toString()]['shipped_at']
+                                        .toString()]['shipped_at']
                                     .toString();
                                 url = orderTimeliveData[listItems[index]['id']
-                                    .toString()]['shipping_doc_url']
+                                        .toString()]['shipping_doc_url']
                                     .toString();
                                 remarks = orderTimeliveData[
-                                listItems[index]['id'].toString()]
-                                ['shipping_remark']
+                                            listItems[index]['id'].toString()]
+                                        ['shipping_remark']
                                     .toString();
                                 break;
                               case "completed_at":
                                 label = listItems[index]['label'].toString();
                                 time = orderTimeliveData[
-                                listItems[index]['id'].toString()]
+                                        listItems[index]['id'].toString()]
                                     .toString();
                                 url = "";
                                 remarks = "";
@@ -719,107 +749,171 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                             return time.isEmpty
                                 ? SizedBox()
                                 : Stack(
-                              children: [
-                                Positioned(
-                                  left: 20,
-                                  child: new Container(
-                                    height: size.height * 0.7,
-                                    width: 1.0,
-                                    color: Colors.grey.shade400,
-                                  ),
-                                ),
-                                // Positioned(
-                                //     left: 20,
-                                //     // top: 60,
-                                //     child: DottedLine(
-                                //       direction: Axis.vertical,
-                                //       lineLength: 70,
-                                //       lineThickness: 5,
-                                //       dashRadius: 100,
-                                //       dashLength: 4.0,
-                                //       dashColor: Color(0xffF3442C),
-                                //       dashGapLength: 4.0,
-                                //       dashGapColor: Colors.transparent,
-                                //       dashGapRadius: 100,
-                                //     )),
-                                Padding(
-                                  padding:
-                                  EdgeInsets.fromLTRB(50, 20, 40, 20),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.start,
                                     children: [
-                                      Text(label,
-                                          style: TextStyle(
-                                              fontSize: 13,
-                                              fontWeight:
-                                              FontWeight.w600)),
-                                      remarks.isEmpty
-                                          ? SizedBox()
-                                          : Text(remarks.toString(),
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              fontWeight:
-                                              FontWeight.w400)),
-                                      url.isEmpty
-                                          ? SizedBox()
-                                          : InkWell(
-                                        onTap: () {
-                                          _setPath(url);
-                                        },
-                                        child: Text("Download",
-                                            style:
-                                            TextStyle(
-                                                fontSize: 12,
-                                                fontWeight:
-                                                FontWeight
-                                                    .w700,
-                                                color: Colors
-                                                    .blue)),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                Positioned(
-                                    bottom: url.isEmpty ? -30 : 10,
-                                    left: -40,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(40.0),
-                                      child: Container(
-                                        height: 40.0,
-                                        width: 40.0,
-                                        child: InkWell(
-                                          child: Icon(
-                                            Icons.check,
-                                            color: Color(0xffF3442C),
-                                          ),
-                                          onTap: () async {},
-                                        ),
-                                        decoration: new BoxDecoration(
-                                          image: DecorationImage(
-                                              image: AssetImage(
-                                                "assets/icons/order_icon.jpg",
-                                              ),
-                                              fit: BoxFit.fill,
-                                              scale: 1),
-                                          // borderRadius:
-                                          //     BorderRadius.circular(50),
+                                      Positioned(
+                                        left: 35,
+                                        child: new Container(
+                                          height: size.height * 0.7,
+                                          width: 1.0,
+                                          color: Colors.grey.shade400,
                                         ),
                                       ),
-                                    )),
-                                Positioned(
-                                    right: 20,
-                                    top: 25,
-                                    child: Text(
-                                        time
-                                            .replaceFirst(" ", "\n")
-                                            .replaceAll("-", " "),
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight:
-                                            FontWeight.w600))),
-                              ],
-                            );
+                                      // Positioned(
+                                      //     left: 20,
+                                      //     // top: 60,
+                                      //     child: DottedLine(
+                                      //       direction: Axis.vertical,
+                                      //       lineLength: 70,
+                                      //       lineThickness: 5,
+                                      //       dashRadius: 100,
+                                      //       dashLength: 4.0,
+                                      //       dashColor: Color(0xffF3442C),
+                                      //       dashGapLength: 4.0,
+                                      //       dashGapColor: Colors.transparent,
+                                      //       dashGapRadius: 100,
+                                      //     )),
+                                      // Padding(
+                                      //   padding:
+                                      //       EdgeInsets.fromLTRB(50, 20, 40, 20),
+                                      //   child: Column(
+                                      //     crossAxisAlignment:
+                                      //         CrossAxisAlignment.start,
+                                      //     children: [
+                                      //       Text(label,
+                                      //           style: TextStyle(
+                                      //               fontSize: 13,
+                                      //               fontWeight:
+                                      //                   FontWeight.w600)),
+                                      //       remarks.isEmpty
+                                      //           ? SizedBox()
+                                      //           : Text(remarks.toString(),
+                                      //               style: TextStyle(
+                                      //                   fontSize: 12,
+                                      //                   fontWeight:
+                                      //                       FontWeight.w400)),
+                                      //       url.isEmpty
+                                      //           ? SizedBox()
+                                      //           : InkWell(
+                                      //               onTap: () {
+                                      //                 _setPath(url);
+                                      //               },
+                                      //               child: Text("Download",
+                                      //                   style: TextStyle(
+                                      //                       fontSize: 12,
+                                      //                       fontWeight:
+                                      //                           FontWeight.w700,
+                                      //                       color:
+                                      //                           Colors.blue)),
+                                      //             )
+                                      //     ],
+                                      //   ),
+                                      // ),
+                                      // Positioned(
+                                      //     bottom: url.isEmpty ? -30 : 10,
+                                      //     left: -40,
+                                      //     child: Padding(
+                                      //       padding: const EdgeInsets.all(40.0),
+                                      //       child: Container(
+                                      //         height: 40.0,
+                                      //         width: 40.0,
+                                      //         child: Icon(
+                                      //           Icons.check,
+                                      //           color: Color(0xffF3442C),
+                                      //         ),
+                                      //         decoration: new BoxDecoration(
+                                      //           image: DecorationImage(
+                                      //               image: AssetImage(
+                                      //                   "assets/icons/bg_icon.jpg"),
+                                      //               fit: BoxFit.fill,
+                                      //               scale: 1),
+                                      //           // borderRadius:
+                                      //           //     BorderRadius.circular(50),
+                                      //         ),
+                                      //       ),
+                                      //     )),
+                                      // Positioned(
+                                      //     right: 20,
+                                      //     top: 25,
+                                      //     child: Text(
+                                      //         time
+                                      //             .replaceFirst(" ", "\n")
+                                      //             .replaceAll("-", " "),
+                                      //         style: TextStyle(
+                                      //             fontSize: 13,
+                                      //             fontWeight:
+                                      //                 FontWeight.w600))),
+
+                                      Column(
+                                        children: [
+                                          ListTile(
+                                            minLeadingWidth: 2,
+                                            leading: Container(
+                                              height: 40.0,
+                                              width: 40.0,
+                                              child: Icon(
+                                                Icons.check,
+                                                color: Color(0xffF3442C),
+                                              ),
+                                              decoration: new BoxDecoration(
+                                                image: DecorationImage(
+                                                    image: AssetImage(
+                                                        "assets/icons/bg_icon.jpg"),
+                                                    fit: BoxFit.fill,
+                                                    scale: 1),
+                                                // borderRadius:
+                                                //     BorderRadius.circular(50),
+                                              ),
+                                            ),
+                                            title: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(label,
+                                                    style: TextStyle(
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w600)),
+                                                remarks.isEmpty
+                                                    ? SizedBox()
+                                                    : Text(remarks.toString(),
+                                                        style: TextStyle(
+                                                            fontSize: 12,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w400)),
+                                                url.isEmpty
+                                                    ? SizedBox()
+                                                    : InkWell(
+                                                        onTap: () {
+                                                          _setPath(url);
+                                                        },
+                                                        child: Text("Download",
+                                                            style: TextStyle(
+                                                                fontSize: 12,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w700,
+                                                                color: Colors
+                                                                    .blue)),
+                                                      )
+                                              ],
+                                            ),
+                                            trailing: Text(
+                                                time
+                                                    .replaceFirst(" ", "\n")
+                                                    .replaceAll("-", " "),
+                                                style: TextStyle(
+                                                    fontSize: 13,
+                                                    fontWeight:
+                                                        FontWeight.w600)),
+                                          ),
+                                          SizedBox(
+                                            height: 20,
+                                          )
+                                        ],
+                                      )
+                                    ],
+                                  );
                           })),
                 ])));
   }
