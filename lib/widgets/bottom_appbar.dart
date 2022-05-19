@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:tayal/views/dashboard_screen.dart';
 import 'package:tayal/views/help_screen.dart';
 import 'package:tayal/views/mybiz_screen.dart';
 
@@ -23,19 +24,25 @@ class _MyBottomAppBarState extends State<MyBottomAppBar> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               InkWell(
-                onTap: () {},
+                onTap: () {
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => DashBoardScreen()),
+                      (route) => false);
+                },
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SvgPicture.asset('assets/icons/home.svg',
-                        fit: BoxFit.fill),
+                    SvgPicture.asset('assets/icons/home.svg', fit: BoxFit.fill),
                     Text("Home")
                   ],
                 ),
               ),
               InkWell(
                 onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => MyBizScreen()));
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => MyBizScreen()));
                 },
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -60,14 +67,13 @@ class _MyBottomAppBarState extends State<MyBottomAppBar> {
               ),
               InkWell(
                 onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => HelpScreen()));
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => HelpScreen()));
                 },
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SvgPicture.asset('assets/icons/help.svg',
-                        fit: BoxFit.fill),
+                    SvgPicture.asset('assets/icons/help.svg', fit: BoxFit.fill),
                     Text("Help")
                   ],
                 ),

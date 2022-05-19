@@ -62,7 +62,6 @@ dependencies:
   share_plus: ^4.0.4
   syncfusion_flutter_gauges: ^20.1.56
   expandable: ^5.0.1
-  share_plus: ^4.0.4
   intl: ^0.17.0
   file_picker: ^4.5.1
   path: ^1.8.0

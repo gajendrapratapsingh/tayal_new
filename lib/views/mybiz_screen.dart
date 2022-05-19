@@ -131,325 +131,62 @@ class _MyBizScreenState extends State<MyBizScreen> {
                   ),
                 ],
               ),
-              Padding(
-                padding: EdgeInsets.only(left: 5, right: 5),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ProfileScreen()));
-                      },
-                      child: Container(
-                          height: size.height * 0.12,
-                          width: size.width * 0.45,
-                          decoration: const BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(8.0))),
-                          child: Card(
-                            elevation: 4.0,
-                            color: Colors.indigo.shade50,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SizedBox(width: 15),
-                                Image.asset('assets/icons/profile_icon.png',
-                                    scale: 7),
-                                SizedBox(width: 10.0),
-                                const Text("Profile",
-                                    style: TextStyle(
-                                        color: Colors.indigo,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 17.0)),
-                              ],
-                            ),
-                          )),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => OrderlistScreen()));
-                      },
-                      child: Container(
-                          height: size.height * 0.12,
-                          width: size.width * 0.45,
-                          decoration: const BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(8.0))),
-                          child: Card(
-                            elevation: 4.0,
-                            color: Colors.indigo.shade50,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SizedBox(width: 15),
-                                Image.asset('assets/icons/order_icon.png',
-                                    scale: 7),
-                                SizedBox(width: 10.0),
-                                const Text("Orders",
-                                    style: TextStyle(
-                                        color: Colors.indigo,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 17.0)),
-                              ],
-                            ),
-                          )),
-                    ),
-                  ],
+              Expanded(
+                flex: 9,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: GridView.count(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 10,
+                    crossAxisSpacing: 10,
+                    childAspectRatio: 1.9,
+                    physics: ClampingScrollPhysics(),
+                    children: labels
+                        .map(
+                          (e) => InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => e['page']));
+                            },
+                            child: Container(
+                                // height: size.height * 0.12,
+                                // width: size.width * 0.50,
+                                decoration: BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0))),
+                                child: Card(
+                                  elevation: 4.0,
+                                  color: Colors.indigo.shade50,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(top: 15),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        SizedBox(width: 15),
+                                        Image.asset(e['image'].toString(),
+                                            scale: 7),
+                                        SizedBox(width: 10.0),
+                                        Text(e['label'],
+                                            style: TextStyle(
+                                                color: Colors.indigo,
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 14)),
+                                      ],
+                                    ),
+                                  ),
+                                )),
+                          ),
+                        )
+                        .toList(),
+                  ),
                 ),
-              ),
-              SizedBox(height: 15),
-              Padding(
-                padding: const EdgeInsets.only(left: 5.0, right: 5.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => LedgerStatementScreen(
-                                      title: "Ledger",
-                                    )));
-                      },
-                      child: Container(
-                          height: size.height * 0.12,
-                          width: size.width * 0.45,
-                          decoration: const BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(8.0))),
-                          child: Card(
-                            elevation: 4.0,
-                            color: Colors.indigo.shade50,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SizedBox(width: 15),
-                                Image.asset('assets/icons/ledger_icon.png',
-                                    scale: 7),
-                                SizedBox(width: 10.0),
-                                const Text("Ledger",
-                                    style: TextStyle(
-                                        color: Colors.indigo,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 17.0)),
-                              ],
-                            ),
-                          )),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    PaymentStatementScreen()));
-                      },
-                      child: Container(
-                          height: size.height * 0.12,
-                          width: size.width * 0.45,
-                          decoration: const BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(8.0))),
-                          child: Card(
-                            elevation: 4.0,
-                            color: Colors.indigo.shade50,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                const SizedBox(width: 15),
-                                Image.asset('assets/icons/payment_icon.png',
-                                    scale: 7),
-                                const SizedBox(width: 10.0),
-                                const Text("Payments",
-                                    style: TextStyle(
-                                        color: Colors.indigo,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 17.0)),
-                              ],
-                            ),
-                          )),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 15),
-              Padding(
-                padding: const EdgeInsets.only(left: 5.0, right: 5.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ReferralScreen()));
-                      },
-                      child: Container(
-                          height: size.height * 0.12,
-                          width: size.width * 0.45,
-                          decoration: const BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(8.0))),
-                          child: Card(
-                            elevation: 4.0,
-                            color: Colors.indigo.shade50,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                const SizedBox(width: 15),
-                                Image.asset('assets/icons/referral_icon.png',
-                                    scale: 7),
-                                const SizedBox(width: 10.0),
-                                const Text("Referral",
-                                    style: TextStyle(
-                                        color: Colors.indigo,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 17.0)),
-                              ],
-                            ),
-                          )),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => HelpScreen()));
-                      },
-                      child: Container(
-                          height: size.height * 0.12,
-                          width: size.width * 0.45,
-                          decoration: const BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(8.0))),
-                          child: Card(
-                            elevation: 4.0,
-                            color: Colors.indigo.shade50,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SizedBox(width: 15),
-                                Image.asset('assets/icons/help_icon.png',
-                                    scale: 7),
-                                SizedBox(width: 10.0),
-                                const Text("Help",
-                                    style: TextStyle(
-                                        color: Colors.indigo,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 17.0)),
-                              ],
-                            ),
-                          )),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 15),
-              Padding(
-                padding: const EdgeInsets.only(left: 5.0, right: 5.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => WalletStatementScreen()));
-                      },
-                      child: Container(
-                          height: size.height * 0.12,
-                          width: size.width * 0.45,
-                          decoration: const BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(8.0))),
-                          child: Card(
-                            elevation: 4.0,
-                            color: Colors.indigo.shade50,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SizedBox(width: 15),
-                                Image.asset('assets/icons/wallet_icon.jpeg',
-                                    scale: 7),
-                                SizedBox(width: 10.0),
-                                const Text("Wallet",
-                                    style: TextStyle(
-                                        color: Colors.indigo,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 17.0)),
-                              ],
-                            ),
-                          )),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => NotificationScreen()));
-                      },
-                      child: Container(
-                          height: size.height * 0.12,
-                          width: size.width * 0.49,
-                          decoration: const BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(8.0))),
-                          child: Card(
-                            elevation: 4.0,
-                            color: Colors.indigo.shade50,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SizedBox(width: 8),
-                                Image.asset(
-                                    'assets/icons/notification_icon.png',
-                                    scale: 7),
-                                SizedBox(width: 10.0),
-                                const Text("Notifications",
-                                    style: TextStyle(
-                                        color: Colors.indigo,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 17.0)),
-                              ],
-                            ),
-                          )),
-                    ),
-                  ],
-                ),
-              ),
+              )
             ],
           ),
         )

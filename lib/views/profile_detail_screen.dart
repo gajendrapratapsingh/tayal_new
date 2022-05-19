@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -38,13 +40,20 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
   String _profilepath = "";
   String _gstcertificatepath = "";
   String _agriculturelicensepath = "";
-  String _pancardpath;
+  String _pancardpath = "";
+
+  TextEditingController nameCont = TextEditingController();
+  TextEditingController emailCont = TextEditingController();
+  TextEditingController pannoCont = TextEditingController();
+  TextEditingController gstnoCont = TextEditingController();
+  TextEditingController addressCont = TextEditingController();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     Future<List<ProfileResponse>> temp = _getprofile();
+
     temp.then((value) {
       setState(() {
         profileimage = value[0].profileImage.toString();
@@ -57,6 +66,11 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
         pancard = value[0].uploadPancard.toString();
         gstcertificate = value[0].uploadGstCertificate.toString();
         agriculturelicense = value[0].uploadAgricultureLicense.toString();
+        nameCont.text = name;
+        emailCont.text = email;
+        pannoCont.text = panno;
+        gstnoCont.text = gstno;
+        addressCont.text = address;
       });
     });
   }
@@ -177,6 +191,7 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                                         color: Colors.grey, fontSize: 14.0)),
                               ),
                               TextField(
+                                controller: nameCont,
                                 keyboardType: TextInputType.text,
                                 //focusNode: focusNode,
                                 decoration: InputDecoration(
@@ -203,6 +218,8 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                                         color: Colors.grey, fontSize: 14.0)),
                               ),
                               TextField(
+                                  controller:
+                                      TextEditingController(text: mobile),
                                   keyboardType: TextInputType.number,
                                   readOnly: true,
                                   decoration: InputDecoration(
@@ -227,6 +244,7 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                                         color: Colors.grey, fontSize: 14.0)),
                               ),
                               TextField(
+                                controller: emailCont,
                                 keyboardType: TextInputType.emailAddress,
                                 decoration: InputDecoration(
                                   hintText:
@@ -252,6 +270,7 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                                         color: Colors.grey, fontSize: 14.0)),
                               ),
                               TextField(
+                                controller: pannoCont,
                                 decoration: InputDecoration(
                                   hintText:
                                       panno == "" || panno == null ? "" : panno,
@@ -277,6 +296,7 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                                         color: Colors.grey, fontSize: 14.0)),
                               ),
                               TextField(
+                                controller: gstnoCont,
                                 decoration: InputDecoration(
                                   hintText:
                                       gstno == "" || gstno == null ? "" : gstno,
@@ -302,6 +322,7 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                                         color: Colors.grey, fontSize: 14.0)),
                               ),
                               TextField(
+                                controller: addressCont,
                                 decoration: InputDecoration(
                                   hintText: address == "" || address == null
                                       ? ""
@@ -616,26 +637,25 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
     final ImagePicker _picker = ImagePicker();
     final XFile photo =
         await _picker.pickImage(source: ImageSource.camera, imageQuality: 50);
-    if (photo.path == "" || photo.path == null) {
-      if (doctype.toString() == "gstcertificate") {
-        setState(() {
-          _gstcertificatepath = photo.path;
-        });
-      } else if (doctype.toString() == "Agriculture") {
-        setState(() {
-          _agriculturelicensepath = photo.path;
-        });
-      } else if (doctype.toString() == "pancard") {
-        setState(() {
-          _pancardpath = photo.path;
-        });
-      } else {
-        print(photo.path);
-        setState(() {
-          _profilepath = photo.path;
-        });
-        print(_profilepath);
-      }
+
+    if (doctype.toString() == "gstcertificate") {
+      setState(() {
+        _gstcertificatepath = photo.path;
+      });
+    } else if (doctype.toString() == "Agriculture") {
+      setState(() {
+        _agriculturelicensepath = photo.path;
+      });
+    } else if (doctype.toString() == "pancard") {
+      setState(() {
+        _pancardpath = photo.path;
+      });
+    } else {
+      print(photo.path);
+      setState(() {
+        _profilepath = photo.path;
+      });
+      print(_profilepath);
     }
   }
 
@@ -665,26 +685,23 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
   }
 
   Future<List<ProfileResponse>> _updateprofile() async {
-    print(name);
-    print(email);
-    print(address);
     setState(() {
       _loading = true;
     });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String mytoken = prefs.getString('token').toString();
-    print(json.encode({
-      "name": name,
-      "email": email,
-      "business_name": "",
-      "gst_no": "",
-      "address": address,
-      "pan_no": "",
-      "upload_photo": "",
-      "upload_gst_certificate": "",
-      "upload_agriculture_license": "",
-      "upload_pancard": ""
-    }));
+    // print(json.encode({
+    //   "name": name,
+    //   "email": email,
+    //   "business_name": "",
+    //   "gst_no": "",
+    //   "address": address,
+    //   "pan_no": "",
+    //   "upload_photo": "",
+    //   "upload_gst_certificate": "",
+    //   "upload_agriculture_license": "",
+    //   "upload_pancard": ""
+    // }));
     var requestMulti =
         http.MultipartRequest('POST', Uri.parse(BASE_URL + updateprofile));
     requestMulti.headers['authorization'] = 'Bearer $mytoken';
@@ -693,19 +710,27 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
     requestMulti.fields["email"] = email;
     requestMulti.fields["gst_no"] = gstno;
     requestMulti.fields["pan_no"] = panno;
-
     //requestMulti.fields["upload_gst_certificate"] = "";
     //requestMulti.fields["upload_agriculture_license"] = "";
     //requestMulti.fields["upload_pancard"] = "";
 
-    requestMulti.files
-        .add(await http.MultipartFile.fromPath('upload_photo', _profilepath));
-    requestMulti.files.add(await http.MultipartFile.fromPath(
-        'upload_gst_certificate', _gstcertificatepath));
-    requestMulti.files.add(await http.MultipartFile.fromPath(
-        'upload_agriculture_license', _agriculturelicensepath));
-    requestMulti.files
-        .add(await http.MultipartFile.fromPath('upload_pancard', _pancardpath));
+    if (_profilepath != "") {
+      requestMulti.files
+          .add(await http.MultipartFile.fromPath('upload_photo', _profilepath));
+    }
+
+    if (_gstcertificatepath != "") {
+      requestMulti.files.add(await http.MultipartFile.fromPath(
+          'upload_gst_certificate', _gstcertificatepath));
+    }
+    if (_agriculturelicensepath != "") {
+      requestMulti.files.add(await http.MultipartFile.fromPath(
+          'upload_agriculture_license', _agriculturelicensepath));
+    }
+    if (_pancardpath != "") {
+      requestMulti.files.add(
+          await http.MultipartFile.fromPath('upload_pancard', _pancardpath));
+    }
 
     requestMulti.send().then((response) {
       response.stream.toBytes().then((value) {
