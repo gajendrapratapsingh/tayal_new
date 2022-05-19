@@ -13,9 +13,10 @@ import 'package:tayal/themes/constant.dart';
 import 'package:html/parser.dart';
 import 'package:http/http.dart' as http;
 import 'package:tayal/views/cart_screen.dart';
-import 'package:tayal/views/dashboard_screen.dart';
+import 'package:tayal/views/category_screen.dart';
 import 'package:tayal/views/help_screen.dart';
 import 'package:tayal/views/mybiz_screen.dart';
+import 'package:tayal/widgets/bottom_appbar.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   String productid;
@@ -80,81 +81,17 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       resizeToAvoidBottomInset: false,
       backgroundColor: kBackgroundShapeColor,
       floatingActionButton: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => CategoryScreen()));
+          },
           backgroundColor: Colors.indigo,
           child: Icon(Icons.add)),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: BottomAppBar(
+      bottomNavigationBar: const BottomAppBar(
         shape: CircularNotchedRectangle(),
         color: Color(0xffBCBEFD),
-        child: Container(
-            width: size.width,
-            height: 70,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  InkWell(
-                    onTap: () {
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => DashBoardScreen()),
-                          (route) => false);
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SvgPicture.asset('assets/icons/home.svg',
-                            fit: BoxFit.fill),
-                        Text("Home")
-                      ],
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => MyBizScreen()));
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SvgPicture.asset('assets/icons/mybiz.svg',
-                            fit: BoxFit.fill),
-                        Text("My Biz")
-                      ],
-                    ),
-                  ),
-                  SizedBox.shrink(),
-                  InkWell(
-                    onTap: () {},
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SvgPicture.asset('assets/icons/reward.svg',
-                            fit: BoxFit.fill),
-                        Text("Campaign")
-                      ],
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => HelpScreen()));
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SvgPicture.asset('assets/icons/help.svg',
-                            fit: BoxFit.fill),
-                        Text("Help")
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            )),
+        child: MyBottomAppBar(),
       ),
       body: ModalProgressHUD(
         inAsyncCall: _loading,

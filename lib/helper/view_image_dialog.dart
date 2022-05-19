@@ -7,13 +7,10 @@ class ViewImageDialog extends StatelessWidget {
 
   ViewImageDialog({Key key, this.image}) : super(key: key);
 
-
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16)
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 0,
       backgroundColor: Colors.transparent,
       child: _buildChild(context),
@@ -21,37 +18,36 @@ class ViewImageDialog extends StatelessWidget {
   }
 
   _buildChild(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(top: 15.0),
-    child: Container(
-      height: MediaQuery.of(context).size.height * 0.50,
-      width: MediaQuery.of(context).size.width,
-      decoration: const BoxDecoration(
-          color: Colors.white,
-          shape: BoxShape.rectangle,
-          borderRadius: BorderRadius.all(Radius.circular(12))
-      ),
-      child: Column(
-        children: <Widget>[
-          Container(
-            height: MediaQuery.of(context).size.height * 0.50,
-            width: double.infinity,
-            child: CachedNetworkImage(
-              fit: BoxFit.fill,
-              progressIndicatorBuilder: (context, url, progress) => Center(
-                child: Container(
-                  height: 24,
-                  width: 24,
-                  child: CircularProgressIndicator(
-                    value: progress.progress,
-                    color: Colors.indigo,
+        padding: const EdgeInsets.only(top: 15.0),
+        child: Container(
+          height: MediaQuery.of(context).size.height * 0.50,
+          width: MediaQuery.of(context).size.width,
+          decoration: const BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.rectangle,
+              borderRadius: BorderRadius.all(Radius.circular(12))),
+          child: Column(
+            children: <Widget>[
+              Container(
+                height: MediaQuery.of(context).size.height * 0.50,
+                width: double.infinity,
+                child: CachedNetworkImage(
+                  fit: BoxFit.fill,
+                  progressIndicatorBuilder: (context, url, progress) => Center(
+                    child: Container(
+                      height: 24,
+                      width: 24,
+                      child: CircularProgressIndicator(
+                        value: progress.progress,
+                        color: Colors.indigo,
+                      ),
+                    ),
                   ),
+                  imageUrl: image,
                 ),
               ),
-              imageUrl: image,
-            ),
+            ],
           ),
-        ],
-      ),
-    ),
-  );
+        ),
+      );
 }

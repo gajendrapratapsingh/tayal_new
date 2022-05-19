@@ -87,7 +87,12 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                             fit: BoxFit.fill),
                       ),
                       SizedBox(width: MediaQuery.of(context).size.width * 0.15),
-                      const Text("Profile", textAlign: TextAlign.center, style: TextStyle(fontStyle: FontStyle.normal, fontSize: 21, fontWeight: FontWeight.bold)),
+                      const Text("Profile",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontStyle: FontStyle.normal,
+                              fontSize: 21,
+                              fontWeight: FontWeight.bold)),
                     ],
                   ),
                   Expanded(
@@ -333,29 +338,31 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                                         DialogHelper.viewimagedialog(
                                             gstcertificate.toString(), context);
                                       },
-                                      child:  _gstcertificatepath.toString() == "" ||
-                                          _gstcertificatepath.toString() ==
-                                              "null"
+                                      child: _gstcertificatepath.toString() ==
+                                                  "" ||
+                                              _gstcertificatepath.toString() ==
+                                                  "null"
                                           ? Container(
-                                            height: 45,
-                                            width: 45,
-                                            child: gstcertificate == "" ||
-                                                gstcertificate == null
-                                                ? Image.asset(
-                                                'assets/images/no_image.jpg', fit: BoxFit.fill)
-                                                : Image.network(
-                                                gstcertificate,
-                                                fit: BoxFit.fill),
-                                          )
+                                              height: 45,
+                                              width: 45,
+                                              child: gstcertificate == "" ||
+                                                      gstcertificate == null
+                                                  ? Image.asset(
+                                                      'assets/images/no_image.jpg',
+                                                      fit: BoxFit.fill)
+                                                  : Image.network(
+                                                      gstcertificate,
+                                                      fit: BoxFit.fill),
+                                            )
                                           : Container(
-                                            height: 45,
-                                            width: 45,
-                                            decoration: BoxDecoration(
-                                                image: DecorationImage(
-                                                    fit: BoxFit.cover,
-                                                    image: FileImage(File(
-                                                        _gstcertificatepath)))),
-                                          ),
+                                              height: 45,
+                                              width: 45,
+                                              decoration: BoxDecoration(
+                                                  image: DecorationImage(
+                                                      fit: BoxFit.cover,
+                                                      image: FileImage(File(
+                                                          _gstcertificatepath)))),
+                                            ),
                                     ),
                                     InkWell(
                                       onTap: () {
@@ -401,29 +408,28 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                                         DialogHelper.viewimagedialog(
                                             pancard.toString(), context);
                                       },
-                                      child:  _pancardpath.toString() == "" ||
-                                          _pancardpath.toString() ==
-                                              "null"
+                                      child: _pancardpath.toString() == "" ||
+                                              _pancardpath.toString() == "null"
                                           ? Container(
-                                        height: 45,
-                                        width: 45,
-                                        child: pancard == "" ||
-                                            pancard == null
-                                            ? Image.asset(
-                                            'assets/images/no_image.jpg', fit: BoxFit.fill)
-                                            : Image.network(
-                                            pancard,
-                                            fit: BoxFit.fill),
-                                      )
+                                              height: 45,
+                                              width: 45,
+                                              child: pancard == "" ||
+                                                      pancard == null
+                                                  ? Image.asset(
+                                                      'assets/images/no_image.jpg',
+                                                      fit: BoxFit.fill)
+                                                  : Image.network(pancard,
+                                                      fit: BoxFit.fill),
+                                            )
                                           : Container(
-                                        height: 45,
-                                        width: 45,
-                                        decoration: BoxDecoration(
-                                            image: DecorationImage(
-                                                fit: BoxFit.cover,
-                                                image: FileImage(File(
-                                                    _pancardpath)))),
-                                      ),
+                                              height: 45,
+                                              width: 45,
+                                              decoration: BoxDecoration(
+                                                  image: DecorationImage(
+                                                      fit: BoxFit.cover,
+                                                      image: FileImage(
+                                                          File(_pancardpath)))),
+                                            ),
                                     ),
                                     InkWell(
                                       onTap: () {
@@ -469,29 +475,33 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                                             agriculturelicense.toString(),
                                             context);
                                       },
-                                      child: _agriculturelicensepath.toString() == "" ||
-                                          _agriculturelicensepath.toString() ==
-                                              "null"
+                                      child: _agriculturelicensepath
+                                                      .toString() ==
+                                                  "" ||
+                                              _agriculturelicensepath
+                                                      .toString() ==
+                                                  "null"
                                           ? Container(
-                                        height: 45,
-                                        width: 45,
-                                        child: agriculturelicense == "" ||
-                                            agriculturelicense == null
-                                            ? Image.asset(
-                                            'assets/images/no_image.jpg', fit: BoxFit.fill)
-                                            : Image.network(
-                                            agriculturelicense,
-                                            fit: BoxFit.fill),
-                                      )
+                                              height: 45,
+                                              width: 45,
+                                              child: agriculturelicense == "" ||
+                                                      agriculturelicense == null
+                                                  ? Image.asset(
+                                                      'assets/images/no_image.jpg',
+                                                      fit: BoxFit.fill)
+                                                  : Image.network(
+                                                      agriculturelicense,
+                                                      fit: BoxFit.fill),
+                                            )
                                           : Container(
-                                        height: 45,
-                                        width: 45,
-                                        decoration: BoxDecoration(
-                                            image: DecorationImage(
-                                                fit: BoxFit.cover,
-                                                image: FileImage(File(
-                                                    _agriculturelicensepath)))),
-                                      ),
+                                              height: 45,
+                                              width: 45,
+                                              decoration: BoxDecoration(
+                                                  image: DecorationImage(
+                                                      fit: BoxFit.cover,
+                                                      image: FileImage(File(
+                                                          _agriculturelicensepath)))),
+                                            ),
                                     ),
                                     InkWell(
                                       onTap: () {
@@ -631,7 +641,8 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
 
   _docimgFromGallery(doctype) async {
     final ImagePicker _picker = ImagePicker();
-    XFile image = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 50);
+    XFile image =
+        await _picker.pickImage(source: ImageSource.gallery, imageQuality: 50);
     if (doctype.toString() == "gstcertificate") {
       print("gst us here");
       setState(() {
@@ -687,10 +698,14 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
     //requestMulti.fields["upload_agriculture_license"] = "";
     //requestMulti.fields["upload_pancard"] = "";
 
-    requestMulti.files.add(await http.MultipartFile.fromPath('upload_photo', _profilepath));
-    requestMulti.files.add(await http.MultipartFile.fromPath('upload_gst_certificate', _gstcertificatepath));
-    requestMulti.files.add(await http.MultipartFile.fromPath('upload_agriculture_license', _agriculturelicensepath));
-    requestMulti.files.add(await http.MultipartFile.fromPath('upload_pancard', _pancardpath));
+    requestMulti.files
+        .add(await http.MultipartFile.fromPath('upload_photo', _profilepath));
+    requestMulti.files.add(await http.MultipartFile.fromPath(
+        'upload_gst_certificate', _gstcertificatepath));
+    requestMulti.files.add(await http.MultipartFile.fromPath(
+        'upload_agriculture_license', _agriculturelicensepath));
+    requestMulti.files
+        .add(await http.MultipartFile.fromPath('upload_pancard', _pancardpath));
 
     requestMulti.send().then((response) {
       response.stream.toBytes().then((value) {

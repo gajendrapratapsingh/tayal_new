@@ -12,19 +12,16 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:tayal/models/profiledata.dart';
+import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:tayal/network/api.dart';
 import 'package:tayal/themes/constant.dart';
 import 'package:tayal/views/category_screen.dart';
-import 'package:tayal/views/help_screen.dart';
-import 'package:tayal/views/mybiz_screen.dart';
 import 'package:tayal/views/notification_screen.dart';
-import 'package:tayal/views/order_detail_screen.dart';
 import 'package:tayal/views/order_list_screen.dart';
 import 'package:tayal/views/payment_statement_screen.dart';
-import 'package:tayal/views/product_screen.dart';
 import 'package:tayal/views/wallet_statement_screen.dart';
+import 'package:tayal/widgets/bottom_appbar.dart';
 import 'package:tayal/widgets/navigation_drawer_widget.dart';
 
 class DashBoardScreen extends StatefulWidget {
@@ -86,74 +83,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       bottomNavigationBar: BottomAppBar(
         shape: CircularNotchedRectangle(),
         color: Color(0xffBCBEFD),
-        child: Container(
-            width: size.width,
-            height: 70,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  InkWell(
-                    onTap: () {
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => DashBoardScreen()),
-                          (route) => false);
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SvgPicture.asset('assets/icons/home.svg',
-                            fit: BoxFit.fill),
-                        Text("Home")
-                      ],
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => MyBizScreen()));
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SvgPicture.asset('assets/icons/mybiz.svg',
-                            fit: BoxFit.fill),
-                        Text("My Biz")
-                      ],
-                    ),
-                  ),
-                  SizedBox.shrink(),
-                  InkWell(
-                    onTap: () {},
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SvgPicture.asset('assets/icons/reward.svg',
-                            fit: BoxFit.fill),
-                        Text("Campaign")
-                      ],
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => HelpScreen()));
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SvgPicture.asset('assets/icons/help.svg',
-                            fit: BoxFit.fill),
-                        Text("Help")
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            )),
+        child: MyBottomAppBar(),
       ),
       body: Stack(
         children: [
@@ -492,6 +422,172 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                 )
                                 .toList(),
                           ),
+                        ),
+                        SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(top: 10, left: 7),
+                              child: Card(
+                                shape: RoundedRectangleBorder(
+                                  side: BorderSide(
+                                      color: Colors.white70, width: 1),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 5.0,
+                                      top: 10,
+                                      bottom: 10,
+                                      right: 50),
+                                  child: Row(
+                                    children: [
+                                      SvgPicture.asset(
+                                          'assets/images/bonus_points.svg',
+                                          fit: BoxFit.fill),
+                                      SizedBox(width: 7.0),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: const [
+                                          Text("Bonus Points",
+                                              style: TextStyle(
+                                                  color: Colors.grey,
+                                                  fontSize: 10)),
+                                          Text("\u20B9 8633.862",
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w500))
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(top: 10, right: 7),
+                              child: Card(
+                                shape: RoundedRectangleBorder(
+                                  side: BorderSide(
+                                      color: Colors.white70, width: 1),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 5, top: 10, bottom: 10, right: 30),
+                                  child: Row(
+                                    children: [
+                                      SvgPicture.asset(
+                                          'assets/images/txn_points.svg'),
+                                      SizedBox(width: 7.0),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: const [
+                                          Text("Transaction Points",
+                                              style: TextStyle(
+                                                  color: Colors.grey,
+                                                  fontSize: 10)),
+                                          Text("\u20B9 8633.862",
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w500))
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(left: 7, top: 5),
+                              child: Card(
+                                shape: RoundedRectangleBorder(
+                                  side: BorderSide(
+                                      color: Colors.white70, width: 1),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 5.0,
+                                      top: 10,
+                                      bottom: 10,
+                                      right: 15),
+                                  child: Row(
+                                    children: [
+                                      SvgPicture.asset(
+                                          'assets/images/outstanding_blnc.svg'),
+                                      SizedBox(width: 7.0),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text("Outstanding Balance",
+                                              style: TextStyle(
+                                                  color: Colors.grey,
+                                                  fontSize: 10)),
+                                          Text("\u20B9 8633.862",
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w500))
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(top: 5, right: 7),
+                              child: Card(
+                                shape: RoundedRectangleBorder(
+                                  side: BorderSide(
+                                      color: Colors.white70, width: 1),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 5.0,
+                                      top: 10,
+                                      bottom: 10,
+                                      right: 15),
+                                  child: Row(
+                                    children: [
+                                      SvgPicture.asset(
+                                          'assets/images/pending_order.svg'),
+                                      SizedBox(width: 7.0),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text("Pending Order Values",
+                                              style: TextStyle(
+                                                  color: Colors.grey,
+                                                  fontSize: 10)),
+                                          Text("\u20B9 8633.862",
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w500))
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            )
+                          ],
                         ),
                         SizedBox(height: 10),
                         Row(
