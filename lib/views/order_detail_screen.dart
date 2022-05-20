@@ -284,40 +284,57 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                                       ],
                                                     ),
                                                     SizedBox(height: 10),
-                                                    Container(
-                                                      height: 30,
-                                                      width: size.width * 0.45,
-                                                      decoration: BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(5),
-                                                          border: Border.all(
-                                                              color:
-                                                                  Colors.indigo,
-                                                              width: 1)),
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .only(
-                                                                left: 5.0,
-                                                                right: 5.0),
-                                                        child: Row(
-                                                          children: const [
-                                                            Icon(
-                                                                Icons
-                                                                    .analytics_outlined,
+                                                    InkWell(
+                                                      onTap: () {
+                                                        // print(downloadSummary);
+                                                        if (downloadSummary !=
+                                                            "") {
+                                                          _setPath(
+                                                              downloadSummary);
+                                                        } else {
+                                                          Fluttertoast.showToast(
+                                                              msg:
+                                                                  "Summary not available");
+                                                        }
+                                                      },
+                                                      child: Container(
+                                                        height: 30,
+                                                        width:
+                                                            size.width * 0.45,
+                                                        decoration: BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        5),
+                                                            border: Border.all(
                                                                 color: Colors
                                                                     .indigo,
-                                                                size: 12),
-                                                            SizedBox(width: 5),
-                                                            Text(
-                                                                "Download summary",
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .indigo,
-                                                                    fontSize:
-                                                                        12))
-                                                          ],
+                                                                width: 1)),
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  left: 5.0,
+                                                                  right: 5.0),
+                                                          child: Row(
+                                                            children: const [
+                                                              Icon(
+                                                                  Icons
+                                                                      .analytics_outlined,
+                                                                  color: Colors
+                                                                      .indigo,
+                                                                  size: 12),
+                                                              SizedBox(
+                                                                  width: 5),
+                                                              Text(
+                                                                  "Download summary",
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .indigo,
+                                                                      fontSize:
+                                                                          12))
+                                                            ],
+                                                          ),
                                                         ),
                                                       ),
                                                     ),
@@ -583,12 +600,12 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
     }
   }
 
+  String downloadSummary = "";
   Future _gettrackingDetails(String orderid) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String mytoken = prefs.getString('token').toString();
     final body = {
-      // "order_number": orderid,
-      "order_number": "DL20000059"
+      "order_number": orderid,
     };
     var response = await http.post(Uri.parse(BASE_URL + ordertimeline),
         body: body, headers: {'Authorization': 'Bearer $mytoken'});
@@ -596,6 +613,9 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
     if (jsonDecode(response.body)['ErrorCode'] == 0) {
       setState(() {
         orderTimeliveData = jsonDecode(response.body)['Response'];
+        downloadSummary = jsonDecode(response.body)['Response']['invoice']
+                ['invoice_url']
+            .toString();
       });
     }
   }

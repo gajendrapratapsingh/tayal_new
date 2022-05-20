@@ -18,6 +18,7 @@ import 'package:tayal/network/api.dart';
 import 'package:tayal/themes/constant.dart';
 import 'package:tayal/views/category_screen.dart';
 import 'package:tayal/views/notification_screen.dart';
+import 'package:tayal/views/order_detail_screen.dart';
 import 'package:tayal/views/order_list_screen.dart';
 import 'package:tayal/views/payment_statement_screen.dart';
 import 'package:tayal/views/wallet_statement_screen.dart';
@@ -457,67 +458,126 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                             ),
                           ],
                         ),
-                        Column(
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
                             children: recent
-                                .map((e) => Padding(
-                                    padding: EdgeInsets.only(
-                                        left: 15, right: 15, bottom: 30),
-                                    child: Card(
-                                      color: Colors.grey.shade50,
-                                      shape: RoundedRectangleBorder(
-                                        side: BorderSide(
-                                            color: Colors.grey.shade50,
-                                            width: 1),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Padding(
-                                        padding: EdgeInsets.all(10),
-                                        child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            SvgPicture.asset(
-                                                'assets/images/order.svg',
-                                                fit: BoxFit.fill),
-                                            SizedBox(width: 15),
-                                            Expanded(
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(e['order_id'].toString(),
-                                                      style: TextStyle(
-                                                          color: Colors.black,
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.w500)),
-                                                  SizedBox(height: 5),
-                                                  Text(e['status'].toString(),
-                                                      style: TextStyle(
-                                                          color: Colors.grey,
-                                                          fontSize: 16)),
-                                                  SizedBox(height: 5),
-                                                  Text(
-                                                      e['date']
-                                                          .toString()
-                                                          .split(" ")[0],
-                                                      style: TextStyle(
-                                                          color: Colors.grey,
-                                                          fontSize: 16))
-                                                ],
-                                              ),
-                                            ),
-                                            Text(e['order_value'].toString(),
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 16,
-                                                    fontWeight:
-                                                        FontWeight.w500))
-                                          ],
+                                .map((e) => InkWell(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    OrderDetailScreen(
+                                                      orderid: e['order_id']
+                                                          .toString(),
+                                                    )));
+                                      },
+                                      child: Card(
+                                        child: ListTile(
+                                          minLeadingWidth: 2,
+                                          leading: SvgPicture.asset(
+                                              'assets/images/order.svg',
+                                              fit: BoxFit.fill),
+                                          title: Text(e['order_id'].toString(),
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w500)),
+                                          subtitle: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                  "STATUS : " +
+                                                      e['status'].toString(),
+                                                  style: TextStyle(
+                                                      color: Colors.grey,
+                                                      fontSize: 14)),
+                                              Text(
+                                                  DateFormat.yMMMd()
+                                                      .format(DateTime.tryParse(
+                                                          e['date']))
+                                                      .toString(),
+                                                  style: TextStyle(
+                                                      color: Colors.grey,
+                                                      fontSize: 14))
+                                            ],
+                                          ),
+                                          trailing: Text(
+                                              "\u20B9 " +
+                                                  e['order_value'].toString(),
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w500)),
                                         ),
                                       ),
-                                    )))
-                                .toList())
+                                    ))
+                                .toList(),
+                          ),
+                        )
+                        // Column(
+                        //     children: recent
+                        //         .map((e) => Padding(
+                        //             padding: EdgeInsets.only(
+                        //                 left: 15, right: 15, bottom: 30),
+                        //             child: Card(
+                        //               color: Colors.grey.shade50,
+                        //               shape: RoundedRectangleBorder(
+                        //                 side: BorderSide(
+                        //                     color: Colors.grey.shade50,
+                        //                     width: 1),
+                        //                 borderRadius: BorderRadius.circular(10),
+                        //               ),
+                        //               child: Padding(
+                        //                 padding: EdgeInsets.all(10),
+                        //                 child: Row(
+                        //                   crossAxisAlignment:
+                        //                       CrossAxisAlignment.center,
+                        //                   children: [
+                        //                     SvgPicture.asset(
+                        //                         'assets/images/order.svg',
+                        //                         fit: BoxFit.fill),
+                        //                     SizedBox(width: 15),
+                        //                     Expanded(
+                        //                       child: Column(
+                        //                         crossAxisAlignment:
+                        //                             CrossAxisAlignment.start,
+                        //                         children: [
+                        //                           Text(e['order_id'].toString(),
+                        //                               style: TextStyle(
+                        //                                   color: Colors.black,
+                        //                                   fontSize: 16,
+                        //                                   fontWeight:
+                        //                                       FontWeight.w500)),
+                        //                           SizedBox(height: 5),
+                        //                           Text(e['status'].toString(),
+                        //                               style: TextStyle(
+                        //                                   color: Colors.grey,
+                        //                                   fontSize: 16)),
+                        //                           SizedBox(height: 5),
+                        //                           Text(
+                        //                               e['date']
+                        //                                   .toString()
+                        //                                   .split(" ")[0],
+                        //                               style: TextStyle(
+                        //                                   color: Colors.grey,
+                        //                                   fontSize: 16))
+                        //                         ],
+                        //                       ),
+                        //                     ),
+                        //                     Text(e['order_value'].toString(),
+                        //                         style: TextStyle(
+                        //                             color: Colors.black,
+                        //                             fontSize: 16,
+                        //                             fontWeight:
+                        //                                 FontWeight.w500))
+                        //                   ],
+                        //                 ),
+                        //               ),
+                        //             )))
+                        //         .toList())
                       ],
                     )
                   ],

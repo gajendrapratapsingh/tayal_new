@@ -55,7 +55,7 @@ class _ReferralScreenState extends State<ReferralScreen> {
                     children: [
                       InkWell(
                         onTap: () {
-                          _willPopCallback();
+                          Navigator.of(context).pop();
                         },
                         child: SvgPicture.asset('assets/images/back.svg',
                             fit: BoxFit.fill),

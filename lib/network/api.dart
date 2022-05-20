@@ -42,3 +42,6 @@ const String paymenttransactionfilter = "payment-transaction-filter";
 const String faqs = "faqs";
 const String dashboardapi = "user-dashboard";
 const String raisedTicket = "customer-query/new-query";
+const String raisedTicketList = "customer-query/all-query-conversation";
+const String fetchqueryconversation = "customer-query/query-conversation";
+const String postqueryconversation = "customer-query/comment-on-query";

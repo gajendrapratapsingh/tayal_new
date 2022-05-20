@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tayal/components/loader.dart';
 import 'package:tayal/models/profiledata.dart';
 import 'package:tayal/network/api.dart';
 import 'package:http/http.dart' as http;
@@ -32,18 +33,19 @@ class _PaymentStatementScreenState extends State<PaymentStatementScreen>
   void initState() {
     // TODO: implement initState
     super.initState();
-    Future<List<ProfileResponse>> temp = _getprofile();
-    temp.then((value) {
+    _getprofile().then((value) {
       setState(() {
         mobile = value[0].mobile.toString();
         walletblnc = value[0].userWallet.toString();
       });
     });
+
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(() => setState(() {}));
-    _lastTenTransaction().then((value) => setState(() {
-          lastTenTrans.addAll(value);
-        }));
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => _lastTenTransaction().then((value) => setState(() {
+              lastTenTrans.addAll(value);
+            })));
   }
 
   @override
@@ -242,62 +244,56 @@ class _PaymentStatementScreenState extends State<PaymentStatementScreen>
           ],
         ),
         bottomSheet: _tabController.index == 0
-            ? Positioned(
-                left: 0,
-                right: 0,
-                bottom: 0,
-                child: Container(
-                  height: 70,
-                  width: double.infinity,
-                  color: Colors.indigo,
-                  alignment: Alignment.center,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      TextButton.icon(
-                        onPressed: () {
-                          setState(() {
-                            selectAll = !selectAll;
+            ? Container(
+                height: 70,
+                width: double.infinity,
+                color: Colors.indigo,
+                alignment: Alignment.center,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    TextButton.icon(
+                      onPressed: () {
+                        setState(() {
+                          selectAll = !selectAll;
+                        });
+                        if (selectAll) {
+                          lastTenTrans.forEach((element) {
+                            setState(() {
+                              element['checked'] = true;
+                            });
                           });
-                          if (selectAll) {
-                            lastTenTrans.forEach((element) {
-                              setState(() {
-                                element['checked'] = true;
-                              });
+                        } else {
+                          lastTenTrans.forEach((element) {
+                            setState(() {
+                              element['checked'] = false;
                             });
-                          } else {
-                            lastTenTrans.forEach((element) {
-                              setState(() {
-                                element['checked'] = false;
-                              });
-                            });
-                          }
-                        },
-                        icon: selectAll
-                            ? Icon(
-                                Icons.check_box,
-                                color: Colors.white,
-                              )
-                            : Icon(
-                                Icons.check_box_outline_blank,
-                                color: Colors.white,
-                              ),
-                        label: Text("Select All",
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 16)),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {},
-                        style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all(Colors.white)),
-                        child: Text("Pay Now",
-                            style:
-                                TextStyle(color: Colors.black, fontSize: 16)),
-                      ),
-                    ],
-                  ),
-                ))
+                          });
+                        }
+                      },
+                      icon: selectAll
+                          ? Icon(
+                              Icons.check_box,
+                              color: Colors.white,
+                            )
+                          : Icon(
+                              Icons.check_box_outline_blank,
+                              color: Colors.white,
+                            ),
+                      label: Text("Select All",
+                          style: TextStyle(color: Colors.white, fontSize: 16)),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {},
+                      style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(Colors.white)),
+                      child: Text("Pay Now",
+                          style: TextStyle(color: Colors.black, fontSize: 16)),
+                    ),
+                  ],
+                ),
+              )
             : SizedBox());
   }
 
@@ -319,11 +315,13 @@ class _PaymentStatementScreenState extends State<PaymentStatementScreen>
   }
 
   Future<List> _lastTenTransaction() async {
+    showLaoding(context);
     List data = [];
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String mytoken = prefs.getString('token').toString();
     var response = await http.post(Uri.parse(BASE_URL + txnstatement),
         headers: {'Authorization': 'Bearer $mytoken'});
+    Navigator.of(context).pop();
     if (response.statusCode == 200) {
       List temp = jsonDecode(response.body)['Response']['order_id'];
 

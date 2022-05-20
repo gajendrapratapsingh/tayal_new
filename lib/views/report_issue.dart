@@ -13,6 +13,7 @@ import 'package:tayal/network/api.dart';
 import 'package:tayal/themes/constant.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as p;
+import 'package:tayal/views/conversation.dart';
 
 class ReportIssues extends StatefulWidget {
   @override
@@ -20,19 +21,42 @@ class ReportIssues extends StatefulWidget {
 }
 
 class _ReportIssuesState extends State<ReportIssues> {
+  List raiesTicketList = [];
+  Future<void> issuesList() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String mytoken = prefs.getString('token').toString();
+    var response = await http.post(Uri.parse(BASE_URL + raisedTicketList),
+        headers: {'Authorization': 'Bearer $mytoken'});
+
+    print(response.body);
+    if (response.statusCode == 200) {
+      setState(() {
+        raiesTicketList.clear();
+        raiesTicketList.addAll(jsonDecode(response.body)['Response']);
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    issuesList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: kBackgroundShapeColor,
-      body: Stack(
+      body: Column(
         children: [
           Padding(
             padding: EdgeInsets.only(top: 30),
             child: Column(
               children: [
                 Row(
-                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     InkWell(
                         onTap: () {
@@ -41,88 +65,84 @@ class _ReportIssuesState extends State<ReportIssues> {
                         child: SvgPicture.asset('assets/images/back.svg',
                             fit: BoxFit.fill)),
                     SizedBox(width: MediaQuery.of(context).size.width * 0.18),
+                    // ignore: prefer_const_constructors
                     Text("Issues List",
                         textAlign: TextAlign.center,
+                        // ignore: prefer_const_constructors
                         style: TextStyle(
                             fontStyle: FontStyle.normal,
                             fontSize: 21,
                             fontWeight: FontWeight.bold)),
                   ],
                 ),
-                // Expanded(
-                //   child: Padding(
-                //     padding: const EdgeInsets.all(10),
-                //     child: ListView.separated(
-                //         itemCount: helplist.length,
-                //         padding: EdgeInsets.zero,
-                //         separatorBuilder: (BuildContext context, int index) =>
-                //             const Divider(color: Colors.blue),
-                //         itemBuilder: (BuildContext context, int index) {
-                //           return Card(
-                //             child: ExpandableNotifier(
-                //                 child: ExpandablePanel(
-                //                     header: Padding(
-                //                       padding: const EdgeInsets.all(8.0),
-                //                       child: Text(
-                //                           helplist[index]['question']
-                //                               .toString(),
-                //                           style: TextStyle(
-                //                               fontWeight: FontWeight.bold,
-                //                               fontSize: 16,
-                //                               color: Colors.blue)),
-                //                     ),
-                //                     expanded: Padding(
-                //                       padding: const EdgeInsets.all(8.0),
-                //                       child: Column(
-                //                         crossAxisAlignment:
-                //                             CrossAxisAlignment.start,
-                //                         children: [
-                //                           Text(
-                //                               helplist[index]['created_at']
-                //                                   .toString()
-                //                                   .split(" ")[0],
-                //                               style: TextStyle(
-                //                                   fontWeight: FontWeight.bold)),
-                //                           Divider(
-                //                             thickness: 1,
-                //                             height: 30,
-                //                           ),
-                //                           Text(
-                //                             helplist[index]['answer']
-                //                                 .toString(),
-                //                             textAlign: TextAlign.justify,
-                //                           )
-                //                         ],
-                //                       ),
-                //                     ))),
-                //           );
-
-                //         }),
-                //   ),
-                // ),
               ],
             ),
           ),
-        ],
-      ),
-      bottomSheet: InkWell(
-        onTap: () {
-          showOrderTracking();
-        },
-        child: Container(
-          height: 55,
-          // width: double.infinity,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: Colors.indigo,
+          Expanded(
+            flex: 12,
+            child: ListView.separated(
+              itemCount: raiesTicketList.length,
+              separatorBuilder: (BuildContext context, int index) =>
+                  const Divider(height: 2),
+              itemBuilder: (BuildContext context, int index) {
+                return Card(
+                  child: ListTile(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Conversation(
+                                    query_id: raiesTicketList[index]['query_id']
+                                        .toString(),
+                                  )));
+                    },
+                    trailing: Icon(
+                      Icons.arrow_forward_ios,
+                      size: 14,
+                    ),
+                    minLeadingWidth: 2,
+                    leading: Text((index + 1).toString() + ". "),
+                    title: Text(
+                      raiesTicketList[index]['title'].toString().toUpperCase(),
+                      style:
+                          TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                    ),
+                    subtitle: Text(
+                      raiesTicketList[index]['query'].toString(),
+                      style:
+                          TextStyle(fontWeight: FontWeight.w400, fontSize: 14),
+                    ),
+                  ),
+                );
+              },
+            ),
           ),
-          child: const Text("Raise Ticket",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18)),
-        ),
+          Expanded(
+            child: InkWell(
+              onTap: () {
+                setState(() {
+                  title.text = "";
+                  details.text = "";
+                });
+                showOrderTracking();
+              },
+              child: Container(
+                height: 55,
+                // width: double.infinity,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: Colors.indigo,
+                ),
+                child: const Text("Raise Ticket",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18)),
+              ),
+            ),
+          )
+        ],
       ),
     );
   }
@@ -155,30 +175,30 @@ class _ReportIssuesState extends State<ReportIssues> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                TextButton.icon(
-                                    onPressed: () async {
-                                      FilePickerResult result =
-                                          await FilePicker.platform.pickFiles();
+                                // TextButton.icon(
+                                //     onPressed: () async {
+                                //       FilePickerResult result =
+                                //           await FilePicker.platform.pickFiles();
 
-                                      if (result != null) {
-                                        setState(() {
-                                          attachmentPath =
-                                              result.files.single.path;
-                                        });
-                                      }
-                                    },
-                                    icon: Icon(Icons.attachment),
-                                    label: Text("Attachment")),
-                                attachmentPath.isEmpty
-                                    ? SizedBox()
-                                    : Text("File Attached"),
+                                //       if (result != null) {
+                                //         setState(() {
+                                //           attachmentPath =
+                                //               result.files.single.path;
+                                //         });
+                                //       }
+                                //     },
+                                //     icon: Icon(Icons.attachment),
+                                //     label: Text("Attachment")),
+                                // attachmentPath.isEmpty
+                                //     ? SizedBox()
+                                //     : Text("File Attached"),
                                 Align(
                                   alignment: Alignment.centerRight,
                                   child: IconButton(
                                       onPressed: () {
-                                        setState(() {
-                                          attachmentPath = "";
-                                        });
+                                        // setState(() {
+                                        //   attachmentPath = "";
+                                        // });
                                         Navigator.of(context).pop();
                                       },
                                       icon: Icon(
@@ -194,6 +214,7 @@ class _ReportIssuesState extends State<ReportIssues> {
                             TextFormField(
                               autofocus: true,
                               controller: title,
+                              textCapitalization: TextCapitalization.words,
                               decoration: InputDecoration(
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(20)),
@@ -206,6 +227,7 @@ class _ReportIssuesState extends State<ReportIssues> {
                               controller: details,
                               maxLines: 3,
                               autofocus: true,
+                              textCapitalization: TextCapitalization.sentences,
                               decoration: InputDecoration(
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(20)),
@@ -218,50 +240,33 @@ class _ReportIssuesState extends State<ReportIssues> {
                               onTap: () async {
                                 FocusScope.of(context).unfocus();
                                 showLaoding(context);
+
+                                print(BASE_URL + raisedTicket);
+
                                 SharedPreferences prefs =
                                     await SharedPreferences.getInstance();
                                 String mytoken =
                                     prefs.getString('token').toString();
-                                print(BASE_URL + raisedTicket);
-                                var request = http.MultipartRequest(
-                                    'POST', Uri.parse(BASE_URL + raisedTicket));
-                                request.headers.addAll({
-                                  'Accept': 'application/json',
-                                  'Authorization': 'Bearer $mytoken',
-                                  // 'Content-Type': 'application/json',
-                                });
-
-                                request.fields["title"] = title.text.toString();
-                                request.fields["query_text"] =
-                                    details.text.toString();
-                                print(attachmentPath);
-                                if (attachmentPath.isNotEmpty) {
-                                  request.files.add(http.MultipartFile(
-                                      'image',
-                                      File(attachmentPath)
-                                          .readAsBytes()
-                                          .asStream(),
-                                      await File(attachmentPath).length(),
-                                      filename: "image" +
-                                          p.extension(attachmentPath)));
-                                } else {
-                                  request.fields['image'] = "";
-                                }
-
-                                print(request.fields);
-                                print(request.files.first.filename);
-                                var response = await request.send();
-
-                                var respStr =
-                                    await response.stream.bytesToString();
-
-                                print(respStr);
-                                // print(
-                                //     jsonDecode(respStr).toString() + " code2");
+                                var response = await http.post(
+                                    Uri.parse(BASE_URL + raisedTicket),
+                                    headers: {
+                                      'Authorization': 'Bearer $mytoken'
+                                    },
+                                    body: {
+                                      "title": title.text.toString(),
+                                      "query_text": details.text.toString()
+                                    });
+                                print(response.body);
                                 Navigator.of(context).pop();
-                                // Navigator.of(context).pop();
-                                if (jsonDecode(respStr)['ErrorCode'] == 0) {
+                                Navigator.of(context).pop();
+                                if (response.statusCode == 200) {
                                   Fluttertoast.showToast(msg: "Ticket Raised");
+                                  showLaoding(context);
+                                  issuesList();
+                                  Navigator.of(context).pop();
+                                } else {
+                                  Fluttertoast.showToast(
+                                      msg: "Ticket Raised Failed");
                                 }
                               },
                               child: Container(
