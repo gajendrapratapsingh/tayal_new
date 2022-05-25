@@ -65,7 +65,10 @@ dependencies:
   intl: ^0.17.0
   file_picker: ^4.5.1
   path: ^1.8.0
-  flutter_chat_ui: ^1.5.8
+  flutter_fortune_wheel: ^1.2.0
+  never_behind_keyboard: ^1.0.1
+  loadmore: ^2.0.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

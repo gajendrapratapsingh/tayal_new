@@ -45,11 +45,9 @@ class _TransactionlistScreenState extends State<TransactionlistScreen> {
                   style: TextStyle(color: Colors.grey, fontSize: 12)),
               trailing: _txnlist[index]['transaction_type'].toString() ==
                       "credit"
-                  ? Text(
-                      '\u20B9 ${_txnlist[index]['update_balance'].toString()} Cr',
+                  ? Text('\u20B9 ${_txnlist[index]['points'].toString()} Cr',
                       style: TextStyle(color: Colors.green, fontSize: 12))
-                  : Text(
-                      '\u20B9 ${_txnlist[index]['update_balance'].toString()} Dr',
+                  : Text('\u20B9 ${_txnlist[index]['points'].toString()} Dr',
                       style: TextStyle(color: Colors.red, fontSize: 12)),
             );
           }

@@ -142,6 +142,21 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                   future: _myorderdetail,
                                   builder: (context, snapshot) {
                                     if (snapshot.hasData) {
+                                      List itemsData = snapshot.data['items'];
+                                      double totalQty = 0;
+                                      double totalUnitPrice = 0;
+                                      String total =
+                                          snapshot.data['total'].toString();
+
+                                      itemsData.forEach((element) {
+                                        totalQty = totalQty +
+                                            double.parse(
+                                                element['quantity'].toString());
+
+                                        totalUnitPrice = totalUnitPrice +
+                                            double.parse(element['offer_price']
+                                                .toString());
+                                      });
                                       return Column(
                                         children: [
                                           Container(
@@ -156,7 +171,17 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                                       CrossAxisAlignment.start,
                                                   children: [
                                                     Text(
+                                                        "${snapshot.data['items'].length} items",
+                                                        style: TextStyle(
+                                                            color: Colors.grey,
+                                                            fontSize: 10)),
+                                                    Text(
                                                         "Order on ${snapshot.data['created_at'].toString()}",
+                                                        style: TextStyle(
+                                                            color: Colors.grey,
+                                                            fontSize: 10)),
+                                                    Text(
+                                                        "Order id: ${snapshot.data['order_number'].toString()}",
                                                         style: TextStyle(
                                                             color: Colors.grey,
                                                             fontSize: 10)),
@@ -172,23 +197,87 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                                                     .w500)),
                                                     SizedBox(height: 5.0),
                                                     Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
                                                       children: [
-                                                        snapshot.data['payment_mode']
-                                                                    .toString() ==
-                                                                "Cash On Delivery"
-                                                            ? Image.asset(
-                                                                'assets/images/cash_pay.png',
-                                                                scale: 2)
-                                                            : Image.asset(
-                                                                'assets/images/online_pay.png',
-                                                                scale: 2),
-                                                        SizedBox(width: 5),
-                                                        Text(
-                                                            "${snapshot.data['payment_mode'].toString()}",
-                                                            style: TextStyle(
-                                                                color:
-                                                                    Colors.grey,
-                                                                fontSize: 12))
+                                                        Row(
+                                                          children: [
+                                                            snapshot.data['payment_mode']
+                                                                        .toString() ==
+                                                                    "Cash On Delivery"
+                                                                ? Image.asset(
+                                                                    'assets/images/cash_pay.png',
+                                                                    scale: 2)
+                                                                : Image.asset(
+                                                                    'assets/images/online_pay.png',
+                                                                    scale: 2),
+                                                            SizedBox(width: 5),
+                                                            Text(
+                                                                "${snapshot.data['payment_mode'].toString()}",
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .grey,
+                                                                    fontSize:
+                                                                        12))
+                                                          ],
+                                                        ),
+                                                        InkWell(
+                                                          onTap: () {
+                                                            // print(downloadSummary);
+                                                            if (downloadSummary !=
+                                                                "") {
+                                                              _setPath(
+                                                                  downloadSummary);
+                                                            } else {
+                                                              Fluttertoast
+                                                                  .showToast(
+                                                                      msg:
+                                                                          "Summary not available");
+                                                            }
+                                                          },
+                                                          child: Container(
+                                                            height: 30,
+                                                            width: size.width *
+                                                                0.45,
+                                                            decoration: BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            5),
+                                                                border: Border.all(
+                                                                    color: Colors
+                                                                        .indigo,
+                                                                    width: 1)),
+                                                            child: Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                          .only(
+                                                                      left: 5.0,
+                                                                      right:
+                                                                          5.0),
+                                                              child: Row(
+                                                                children: const [
+                                                                  Icon(
+                                                                      Icons
+                                                                          .analytics_outlined,
+                                                                      color: Colors
+                                                                          .indigo,
+                                                                      size: 12),
+                                                                  SizedBox(
+                                                                      width: 5),
+                                                                  Text(
+                                                                      "Download summary",
+                                                                      style: TextStyle(
+                                                                          color: Colors
+                                                                              .indigo,
+                                                                          fontSize:
+                                                                              12))
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
                                                       ],
                                                     )
                                                   ],
@@ -232,214 +321,403 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                               ),
                                             ),
                                           ),
-                                          Container(
-                                            width: double.infinity,
-                                            child: Card(
-                                              color: Colors.grey[50],
-                                              child: Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: 10,
-                                                    horizontal: 10),
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Row(
-                                                      children: [
-                                                        Text(
-                                                            "${snapshot.data['items'].length} items",
-                                                            style: TextStyle(
-                                                                color:
-                                                                    Colors.grey,
-                                                                fontSize: 10)),
-                                                        const SizedBox(
-                                                            width: 15),
-                                                        Expanded(
-                                                            child: Text(
-                                                                "Order id: ${snapshot.data['order_number'].toString()}",
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .grey,
-                                                                    fontSize:
-                                                                        10))),
-                                                        Container(
-                                                          height: 30,
-                                                          width: 80,
-                                                          alignment:
-                                                              Alignment.center,
-                                                          decoration: BoxDecoration(
-                                                              color:
-                                                                  Colors.indigo,
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          5)),
-                                                          child: Text("reorder",
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontSize:
-                                                                      10)),
-                                                        )
-                                                      ],
-                                                    ),
-                                                    SizedBox(height: 10),
-                                                    InkWell(
-                                                      onTap: () {
-                                                        // print(downloadSummary);
-                                                        if (downloadSummary !=
-                                                            "") {
-                                                          _setPath(
-                                                              downloadSummary);
-                                                        } else {
-                                                          Fluttertoast.showToast(
-                                                              msg:
-                                                                  "Summary not available");
-                                                        }
-                                                      },
-                                                      child: Container(
-                                                        height: 30,
-                                                        width:
-                                                            size.width * 0.45,
-                                                        decoration: BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        5),
-                                                            border: Border.all(
-                                                                color: Colors
-                                                                    .indigo,
-                                                                width: 1)),
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                      .only(
-                                                                  left: 5.0,
-                                                                  right: 5.0),
-                                                          child: Row(
-                                                            children: const [
-                                                              Icon(
-                                                                  Icons
-                                                                      .analytics_outlined,
-                                                                  color: Colors
-                                                                      .indigo,
-                                                                  size: 12),
-                                                              SizedBox(
-                                                                  width: 5),
-                                                              Text(
-                                                                  "Download summary",
-                                                                  style: TextStyle(
-                                                                      color: Colors
-                                                                          .indigo,
-                                                                      fontSize:
-                                                                          12))
-                                                            ],
-                                                          ),
-                                                        ),
+                                          // Container(
+                                          //   width: double.infinity,
+                                          //   child: Card(
+                                          //     color: Colors.grey[50],
+                                          //     child: Padding(
+                                          //       padding: EdgeInsets.symmetric(
+                                          //           vertical: 10,
+                                          //           horizontal: 10),
+                                          //       child: Column(
+                                          //         crossAxisAlignment:
+                                          //             CrossAxisAlignment.start,
+                                          //         children: [
+                                          //           Row(
+                                          //             children: [
+                                          //               Text(
+                                          //                   "${snapshot.data['items'].length} items",
+                                          //                   style: TextStyle(
+                                          //                       color:
+                                          //                           Colors.grey,
+                                          //                       fontSize: 10)),
+                                          //               const SizedBox(
+                                          //                   width: 15),
+                                          //               Expanded(
+                                          //                   child: Text(
+                                          //                       "Order id: ${snapshot.data['order_number'].toString()}",
+                                          //                       style: TextStyle(
+                                          //                           color: Colors
+                                          //                               .grey,
+                                          //                           fontSize:
+                                          //                               10))),
+                                          //               Container(
+                                          //                 height: 30,
+                                          //                 width: 80,
+                                          //                 alignment:
+                                          //                     Alignment.center,
+                                          //                 decoration: BoxDecoration(
+                                          //                     color:
+                                          //                         Colors.indigo,
+                                          //                     borderRadius:
+                                          //                         BorderRadius
+                                          //                             .circular(
+                                          //                                 5)),
+                                          //                 child: Text("reorder",
+                                          //                     style: TextStyle(
+                                          //                         color: Colors
+                                          //                             .white,
+                                          //                         fontSize:
+                                          //                             10)),
+                                          //               )
+                                          //             ],
+                                          //           ),
+                                          //           SizedBox(height: 10),
+                                          //           InkWell(
+                                          //             onTap: () {
+                                          //               // print(downloadSummary);
+                                          //               if (downloadSummary !=
+                                          //                   "") {
+                                          //                 _setPath(
+                                          //                     downloadSummary);
+                                          //               } else {
+                                          //                 Fluttertoast.showToast(
+                                          //                     msg:
+                                          //                         "Summary not available");
+                                          //               }
+                                          //             },
+                                          //             child: Container(
+                                          //               height: 30,
+                                          //               width:
+                                          //                   size.width * 0.45,
+                                          //               decoration: BoxDecoration(
+                                          //                   borderRadius:
+                                          //                       BorderRadius
+                                          //                           .circular(
+                                          //                               5),
+                                          //                   border: Border.all(
+                                          //                       color: Colors
+                                          //                           .indigo,
+                                          //                       width: 1)),
+                                          //               child: Padding(
+                                          //                 padding:
+                                          //                     const EdgeInsets
+                                          //                             .only(
+                                          //                         left: 5.0,
+                                          //                         right: 5.0),
+                                          //                 child: Row(
+                                          //                   children: const [
+                                          //                     Icon(
+                                          //                         Icons
+                                          //                             .analytics_outlined,
+                                          //                         color: Colors
+                                          //                             .indigo,
+                                          //                         size: 12),
+                                          //                     SizedBox(
+                                          //                         width: 5),
+                                          //                     Text(
+                                          //                         "Download summary",
+                                          //                         style: TextStyle(
+                                          //                             color: Colors
+                                          //                                 .indigo,
+                                          //                             fontSize:
+                                          //                                 12))
+                                          //                   ],
+                                          //                 ),
+                                          //               ),
+                                          //             ),
+                                          //           ),
+                                          //           SizedBox(height: 10),
+                                          //           Container(
+                                          //             width: double.infinity,
+                                          //             child: ListView.separated(
+                                          //                 itemCount: snapshot
+                                          //                     .data['items']
+                                          //                     .length,
+                                          //                 padding:
+                                          //                     EdgeInsets.zero,
+                                          //                 shrinkWrap: true,
+                                          //                 separatorBuilder:
+                                          //                     (BuildContext
+                                          //                                 context,
+                                          //                             int
+                                          //                                 index) =>
+                                          //                         Divider(
+                                          //                           height: 1,
+                                          //                           color: Colors
+                                          //                                   .grey[
+                                          //                               300],
+                                          //                         ),
+                                          //                 itemBuilder:
+                                          //                     (context, index) {
+                                          //                   return Container(
+                                          //                     child: Padding(
+                                          //                       padding:
+                                          //                           EdgeInsets
+                                          //                               .all(5),
+                                          //                       child: Row(
+                                          //                         children: [
+                                          //                           ClipRRect(
+                                          //                             borderRadius:
+                                          //                                 BorderRadius.circular(
+                                          //                                     10),
+                                          //                             child:
+                                          //                                 Container(
+                                          //                               height:
+                                          //                                   80,
+                                          //                               width:
+                                          //                                   80,
+                                          //                               child:
+                                          //                                   CachedNetworkImage(
+                                          //                                 imageUrl: snapshot
+                                          //                                     .data['items'][index]['product_image']
+                                          //                                     .toString(),
+                                          //                                 progressIndicatorBuilder: (context, url, downloadProgress) =>
+                                          //                                     Center(child: CircularProgressIndicator(value: downloadProgress.progress, color: Colors.indigo)),
+                                          //                                 errorWidget: (context, url, error) =>
+                                          //                                     Image.asset('assets/images/no_image.jpg'),
+                                          //                               ),
+                                          //                             ),
+                                          //                           ),
+                                          //                           SizedBox(
+                                          //                               width:
+                                          //                                   10),
+                                          //                           Column(
+                                          //                             crossAxisAlignment:
+                                          //                                 CrossAxisAlignment
+                                          //                                     .start,
+                                          //                             children: [
+                                          //                               Row(
+                                          //                                 mainAxisAlignment:
+                                          //                                     MainAxisAlignment.spaceBetween,
+                                          //                                 children: [
+                                          //                                   Text("${snapshot.data['items'][index]['product_name'].toString()}",
+                                          //                                       style: TextStyle(color: Colors.grey, fontSize: 12)),
+                                          //                                   SizedBox(width: 7),
+                                          //                                   Text("\u20B9 ${snapshot.data['items'][index]['offer_price'].toString()}",
+                                          //                                       style: TextStyle(color: Colors.black, fontSize: 12))
+                                          //                                 ],
+                                          //                               ),
+                                          //                               SizedBox(
+                                          //                                   height:
+                                          //                                       5.0),
+                                          //                               Text(
+                                          //                                   "Quantity : ${snapshot.data['items'][index]['quantity'].toString()}",
+                                          //                                   style:
+                                          //                                       TextStyle(color: Colors.grey, fontSize: 12)),
+                                          //                               SizedBox(
+                                          //                                   height:
+                                          //                                       5.0),
+                                          //                               Row(
+                                          //                                 children: [
+                                          //                                   Text("\u20B9 ${snapshot.data['items'][index]['price'].toString()}",
+                                          //                                       style: TextStyle(decoration: TextDecoration.lineThrough, color: Colors.grey, fontSize: 12)),
+                                          //                                   SizedBox(width: 15),
+                                          //                                   Text("\u20B9 ${snapshot.data['items'][index]['offer_price'].toString()} x ${snapshot.data['items'][index]['quantity'].toString()}",
+                                          //                                       style: TextStyle(color: Colors.black, fontSize: 12)),
+                                          //                                 ],
+                                          //                               ),
+                                          //                             ],
+                                          //                           )
+                                          //                         ],
+                                          //                       ),
+                                          //                     ),
+                                          //                   );
+                                          //                 }),
+                                          //           ),
+                                          //         ],
+                                          //       ),
+                                          //     ),
+                                          //   ),
+                                          // ),
+                                          Card(
+                                            child: Container(
+                                                color: Colors.white,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Column(
+                                                    children: [
+                                                      Table(
+                                                        defaultVerticalAlignment:
+                                                            TableCellVerticalAlignment
+                                                                .top,
+                                                        columnWidths: {
+                                                          0: FlexColumnWidth(4),
+                                                          1: FlexColumnWidth(2),
+                                                          2: FlexColumnWidth(1),
+                                                          3: FlexColumnWidth(2),
+                                                        },
+                                                        border: TableBorder.all(
+                                                            color: Colors
+                                                                .grey[200],
+                                                            style: BorderStyle
+                                                                .solid,
+                                                            width: 1),
+                                                        children: [
+                                                          TableRow(children: [
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(5.0),
+                                                              child: Text(
+                                                                  "Product"),
+                                                            ),
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(5.0),
+                                                              child: Text(
+                                                                  "(\u20B9) Unit Pr."),
+                                                            ),
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(5.0),
+                                                              child:
+                                                                  Text("Qty"),
+                                                            ),
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(5.0),
+                                                              child: Text(
+                                                                  "(\u20B9) Total"),
+                                                            ),
+                                                          ])
+                                                        ],
                                                       ),
-                                                    ),
-                                                    SizedBox(height: 10),
-                                                    Container(
-                                                      width: double.infinity,
-                                                      child: ListView.separated(
-                                                          itemCount: snapshot
-                                                              .data['items']
-                                                              .length,
-                                                          padding:
-                                                              EdgeInsets.zero,
-                                                          shrinkWrap: true,
-                                                          separatorBuilder:
-                                                              (BuildContext
-                                                                          context,
-                                                                      int
-                                                                          index) =>
-                                                                  Divider(
-                                                                    height: 1,
-                                                                    color: Colors
-                                                                            .grey[
-                                                                        300],
-                                                                  ),
-                                                          itemBuilder:
-                                                              (context, index) {
-                                                            return Container(
-                                                              child: Padding(
-                                                                padding:
-                                                                    EdgeInsets
-                                                                        .all(5),
-                                                                child: Row(
-                                                                  children: [
-                                                                    ClipRRect(
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              10),
-                                                                      child:
-                                                                          Container(
-                                                                        height:
-                                                                            80,
-                                                                        width:
-                                                                            80,
+                                                      Table(
+                                                        defaultVerticalAlignment:
+                                                            TableCellVerticalAlignment
+                                                                .top,
+                                                        columnWidths: {
+                                                          0: FlexColumnWidth(4),
+                                                          1: FlexColumnWidth(2),
+                                                          2: FlexColumnWidth(1),
+                                                          3: FlexColumnWidth(2),
+                                                        },
+                                                        border: TableBorder.all(
+                                                            color: Colors
+                                                                .grey[200],
+                                                            style: BorderStyle
+                                                                .solid,
+                                                            width: 1),
+                                                        children: itemsData
+                                                            .map((e) =>
+                                                                TableRow(
+                                                                    children: [
+                                                                      Padding(
+                                                                        padding:
+                                                                            const EdgeInsets.all(5.0),
                                                                         child:
-                                                                            CachedNetworkImage(
-                                                                          imageUrl: snapshot
-                                                                              .data['items'][index]['product_image']
-                                                                              .toString(),
-                                                                          progressIndicatorBuilder: (context, url, downloadProgress) =>
-                                                                              Center(child: CircularProgressIndicator(value: downloadProgress.progress, color: Colors.indigo)),
-                                                                          errorWidget: (context, url, error) =>
-                                                                              Image.asset('assets/images/no_image.jpg'),
+                                                                            Column(
+                                                                          crossAxisAlignment:
+                                                                              CrossAxisAlignment.start,
+                                                                          children: [
+                                                                            Text(e['product_name'].toString()),
+                                                                            ClipRRect(
+                                                                              borderRadius: BorderRadius.circular(10),
+                                                                              child: Container(
+                                                                                height: 80,
+                                                                                width: 80,
+                                                                                child: CachedNetworkImage(
+                                                                                  imageUrl: e['product_image'].toString(),
+                                                                                  progressIndicatorBuilder: (context, url, downloadProgress) => Center(child: CircularProgressIndicator(value: downloadProgress.progress, color: Colors.indigo)),
+                                                                                  errorWidget: (context, url, error) => Image.asset('assets/images/no_image.jpg'),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ],
                                                                         ),
                                                                       ),
-                                                                    ),
-                                                                    SizedBox(
-                                                                        width:
-                                                                            10),
-                                                                    Column(
-                                                                      crossAxisAlignment:
-                                                                          CrossAxisAlignment
-                                                                              .start,
-                                                                      children: [
-                                                                        Row(
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.spaceBetween,
+                                                                      Padding(
+                                                                        padding:
+                                                                            const EdgeInsets.all(5.0),
+                                                                        child:
+                                                                            Column(
+                                                                          crossAxisAlignment:
+                                                                              CrossAxisAlignment.start,
                                                                           children: [
-                                                                            Text("${snapshot.data['items'][index]['product_name'].toString()}",
-                                                                                style: TextStyle(color: Colors.grey, fontSize: 12)),
-                                                                            SizedBox(width: 7),
-                                                                            Text("\u20B9 ${snapshot.data['items'][index]['offer_price'].toString()}",
-                                                                                style: TextStyle(color: Colors.black, fontSize: 12))
+                                                                            Text(e['offer_price'].toString()),
+                                                                            Text(
+                                                                              e['price'].toString(),
+                                                                              style: TextStyle(
+                                                                                decoration: TextDecoration.lineThrough,
+                                                                                color: Colors.grey,
+                                                                              ),
+                                                                            ),
                                                                           ],
                                                                         ),
-                                                                        SizedBox(
-                                                                            height:
-                                                                                5.0),
-                                                                        Text(
-                                                                            "Quantity : ${snapshot.data['items'][index]['quantity'].toString()}",
-                                                                            style:
-                                                                                TextStyle(color: Colors.grey, fontSize: 12)),
-                                                                        SizedBox(
-                                                                            height:
-                                                                                5.0),
-                                                                        Row(
-                                                                          children: [
-                                                                            Text("\u20B9 ${snapshot.data['items'][index]['price'].toString()}",
-                                                                                style: TextStyle(decoration: TextDecoration.lineThrough, color: Colors.grey, fontSize: 12)),
-                                                                            SizedBox(width: 15),
-                                                                            Text("\u20B9 ${snapshot.data['items'][index]['offer_price'].toString()} x ${snapshot.data['items'][index]['quantity'].toString()}",
-                                                                                style: TextStyle(color: Colors.black, fontSize: 12)),
-                                                                          ],
-                                                                        ),
-                                                                      ],
-                                                                    )
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            );
-                                                          }),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
+                                                                      ),
+                                                                      Padding(
+                                                                        padding:
+                                                                            const EdgeInsets.all(5.0),
+                                                                        child: Text("x " +
+                                                                            e['quantity'].toString()),
+                                                                      ),
+                                                                      Padding(
+                                                                        padding:
+                                                                            const EdgeInsets.all(5.0),
+                                                                        child: Text((double.parse(e['offer_price'].toString()) *
+                                                                                double.parse(e['quantity'].toString()))
+                                                                            .toStringAsFixed(2)
+                                                                            .toString()),
+                                                                      ),
+                                                                    ]))
+                                                            .toList(),
+                                                      ),
+                                                      Table(
+                                                        defaultVerticalAlignment:
+                                                            TableCellVerticalAlignment
+                                                                .top,
+                                                        columnWidths: {
+                                                          0: FlexColumnWidth(4),
+                                                          1: FlexColumnWidth(2),
+                                                          2: FlexColumnWidth(1),
+                                                          3: FlexColumnWidth(2),
+                                                        },
+                                                        border: TableBorder.all(
+                                                            color: Colors
+                                                                .grey[200],
+                                                            style: BorderStyle
+                                                                .solid,
+                                                            width: 1),
+                                                        children: [
+                                                          TableRow(children: [
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(5.0),
+                                                              child: Text(
+                                                                  "All Products"),
+                                                            ),
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(5.0),
+                                                              child: Text(""),
+                                                            ),
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(5.0),
+                                                              child: Text(totalQty
+                                                                  .toString()),
+                                                            ),
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(5.0),
+                                                              child:
+                                                                  Text(total),
+                                                            ),
+                                                          ])
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                )),
                                           ),
                                           Container(
                                             width: double.infinity,
@@ -472,7 +750,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                                                     Colors.grey,
                                                                 fontSize: 14)),
                                                         Text(
-                                                            "\u20B9 ${snapshot.data['total'].toString()}",
+                                                            "\u20B9 ${snapshot.data['sub_total'].toString()}",
                                                             style: TextStyle(
                                                                 color:
                                                                     Colors.grey,
@@ -488,17 +766,179 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                                       mainAxisAlignment:
                                                           MainAxisAlignment
                                                               .spaceBetween,
-                                                      children: const [
+                                                      children: [
                                                         Text("Delivery charges",
                                                             style: TextStyle(
                                                                 color:
                                                                     Colors.grey,
                                                                 fontSize: 14)),
-                                                        Text("\u20B9 0.0",
+                                                        Text(
+                                                            "\u20B9 ${snapshot.data['shipped'].toString()}",
                                                             style: TextStyle(
                                                                 color:
                                                                     Colors.grey,
                                                                 fontSize: 14))
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  // Padding(
+                                                  //   padding:
+                                                  //       EdgeInsets.symmetric(
+                                                  //           horizontal: 10),
+                                                  //   child: Row(
+                                                  //     mainAxisAlignment:
+                                                  //         MainAxisAlignment
+                                                  //             .spaceBetween,
+                                                  //     children: [
+                                                  //       Text(snapshot.data[
+                                                  //                   'tax']["2"][""],
+                                                  //           style: TextStyle(
+                                                  //               color:
+                                                  //                   Colors.grey,
+                                                  //               fontSize: 14)),
+                                                  //       snapshot.data[
+                                                  //                   'tax'] ==
+                                                  //               null
+                                                  //           ? Text("\u20B9 0",
+                                                  //               style: TextStyle(
+                                                  //                   color: Colors
+                                                  //                       .grey,
+                                                  //                   fontSize:
+                                                  //                       14))
+                                                  //           : Text(
+                                                  //               "\u20B9 " +
+                                                  //                   snapshot
+                                                  //                       .data[
+                                                  //                           'tax']
+                                                  //                       .toString(),
+                                                  //               style: TextStyle(
+                                                  //                   color: Colors
+                                                  //                       .grey,
+                                                  //                   fontSize:
+                                                  //                       14))
+                                                  //     ],
+                                                  //   ),
+                                                  // ),
+
+                                                  Padding(
+                                                    padding: const EdgeInsets
+                                                        .fromLTRB(10, 2, 10, 2),
+                                                    child: Column(
+                                                      children: [
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children: [
+                                                            Text(
+                                                                "SGST (" +
+                                                                    snapshot
+                                                                        .data[
+                                                                            'tax']
+                                                                            [
+                                                                            '2']
+                                                                            [
+                                                                            'rate']
+                                                                        .toString() +
+                                                                    " %)",
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .grey,
+                                                                    fontSize:
+                                                                        14)),
+                                                            Text(
+                                                                "\u20B9 " +
+                                                                    snapshot
+                                                                        .data[
+                                                                            'tax']
+                                                                            [
+                                                                            '2']
+                                                                            [
+                                                                            'tax_amount']
+                                                                        .toString(),
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .grey,
+                                                                    fontSize:
+                                                                        14))
+                                                          ],
+                                                        ),
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children: [
+                                                            Text(
+                                                                "CGST (" +
+                                                                    snapshot
+                                                                        .data[
+                                                                            'tax']
+                                                                            [
+                                                                            '1']
+                                                                            [
+                                                                            'rate']
+                                                                        .toString() +
+                                                                    " %)",
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .grey,
+                                                                    fontSize:
+                                                                        14)),
+                                                            Text(
+                                                                "\u20B9 " +
+                                                                    snapshot
+                                                                        .data[
+                                                                            'tax']
+                                                                            [
+                                                                            '1']
+                                                                            [
+                                                                            'tax_amount']
+                                                                        .toString(),
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .grey,
+                                                                    fontSize:
+                                                                        14))
+                                                          ],
+                                                        ),
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children: [
+                                                            Text(
+                                                                "IGST (" +
+                                                                    snapshot
+                                                                        .data[
+                                                                            'tax']
+                                                                            [
+                                                                            '0']
+                                                                            [
+                                                                            'rate']
+                                                                        .toString() +
+                                                                    " %)",
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .grey,
+                                                                    fontSize:
+                                                                        14)),
+                                                            Text(
+                                                                "\u20B9 " +
+                                                                    snapshot
+                                                                        .data[
+                                                                            'tax']
+                                                                            [
+                                                                            '0']
+                                                                            [
+                                                                            'tax_amount']
+                                                                        .toString(),
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .grey,
+                                                                    fontSize:
+                                                                        14))
+                                                          ],
+                                                        )
                                                       ],
                                                     ),
                                                   ),
@@ -589,6 +1029,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
     };
     var response = await http.post(Uri.parse(BASE_URL + orderdetail),
         body: body, headers: {'Authorization': 'Bearer $mytoken'});
+    print(response.body);
     if (response.statusCode == 200) {
       var data = json.decode(response.body)['Response'];
       return data;

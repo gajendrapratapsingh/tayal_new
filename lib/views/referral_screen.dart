@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tayal/components/loader.dart';
 import 'package:tayal/models/profiledata.dart';
 import 'package:tayal/network/api.dart';
 import 'package:http/http.dart' as http;
 import 'package:tayal/themes/constant.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter/services.dart';
+import 'package:tayal/views/mybiz_screen.dart';
 import 'package:tayal/views/profile_screen.dart';
 
 class ReferralScreen extends StatefulWidget {
@@ -23,16 +25,21 @@ class _ReferralScreenState extends State<ReferralScreen> {
   bool _loading = false;
   String referralcode = "";
 
+  String startDate = "From Date";
+  String endDate = "To Date";
+
+  DateTime selectedDate = DateTime.now();
+  DateTime selectedStartDate = DateTime.now();
+  DateTime selectedEndDate = DateTime.now();
+
+  List<dynamic> _referrallist = [];
+  int _value = 0;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    Future<List<ProfileResponse>> temp = _getprofile();
-    temp.then((value) {
-      setState(() {
-        referralcode = value[0].referralCode.toString();
-      });
-    });
+    _getreferraldata("", "");
   }
 
   @override
@@ -55,7 +62,7 @@ class _ReferralScreenState extends State<ReferralScreen> {
                     children: [
                       InkWell(
                         onTap: () {
-                          Navigator.of(context).pop();
+                          _willPopCallback();
                         },
                         child: SvgPicture.asset('assets/images/back.svg',
                             fit: BoxFit.fill),
@@ -74,7 +81,8 @@ class _ReferralScreenState extends State<ReferralScreen> {
                     child: Column(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(left: 5.0, right: 5.0),
+                          padding:
+                              const EdgeInsets.only(left: 10.0, right: 10.0),
                           child: Card(
                             elevation: 0.0,
                             child: Padding(
@@ -107,7 +115,8 @@ class _ReferralScreenState extends State<ReferralScreen> {
                                         _onShare(context, referralcode);
                                       },
                                       icon: Icon(Icons.share,
-                                          color: Colors.grey, size: 24)),
+                                          color: Colors.indigo.shade500,
+                                          size: 24)),
                                   IconButton(
                                       onPressed: () {
                                         Clipboard.setData(ClipboardData(
@@ -125,115 +134,322 @@ class _ReferralScreenState extends State<ReferralScreen> {
                                         });
                                       },
                                       icon: Icon(Icons.copy_outlined,
-                                          color: Colors.grey, size: 24))
+                                          color: Colors.indigo.shade500,
+                                          size: 24))
                                 ],
                               ),
                             ),
                           ),
                         ),
-                        ListView.separated(
-                          itemCount: 10,
-                          shrinkWrap: true,
-                          padding: EdgeInsets.zero,
-                          separatorBuilder: (BuildContext context, int index) =>
-                              const Divider(
-                                  color: Colors.grey, height: 1, thickness: 1),
-                          itemBuilder: (BuildContext context, int index) {
-                            return Container(
-                              padding: EdgeInsets.all(10),
+                        /* Padding (
+                              padding: EdgeInsets.all(10.0),
                               child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: const [
-                                          Text("Name:",
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w400)),
-                                          SizedBox(width: 5.0),
-                                          Text("Gaurav Singh",
-                                              style: TextStyle(
-                                                  color: Colors.grey,
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w400))
-                                        ],
-                                      ),
-                                      const SizedBox(height: 5.0),
-                                      Row(
-                                        children: const [
-                                          Text("Mobile:",
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w400)),
-                                          SizedBox(width: 5.0),
-                                          Text("9540174604",
-                                              style: TextStyle(
-                                                  color: Colors.grey,
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w400))
-                                        ],
-                                      ),
-                                    ],
+                                  GestureDetector(
+                                    onTap: () {
+                                      _selectStartDate(context);
+                                    },
+                                    child: Card(
+                                      elevation: 4.0,
+                                      child: Container(
+                                          height: size.height * 0.06,
+                                          color: Colors.white,
+                                          width: size.width * 0.44,
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.only(left: 10.0),
+                                                child: Text(
+                                                  startDate,
+                                                  style: TextStyle(
+                                                      color: Colors.grey.shade700,
+                                                      fontSize: 16.0),
+                                                ),
+                                              ),
+                                              Padding(
+                                                  padding: const EdgeInsets.only(right: 10.0),
+                                                  child: Icon(
+                                                    Icons.calendar_today_sharp,
+                                                    color: Colors.grey,
+                                                    size: 20,
+                                                  )),
+                                            ],
+                                          )),
+                                    ),
                                   ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: const [
-                                          Text("Date:",
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w400)),
-                                          SizedBox(width: 5.0),
-                                          Text("22-11-2022",
-                                              style: TextStyle(
-                                                  color: Colors.grey,
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w400))
-                                        ],
-                                      ),
-                                      const SizedBox(height: 5.0),
-                                      Row(
-                                        children: const [
-                                          Text("Points:",
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w400)),
-                                          SizedBox(width: 5.0),
-                                          Text("800.00",
-                                              style: TextStyle(
-                                                  color: Colors.grey,
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w400))
-                                        ],
-                                      ),
-                                    ],
-                                  )
+                                  GestureDetector(
+                                    onTap: () {
+                                      _selectedEndDate(context);
+                                    },
+                                    child: Card(
+                                      elevation: 4.0,
+                                      child: Container(
+                                          height: size.height * 0.06,
+                                          color: Colors.white,
+                                          width: size.width * 0.44,
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.only(left: 10.0),
+                                                child: Text(
+                                                  endDate,
+                                                  style: TextStyle(
+                                                      color: Colors.grey.shade700,
+                                                      fontSize: 16.0),
+                                                ),
+                                              ),
+                                              const Padding(
+                                                  padding: EdgeInsets.only(right: 10.0),
+                                                  child: Icon(
+                                                    Icons.calendar_today_sharp,
+                                                    color: Colors.grey,
+                                                    size: 20,
+                                                  )),
+                                            ],
+                                          )),
+                                    ),
+                                  ),
                                 ],
                               ),
-                            );
-                          },
+                            ),*/
+                        Padding(
+                          padding: EdgeInsets.only(left: 10, right: 10),
+                          child: ListView.separated(
+                            itemCount: _referrallist.length,
+                            shrinkWrap: true,
+                            padding: EdgeInsets.zero,
+                            separatorBuilder:
+                                (BuildContext context, int index) =>
+                                    const Divider(
+                                        color: Colors.grey,
+                                        height: 1,
+                                        thickness: 1),
+                            itemBuilder: (BuildContext context, int index) {
+                              return Container(
+                                padding: EdgeInsets.all(10),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            const Text("Name:",
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.w400)),
+                                            const SizedBox(width: 5.0),
+                                            Text(
+                                                "${_referrallist[index]['username'].toString()}",
+                                                style: TextStyle(
+                                                    color: Colors.grey,
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.w400))
+                                          ],
+                                        ),
+                                        const SizedBox(height: 5.0),
+                                        Row(
+                                          children: [
+                                            const Text("Mobile:",
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.w400)),
+                                            const SizedBox(width: 5.0),
+                                            Text(
+                                                "${_referrallist[index]['mobile'].toString()}",
+                                                style: TextStyle(
+                                                    color: Colors.grey,
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.w400))
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            const Text("Date:",
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.w400)),
+                                            const SizedBox(width: 5.0),
+                                            Text(
+                                                "${_referrallist[index]['created_at'].toString().split(" ")[0]}",
+                                                style: const TextStyle(
+                                                    color: Colors.grey,
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.w400))
+                                          ],
+                                        ),
+                                        const SizedBox(height: 5.0),
+                                        Row(
+                                          children: [
+                                            const Text("Points:",
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.w400)),
+                                            const SizedBox(width: 5.0),
+                                            Text(
+                                                "${_referrallist[index]['refer_by_point'].toString()}",
+                                                style: const TextStyle(
+                                                    color: Colors.grey,
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.w400))
+                                          ],
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
                         )
                       ],
                     ),
                   ))
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),
     );
+  }
+
+  Future<void> _selectStartDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+      context: context,
+      initialDate: selectedStartDate,
+      //firstDate: DateTime.now().subtract(Duration(days: 0)),
+      firstDate: DateTime(2015, 8),
+      lastDate: DateTime(2101),
+      builder: (BuildContext context, Widget child) {
+        return Theme(
+          data: ThemeData(
+              primaryColor: Colors.indigo,
+              accentColor: Colors.indigo,
+              primarySwatch: const MaterialColor(
+                0xFF3949AB,
+                <int, Color>{
+                  50: Colors.indigo,
+                  100: Colors.indigo,
+                  200: Colors.indigo,
+                  300: Colors.indigo,
+                  400: Colors.indigo,
+                  500: Colors.indigo,
+                  600: Colors.indigo,
+                  700: Colors.indigo,
+                  800: Colors.indigo,
+                  900: Colors.indigo,
+                },
+              )),
+          child: child,
+        );
+      },
+    );
+
+    if (picked != null)
+      setState(() {
+        _value = 1;
+        selectedStartDate = picked;
+        startDate = selectedStartDate.toString().split(" ")[0];
+      });
+  }
+
+  Future<void> _selectedEndDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: selectedEndDate,
+        // firstDate: DateTime.now().subtract(Duration(days: 0)),
+        firstDate: DateTime(2015, 8),
+        lastDate: DateTime(2101),
+        builder: (BuildContext context, Widget child) {
+          return Theme(
+            data: ThemeData(
+                primaryColor: Colors.indigo,
+                accentColor: Colors.indigo,
+                primarySwatch: const MaterialColor(
+                  0xFF3949AB,
+                  <int, Color>{
+                    50: Colors.indigo,
+                    100: Colors.indigo,
+                    200: Colors.indigo,
+                    300: Colors.indigo,
+                    400: Colors.indigo,
+                    500: Colors.indigo,
+                    600: Colors.indigo,
+                    700: Colors.indigo,
+                    800: Colors.indigo,
+                    900: Colors.indigo,
+                  },
+                )),
+            child: child,
+          );
+        });
+
+    if (picked != null)
+      setState(() {
+        _value = 1;
+        selectedEndDate = picked;
+        endDate = selectedEndDate.toString().split(" ")[0];
+      });
+  }
+
+  Future _getreferraldata(String startdate, String enddate) async {
+    setState(() {
+      _loading = true;
+    });
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String mytoken = prefs.getString('token').toString();
+
+    final body = {"start_date": startdate, "end_date": enddate};
+    var response = await http.post(Uri.parse(BASE_URL + referrallist),
+        body: json.encode(body),
+        headers: {
+          'Authorization': 'Bearer $mytoken',
+          'Content-Type': 'application/json'
+        });
+
+    if (response.statusCode == 200) {
+      print(response.body);
+      if (json.decode(response.body)['ErrorCode'] == 0) {
+        setState(() {
+          _referrallist.clear();
+          referralcode = json
+              .decode(response.body)['Response']['my_referral_code']
+              .toString();
+          _referrallist = json.decode(response.body)['Response']['referrals'];
+          _loading = false;
+        });
+      }
+    } else {
+      setState(() {
+        _loading = false;
+      });
+      throw Exception('Failed to get data due to ${response.body}');
+    }
   }
 
   void _onShare(BuildContext context, String referralcode) async {
@@ -260,6 +476,6 @@ class _ReferralScreenState extends State<ReferralScreen> {
 
   Future<bool> _willPopCallback() async {
     return Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => ProfileScreen()));
+        context, MaterialPageRoute(builder: (context) => MyBizScreen()));
   }
 }

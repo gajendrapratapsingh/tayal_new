@@ -217,11 +217,11 @@ class _WalletStatementTabScrrenState extends State<WalletStatementTabScrren> {
                                         .toString() ==
                                     "credit"
                                 ? Text(
-                                    '\u20B9 ${_txnlist[index]['update_balance'].toString()} Cr',
+                                    '\u20B9 ${_txnlist[index]['points'].toString()} Cr',
                                     style: const TextStyle(
                                         color: Colors.green, fontSize: 12))
                                 : Text(
-                                    '\u20B9 ${_txnlist[index]['update_balance'].toString()} Dr',
+                                    '\u20B9 ${_txnlist[index]['points'].toString()} Dr',
                                     style: const TextStyle(
                                         color: Colors.red, fontSize: 12)),
                           );

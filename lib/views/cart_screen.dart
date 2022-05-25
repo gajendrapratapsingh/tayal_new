@@ -36,6 +36,7 @@ class _CartScreenState extends State<CartScreen> {
 
   String nodata = "";
   List mainData = [];
+  String addressType = "Home-";
   @override
   void initState() {
     // TODO: implement initState
@@ -105,7 +106,9 @@ class _CartScreenState extends State<CartScreen> {
                                       Icon(Icons.location_on_outlined,
                                           color: Colors.black, size: 20),
                                       SizedBox(width: 2),
-                                      Expanded(child: Text("Deliver to:")),
+                                      Expanded(
+                                          child: Text(
+                                              "Deliver to : " + addressType)),
                                       GestureDetector(
                                         onTap: () {},
                                         child: Container(
@@ -140,16 +143,16 @@ class _CartScreenState extends State<CartScreen> {
                                       )
                                     ],
                                   ),
-                                  SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.65,
-                                      child: address == null || address == ""
-                                          ? Text("")
-                                          : Text(
-                                              address.toString().toUpperCase(),
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 12)))
+                                  // SizedBox(
+                                  //     width: MediaQuery.of(context).size.width *
+                                  //         0.65,
+                                  //     child: address == null || address == ""
+                                  //         ? Text("")
+                                  //         : Text(
+                                  //             address.toString().toUpperCase(),
+                                  //             style: TextStyle(
+                                  //                 color: Colors.black,
+                                  //                 fontSize: 12)))
                                 ],
                               ),
                             ),
@@ -172,42 +175,117 @@ class _CartScreenState extends State<CartScreen> {
                         ),
                         const SizedBox(height: 10),
                         Expanded(
-                            child: Padding(
-                                padding:
-                                    EdgeInsets.only(bottom: size.height * 0.10),
-                                child: ListView.separated(
-                                    itemCount: mainData.length,
-                                    padding: EdgeInsets.zero,
-                                    separatorBuilder:
-                                        (BuildContext context, int index) =>
-                                            const Divider(
-                                                height: 3, color: Colors.grey),
-                                    itemBuilder: (context, index) {
-                                      return itemContainer(
-                                          index,
-                                          mainData,
-                                          mainData[index]['id'].toString(),
-                                          mainData[index]['cart_id'].toString(),
-                                          mainData[index]['product_name']
-                                              .toString(),
-                                          mainData[index]['product_image']
-                                              .toString(),
-                                          mainData[index]['quantity']
-                                              .toString(),
-                                          mainData[index]['amount'].toString(),
-                                          mainData[index]['offer_price']
-                                              .toString(),
-                                          mainData[index]['short_description']
-                                              .toString(),
-                                          (parse(parse(mainData[index]
-                                                              ['group_price']
-                                                          .toString())
-                                                      .body
-                                                      .text)
-                                                  .documentElement
-                                                  .text)
-                                              .toString());
-                                    })))
+                            child: Column(
+                          children: [
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height / 2.15,
+                              child: Padding(
+                                  padding: EdgeInsets.only(bottom: 20),
+                                  child: ListView.separated(
+                                      itemCount: mainData.length,
+                                      padding: EdgeInsets.zero,
+                                      separatorBuilder:
+                                          (BuildContext context, int index) =>
+                                              const Divider(
+                                                  height: 3,
+                                                  color: Colors.grey),
+                                      itemBuilder: (context, index) {
+                                        return itemContainer(
+                                            index,
+                                            mainData,
+                                            mainData[index]['id'].toString(),
+                                            mainData[index]['cart_id']
+                                                .toString(),
+                                            mainData[index]['product_name']
+                                                .toString(),
+                                            mainData[index]['product_image']
+                                                .toString(),
+                                            mainData[index]['quantity']
+                                                .toString(),
+                                            mainData[index]['amount']
+                                                .toString(),
+                                            mainData[index]['offer_price']
+                                                .toString(),
+                                            mainData[index]['short_description']
+                                                .toString(),
+                                            (parse(parse(mainData[index]
+                                                                ['group_price']
+                                                            .toString())
+                                                        .body
+                                                        .text)
+                                                    .documentElement
+                                                    .text)
+                                                .toString());
+                                      })),
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 12, right: 12),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: Colors.indigo,
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text("Sub-Total",
+                                              style: TextStyle(
+                                                  color: Colors.white)),
+                                          Text("\u20B9 " + subtotal,
+                                              style: TextStyle(
+                                                  color: Colors.white)),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text("Delivery",
+                                              style: TextStyle(
+                                                  color: Colors.white)),
+                                          Text("\u20B9 " + delevivery,
+                                              style: TextStyle(
+                                                  color: Colors.white)),
+                                        ],
+                                      ),
+                                      Column(
+                                        children: taxList
+                                            .map((e) => Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      e['title'].toString() +
+                                                          " (%" +
+                                                          e['rate'].toString() +
+                                                          ")",
+                                                      style: TextStyle(
+                                                          color: Colors.white),
+                                                    ),
+                                                    Text(
+                                                      "\u20B9 " +
+                                                          e['tax_amount']
+                                                              .toString(),
+                                                      style: TextStyle(
+                                                          color: Colors.white),
+                                                    )
+                                                  ],
+                                                ))
+                                            .toList(),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        )),
                       ],
                     ),
                   ),
@@ -586,11 +664,15 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
+  List taxList = [];
+  String delevivery = "-";
+  String subtotal = "-";
   Future<void> _getCartData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String mytoken = prefs.getString('token').toString();
     var response = await http.post(Uri.parse(BASE_URL + cartlist),
         headers: {'Authorization': 'Bearer $mytoken'});
+    // print(response.body);
     if (response.statusCode == 200) {
       if (json.decode(response.body)['ErrorCode'].toString() != "0") {
         setState(() {
@@ -598,11 +680,45 @@ class _CartScreenState extends State<CartScreen> {
           prefs.setString('cartcount', "0");
         });
       } else {
+        print(response.body);
+        List data = [];
+        Map map = jsonDecode(response.body)['Response']['tax'];
+
+        map.forEach((key, value) {
+          if (isNumeric(key.toString())) {
+            print(key);
+            data.add(key.toString());
+          }
+        });
+
+        setState(() {
+          taxList.clear();
+        });
+        data.forEach((element) {
+          setState(() {
+            taxList.add(map[element.toString()]);
+          });
+        });
+        print(taxList);
+        setState(() {
+          delevivery = "";
+          delevivery =
+              jsonDecode(response.body)['Response']['delivery_fee'].toString();
+          subtotal = "";
+          subtotal =
+              jsonDecode(response.body)['Response']['sub_total'].toString();
+        });
+        print(delevivery);
+
         setState(() {
           totalprice =
               json.decode(response.body)['Response']['total_price'].toString();
           address =
               json.decode(response.body)['Response']['address'].toString();
+          addressType = "";
+          addressType =
+              json.decode(response.body)['Response']['address_type'].toString();
+
           userwallet =
               json.decode(response.body)['Response']['user_wallet'].toString();
           cashback = (parse(parse(json
@@ -625,6 +741,13 @@ class _CartScreenState extends State<CartScreen> {
     } else {
       throw Exception('Failed to get data due to ${response.body}');
     }
+  }
+
+  bool isNumeric(String s) {
+    if (s == null) {
+      return false;
+    }
+    return int.tryParse(s) != null;
   }
 
   Future<bool> _addtocart(

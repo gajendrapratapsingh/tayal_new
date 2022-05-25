@@ -4,6 +4,9 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tayal/components/loader.dart';
 import 'package:tayal/models/profiledata.dart';
@@ -28,7 +31,9 @@ class _PaymentStatementScreenState extends State<PaymentStatementScreen>
   TabController _tabController;
 
   List lastTenTrans = [];
+  static const platform = const MethodChannel("razorpay_flutter");
 
+  Razorpay _razorpay;
   @override
   void initState() {
     // TODO: implement initState
@@ -46,12 +51,17 @@ class _PaymentStatementScreenState extends State<PaymentStatementScreen>
         (_) => _lastTenTransaction().then((value) => setState(() {
               lastTenTrans.addAll(value);
             })));
+    _razorpay = Razorpay();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
   }
 
   @override
   void dispose() {
     _tabController.dispose();
     super.dispose();
+    _razorpay.clear();
   }
 
   @override
@@ -194,6 +204,7 @@ class _PaymentStatementScreenState extends State<PaymentStatementScreen>
                                               .toString(),
                                       style: TextStyle(
                                           color: Colors.grey, fontSize: 12)),
+
                                   // Text(
                                   //     'Payment Mode - ' +
                                   //         lastTenTrans[index]['payment_method'],
@@ -284,7 +295,50 @@ class _PaymentStatementScreenState extends State<PaymentStatementScreen>
                           style: TextStyle(color: Colors.white, fontSize: 16)),
                     ),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () async {
+                        bool movePayment = false;
+                        for (var element in lastTenTrans) {
+                          if (element['checked']) {
+                            movePayment = true;
+                            break;
+                          }
+                        }
+
+                        if (movePayment) {
+                          List temp = [];
+                          for (var element in lastTenTrans) {
+                            if (element['checked']) {
+                              temp.add(element['id']);
+                            }
+                          }
+
+                          print(temp);
+                          showLaoding(context);
+                          SharedPreferences prefs =
+                              await SharedPreferences.getInstance();
+                          String mytoken = prefs.getString('token').toString();
+                          print(jsonEncode({"order_ids": temp}));
+                          var response = await http.post(
+                              Uri.parse(BASE_URL + paymentsettlement),
+                              headers: {
+                                'Authorization': 'Bearer $mytoken',
+                                'Content-Type': 'application/json'
+                              },
+                              body: jsonEncode({"order_ids": temp}));
+                          Navigator.of(context).pop();
+                          if (response.statusCode == 200) {
+                            openCheckout(jsonDecode(response.body)['Response']
+                                    ['razorpay_order_id']
+                                .toString());
+                          } else {
+                            Fluttertoast.showToast(
+                                msg: "Payment Failed. Try Again");
+                          }
+                        } else {
+                          Fluttertoast.showToast(
+                              msg: "Please select alteast one payment");
+                        }
+                      },
                       style: ButtonStyle(
                           backgroundColor:
                               MaterialStateProperty.all(Colors.white)),
@@ -326,7 +380,8 @@ class _PaymentStatementScreenState extends State<PaymentStatementScreen>
       List temp = jsonDecode(response.body)['Response']['order_id'];
 
       temp.forEach((element) {
-        if (element['payment_status'] == "pending") {
+        if (element['payment_status'] == "pending" &&
+            element['payment_method'] == "Cash on delivery") {
           element['checked'] = true;
           data.add(element);
 
@@ -338,5 +393,69 @@ class _PaymentStatementScreenState extends State<PaymentStatementScreen>
       return data;
     }
     return [];
+  }
+
+  void openCheckout(orderid) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    print(orderid + "test");
+    try {
+      var options = {
+        'key': 'rzp_test_MhKrOdDQM8C8PL',
+        //'key': 'rzp_test_MhKrOdDQM8C8PL',
+        //'key': 'rzp_live_BFMsXWTfZmdTnn',
+        // 'amount': ((int.parse(amount)) * 100)
+        // .toString(), //in the smallest currency sub-unit.
+        'name': 'Tayal',
+        'order_id': orderid,
+        //"reference_id": orderid.toString(),
+        'description': '',
+        'timeout': 600, // in seconds
+        'prefill': {
+          'contact': prefs.getString('mobile'),
+          'email': prefs.getString('email')
+        }
+      };
+      _razorpay.open(options);
+    } catch (e) {
+      print("test2-----" + e.toString());
+    }
+  }
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) async {
+    showLaoding(context);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String mytoken = prefs.getString('token').toString();
+    var response1 = await http
+        .post(Uri.parse(BASE_URL + paymentsettlementupdate), headers: {
+      'Authorization': 'Bearer $mytoken'
+    }, body: {
+      "razorpay_order_id": response.orderId.toString(),
+      "razorpay_transaction_id": response.paymentId.toString(),
+      "status": "success"
+    });
+    Navigator.of(context).pop();
+    if (response1.statusCode == 200) {
+      Fluttertoast.showToast(msg: "Payment Successfull");
+      _lastTenTransaction().then((value) => setState(() {
+            lastTenTrans.clear();
+            lastTenTrans.addAll(value);
+          }));
+    } else {
+      Fluttertoast.showToast(msg: "Playment Filed");
+    }
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    print('Error Response: $response');
+    /* Fluttertoast.showToast(
+        msg: "ERROR: " + response.code.toString() + " - " + response.message!,
+        toastLength: Toast.LENGTH_SHORT); */
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    print('External SDK Response: $response');
+    /* Fluttertoast.showToast(
+        msg: "EXTERNAL_WALLET: " + response.walletName!,
+        toastLength: Toast.LENGTH_SHORT); */
   }
 }

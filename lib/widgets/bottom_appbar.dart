@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:tayal/views/campaign_screen.dart';
 import 'package:tayal/views/dashboard_screen.dart';
 import 'package:tayal/views/help_screen.dart';
 import 'package:tayal/views/mybiz_screen.dart';
@@ -55,7 +56,10 @@ class _MyBottomAppBarState extends State<MyBottomAppBar> {
               ),
               SizedBox.shrink(),
               InkWell(
-                onTap: () {},
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => CampaignScreen()));
+                },
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

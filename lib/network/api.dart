@@ -37,7 +37,7 @@ const String wallettxn = "wallet/transaction";
 const String wallettxnstatement = "transaction-statement";
 const String ordertimeline = "order-timeline";
 const String txnstatement = "payment-transaction-list";
-const String ledger = "";
+const String ledger = "ledger/transaction-history";
 const String paymenttransactionfilter = "payment-transaction-filter";
 const String faqs = "faqs";
 const String dashboardapi = "user-dashboard";
@@ -45,3 +45,9 @@ const String raisedTicket = "customer-query/new-query";
 const String raisedTicketList = "customer-query/all-query-conversation";
 const String fetchqueryconversation = "customer-query/query-conversation";
 const String postqueryconversation = "customer-query/comment-on-query";
+const String referrallist = "referrals";
+const String campaign = "annual-campaign";
+const String paymentsettlement =
+    "payment-settlement/payment-settlement-order-generate";
+const String paymentsettlementupdate =
+    "payment-settlement/payment-settlement-order-update";
