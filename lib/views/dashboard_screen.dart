@@ -3,11 +3,13 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -24,6 +26,8 @@ import 'package:tayal/views/payment_statement_screen.dart';
 import 'package:tayal/views/wallet_statement_screen.dart';
 import 'package:tayal/widgets/bottom_appbar.dart';
 import 'package:tayal/widgets/navigation_drawer_widget.dart';
+
+import '../main.dart';
 
 class DashBoardScreen extends StatefulWidget {
   const DashBoardScreen({Key key}) : super(key: key);
@@ -50,10 +54,73 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     {'label': 'year', 'selected': false}
   ];
 
+  int _counter = 0;
+  void showNotification() {
+    setState(() {
+      _counter++;
+    });
+    flutterLocalNotificationsPlugin.show(
+        0,
+        "Testing $_counter",
+        "How you doin ?",
+        NotificationDetails(
+            android: AndroidNotificationDetails(channel.id, channel.name,
+                importance: Importance.high,
+                color: Colors.blue,
+                playSound: true,
+                icon: '@mipmap/ic_launcher')));
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+      RemoteNotification notification = message.notification;
+      AndroidNotification android = message.notification?.android;
+      if (notification != null && android != null) {
+        flutterLocalNotificationsPlugin.show(
+            notification.hashCode,
+            notification.title.toString(),
+            notification.body.toString(),
+            NotificationDetails(
+              android: AndroidNotificationDetails(
+                channel.id,
+                channel.name,
+                color: Colors.blue,
+                playSound: true,
+                icon: '@mipmap/ic_launcher',
+                fullScreenIntent: true,
+              ),
+            ),
+            payload: "");
+      }
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
+      print("onMessageOpenedApp");
+      RemoteNotification notification = message.notification;
+      AndroidNotification android = message.notification?.android;
+      if (notification != null && android != null) {
+        flutterLocalNotificationsPlugin.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            NotificationDetails(
+              android: AndroidNotificationDetails(
+                channel.id,
+                channel.name,
+                color: Colors.blue,
+                playSound: true,
+                icon: '@mipmap/ic_launcher',
+                fullScreenIntent: true,
+              ),
+            ),
+            payload: "");
+      }
+    });
+
     Future<List<ProfileResponse>> temp = _getprofile();
     temp.then((value) async {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -73,19 +140,19 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       key: _scaffoldKey,
       backgroundColor: kBackgroundShapeColor,
       drawer: NavigationDrawerWidget(),
-      floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => CategoryScreen()));
-          },
-          backgroundColor: Colors.indigo,
-          child: Icon(Icons.add)),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: BottomAppBar(
-        shape: CircularNotchedRectangle(),
-        color: Color(0xffBCBEFD),
-        child: MyBottomAppBar(),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //     onPressed: () {
+      //       Navigator.of(context).pushReplacement(
+      //           MaterialPageRoute(builder: (context) => CategoryScreen()));
+      //     },
+      //     backgroundColor: Colors.indigo,
+      //     child: Icon(Icons.add)),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      // bottomNavigationBar: BottomAppBar(
+      //   shape: CircularNotchedRectangle(),
+      //   color: Color(0xffBCBEFD),
+      //   child: MyBottomAppBar(),
+      // ),
       body: Stack(
         children: [
           Padding(

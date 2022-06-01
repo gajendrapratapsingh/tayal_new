@@ -68,7 +68,12 @@ dependencies:
   flutter_fortune_wheel: ^1.2.0
   never_behind_keyboard: ^1.0.1
   loadmore: ^2.0.1
-
+  firebase_messaging: ^11.4.1
+  flutter_local_notifications: ^9.5.3+1
+  firebase_core: ^1.13.1
+  convex_bottom_bar: ^3.0.0
+  url_launcher: ^6.1.2
+  flutter_share: ^2.0.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

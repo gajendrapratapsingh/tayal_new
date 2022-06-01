@@ -11,10 +11,12 @@ import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:http/http.dart' as http;
+import 'package:tayal/helper/dialog_helper.dart';
 import 'package:tayal/network/api.dart';
 import 'package:tayal/themes/constant.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 import 'package:tayal/views/dashboard_screen.dart';
+import 'package:tayal/helper/dialog_helper.dart';
 
 class CampaignScreen extends StatefulWidget {
   const CampaignScreen({Key key}) : super(key: key);
@@ -83,25 +85,14 @@ class _CampaignScreenState extends State<CampaignScreen> {
               padding: EdgeInsets.only(top: 20),
               child: Column(
                 children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          _willPopCallback();
-                        },
-                        child: SvgPicture.asset('assets/images/back.svg',
-                            fit: BoxFit.fill),
-                      ),
-                      SizedBox(width: MediaQuery.of(context).size.width * 0.12),
-                      const Text("Campaign",
+                  Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Text("Campaign",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontStyle: FontStyle.normal,
                               fontSize: 21,
-                              fontWeight: FontWeight.bold)),
-                    ],
-                  ),
+                              fontWeight: FontWeight.bold))),
                   Expanded(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -262,6 +253,7 @@ class _CampaignScreenState extends State<CampaignScreen> {
                               onFling: () {
                                 selected.add(1);
                               },
+
                               /*indicators: const <FortuneIndicator>[
                           FortuneIndicator(
                             alignment: Alignment(0, -1.5),
@@ -344,6 +336,7 @@ class _CampaignScreenState extends State<CampaignScreen> {
   Future _getcampaigndata() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String mytoken = prefs.getString('token').toString();
+    print(mytoken);
     var response = await http.post(Uri.parse(BASE_URL + campaign), headers: {
       'Authorization': 'Bearer $mytoken',
       'Content-Type': 'application/json'
@@ -369,10 +362,5 @@ class _CampaignScreenState extends State<CampaignScreen> {
     } else {
       throw Exception('Failed to get data due to ${response.body}');
     }
-  }
-
-  Future<bool> _willPopCallback() async {
-    return Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => DashBoardScreen()));
   }
 }

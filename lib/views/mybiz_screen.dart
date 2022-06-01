@@ -85,19 +85,19 @@ class _MyBizScreenState extends State<MyBizScreen> {
       key: _scaffoldKey,
       backgroundColor: kBackgroundShapeColor,
       drawer: NavigationDrawerWidget(),
-      floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => CategoryScreen()));
-          },
-          backgroundColor: Colors.indigo,
-          child: Icon(Icons.add)),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: const BottomAppBar(
-        shape: CircularNotchedRectangle(),
-        color: Color(0xffBCBEFD),
-        child: MyBottomAppBar(),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //     onPressed: () {
+      //       Navigator.of(context).pushReplacement(
+      //           MaterialPageRoute(builder: (context) => CategoryScreen()));
+      //     },
+      //     backgroundColor: Colors.indigo,
+      //     child: Icon(Icons.add)),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      // bottomNavigationBar: const BottomAppBar(
+      //   shape: CircularNotchedRectangle(),
+      //   color: Color(0xffBCBEFD),
+      //   child: MyBottomAppBar(),
+      // ),
       body: Stack(children: [
         Padding(
           padding: EdgeInsets.only(top: 30),

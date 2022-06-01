@@ -523,107 +523,107 @@ class _PaymentOptionsScreenState extends State<PaymentOptionsScreen> {
                           ),
                         ),
                         SizedBox(height: 15),
-                        Card(
-                          elevation: 4.0,
-                          color: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            side: BorderSide(color: Colors.white, width: 1),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 10.0, left: 12.0, right: 12.0),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const Text("Cash on delivery",
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 14.0,
-                                                fontWeight: FontWeight.w500)),
-                                        SizedBox(height: 4.0),
-                                        SizedBox(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.75,
-                                            child: const Text(
-                                                "Pay cash at the time of delivery. We recommend you use online payments for contactless delivery",
-                                                maxLines: 3,
-                                                style: TextStyle(
-                                                    color: Colors.grey,
-                                                    fontSize: 12.0))),
-                                        const SizedBox(height: 4.0),
-                                        // selectedIndex == 1
-                                        //     ? Text(
-                                        //         "Payable Amount: \u20B9 $payableAmount",
-                                        //         style: TextStyle(
-                                        //             color: Colors.black,
-                                        //             fontSize: 14.0))
-                                        //     : Container()
-                                        Text(
-                                            "Payable Amount: \u20B9 " +
-                                                double.parse(payableAmount)
-                                                    .toStringAsFixed(2)
-                                                    .toString(),
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 14.0))
-                                      ],
-                                    ),
-                                    CustomRadioButton(2)
-                                  ],
-                                ),
-                              ),
-                              SizedBox(height: 5.0),
-                              Visibility(
-                                visible: _cashVisibility,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 10.0, right: 10.0, bottom: 10.0),
-                                  child: InkWell(
-                                    onTap: () {
-                                      _placeorder();
-                                    },
-                                    child: Container(
-                                      height: 55.0,
-                                      width: double.infinity,
-                                      child: Card(
-                                        elevation: 4.0,
-                                        color: Colors.indigo,
-                                        shape: RoundedRectangleBorder(
-                                          side: BorderSide(
-                                              color: Colors.indigo, width: 1),
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                        child: const Padding(
-                                          padding: EdgeInsets.only(top: 15.0),
-                                          child: Text("PLACE ORDER",
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.w500)),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
+                        // Card(
+                        //   elevation: 4.0,
+                        //   color: Colors.white,
+                        //   shape: RoundedRectangleBorder(
+                        //     side: BorderSide(color: Colors.white, width: 1),
+                        //     borderRadius: BorderRadius.circular(10),
+                        //   ),
+                        //   child: Column(
+                        //     crossAxisAlignment: CrossAxisAlignment.start,
+                        //     children: [
+                        //       Padding(
+                        //         padding: const EdgeInsets.only(
+                        //             top: 10.0, left: 12.0, right: 12.0),
+                        //         child: Row(
+                        //           mainAxisAlignment:
+                        //               MainAxisAlignment.spaceBetween,
+                        //           crossAxisAlignment: CrossAxisAlignment.start,
+                        //           children: [
+                        //             Column(
+                        //               mainAxisAlignment:
+                        //                   MainAxisAlignment.start,
+                        //               crossAxisAlignment:
+                        //                   CrossAxisAlignment.start,
+                        //               children: [
+                        //                 const Text("Cash on delivery",
+                        //                     style: TextStyle(
+                        //                         color: Colors.black,
+                        //                         fontSize: 14.0,
+                        //                         fontWeight: FontWeight.w500)),
+                        //                 SizedBox(height: 4.0),
+                        //                 SizedBox(
+                        //                     width: MediaQuery.of(context)
+                        //                             .size
+                        //                             .width *
+                        //                         0.75,
+                        //                     child: const Text(
+                        //                         "Pay cash at the time of delivery. We recommend you use online payments for contactless delivery",
+                        //                         maxLines: 3,
+                        //                         style: TextStyle(
+                        //                             color: Colors.grey,
+                        //                             fontSize: 12.0))),
+                        //                 const SizedBox(height: 4.0),
+                        //                 // selectedIndex == 1
+                        //                 //     ? Text(
+                        //                 //         "Payable Amount: \u20B9 $payableAmount",
+                        //                 //         style: TextStyle(
+                        //                 //             color: Colors.black,
+                        //                 //             fontSize: 14.0))
+                        //                 //     : Container()
+                        //                 Text(
+                        //                     "Payable Amount: \u20B9 " +
+                        //                         double.parse(payableAmount)
+                        //                             .toStringAsFixed(2)
+                        //                             .toString(),
+                        //                     style: TextStyle(
+                        //                         color: Colors.black,
+                        //                         fontSize: 14.0))
+                        //               ],
+                        //             ),
+                        //             CustomRadioButton(2)
+                        //           ],
+                        //         ),
+                        //       ),
+                        //       SizedBox(height: 5.0),
+                        //       Visibility(
+                        //         visible: _cashVisibility,
+                        //         child: Padding(
+                        //           padding: const EdgeInsets.only(
+                        //               left: 10.0, right: 10.0, bottom: 10.0),
+                        //           child: InkWell(
+                        //             onTap: () {
+                        //               _placeorder();
+                        //             },
+                        //             child: Container(
+                        //               height: 55.0,
+                        //               width: double.infinity,
+                        //               child: Card(
+                        //                 elevation: 4.0,
+                        //                 color: Colors.indigo,
+                        //                 shape: RoundedRectangleBorder(
+                        //                   side: BorderSide(
+                        //                       color: Colors.indigo, width: 1),
+                        //                   borderRadius:
+                        //                       BorderRadius.circular(10),
+                        //                 ),
+                        //                 child: const Padding(
+                        //                   padding: EdgeInsets.only(top: 15.0),
+                        //                   child: Text("PLACE ORDER",
+                        //                       textAlign: TextAlign.center,
+                        //                       style: TextStyle(
+                        //                           color: Colors.white,
+                        //                           fontWeight: FontWeight.w500)),
+                        //                 ),
+                        //               ),
+                        //             ),
+                        //           ),
+                        //         ),
+                        //       )
+                        //     ],
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tayal/views/account_verified_screen.dart';
+import 'package:tayal/views/dashboard.dart';
 import 'package:tayal/views/dashboard_screen.dart';
 import 'package:tayal/views/intro_screen.dart';
 import 'package:tayal/views/login_screen.dart';
@@ -21,7 +22,6 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
   bool _loggedIn = false;
   final splashDelay = 3;
 
@@ -53,35 +53,34 @@ class _SplashScreenState extends State<SplashScreen> {
     return Timer(_duration, navigationPage);
   }
 
-  void navigationPage() async{
+  void navigationPage() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       loginsuccess = prefs.getString('loginsuccess');
     });
     //Get.off(homeOrLog());
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => homeOrLog()));
+    Navigator.pushReplacement(context,
+        MaterialPageRoute(builder: (BuildContext context) => homeOrLog()));
   }
 
   Widget homeOrLog() {
     if (this._loggedIn) {
       return IntroScreen();
     } else {
-      if(loginsuccess == "true"){
-         return DashBoardScreen();
-      }
-      else{
+      if (loginsuccess == "true") {
+        return Dashboard();
+      } else {
         return LoginScreen();
       }
-
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Center(
-           child: Image.asset('assets/images/logo_image.png', fit: BoxFit.fill, scale: 1)
-        ),
+      body: Center(
+          child: Image.asset('assets/images/logo_image.png',
+              fit: BoxFit.fill, scale: 1)),
     );
   }
 }

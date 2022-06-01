@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:connectivity/connectivity.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_svg/flutter_svg.dart';
@@ -9,10 +10,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tayal/network/api.dart';
 import 'package:tayal/themes/constant.dart';
 import 'package:tayal/views/account_verified_screen.dart';
+import 'package:tayal/views/dashboard.dart';
 import 'package:tayal/views/dashboard_screen.dart';
 
 class OtpScreen extends StatefulWidget {
-
   String phone;
   String otp;
   String type;
@@ -23,7 +24,6 @@ class OtpScreen extends StatefulWidget {
 }
 
 class _OtpScreenState extends State<OtpScreen> {
-
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   String userotp;
@@ -37,11 +37,17 @@ class _OtpScreenState extends State<OtpScreen> {
 
   String _connectionStatus = 'Unknown';
   final Connectivity _connectivity = Connectivity();
-
+  String fcmToken = "";
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    FirebaseMessaging.instance.getToken().then((value) {
+      setState(() {
+        fcmToken = value.toString();
+        print(fcmToken);
+      });
+    });
     initConnectivity();
   }
 
@@ -67,8 +73,12 @@ class _OtpScreenState extends State<OtpScreen> {
         setState(() {
           _connectionStatus = result.toString();
         });
-        if(_connectionStatus.toString() == ConnectivityResult.none.toString()){
-          _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text("Please check your internet connection.", style: TextStyle(color: Colors.white)),backgroundColor: Colors.red));
+        if (_connectionStatus.toString() ==
+            ConnectivityResult.none.toString()) {
+          _scaffoldKey.currentState.showSnackBar(SnackBar(
+              content: Text("Please check your internet connection.",
+                  style: TextStyle(color: Colors.white)),
+              backgroundColor: Colors.red));
         }
         break;
       default:
@@ -119,7 +129,8 @@ class _OtpScreenState extends State<OtpScreen> {
                             ),
                           ),
                           const Padding(
-                            padding: const EdgeInsets.only(left: 15.0,  top: 5.0, right: 25.0),
+                            padding: const EdgeInsets.only(
+                                left: 15.0, top: 5.0, right: 25.0),
                             child: Align(
                               alignment: Alignment.topLeft,
                               child: Text("We sent you an SMS code",
@@ -131,20 +142,30 @@ class _OtpScreenState extends State<OtpScreen> {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(left: 15.0,  top: 5.0, right: 25.0),
-                            child: Align(
-                              alignment: Alignment.topLeft,
-                              child: Row(
-                                 children: [
-                                    Text("On number:", style: TextStyle(color: Colors.black, fontSize: 12)),
-                                    SizedBox(width: 5.0),
-                                    Text("+91 $phone", style: TextStyle(color: Colors.indigo, fontSize: 12),)
-                                 ],
-                              )
-                           )
-                          ),
+                              padding: const EdgeInsets.only(
+                                  left: 15.0, top: 5.0, right: 25.0),
+                              child: Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Row(
+                                    children: [
+                                      Text("On number:",
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 12)),
+                                      SizedBox(width: 5.0),
+                                      Text(
+                                        "+91 $phone",
+                                        style: TextStyle(
+                                            color: Colors.indigo, fontSize: 12),
+                                      )
+                                    ],
+                                  ))),
                           Padding(
-                            padding: const EdgeInsets.only(left: 60.0, top: 80.0, right: 60.0, bottom: 10.0),
+                            padding: const EdgeInsets.only(
+                                left: 60.0,
+                                top: 80.0,
+                                right: 60.0,
+                                bottom: 10.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -156,7 +177,11 @@ class _OtpScreenState extends State<OtpScreen> {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(left: 60.0, top: 20.0, right: 60.0, bottom: 10.0),
+                            padding: const EdgeInsets.only(
+                                left: 60.0,
+                                top: 20.0,
+                                right: 60.0,
+                                bottom: 10.0),
                             child: Container(
                               margin: const EdgeInsets.symmetric(vertical: 10),
                               width: size.width * 0.9,
@@ -167,20 +192,21 @@ class _OtpScreenState extends State<OtpScreen> {
                             ),
                           ),
                           InkWell(
-                            onTap: (){
-                               if(type == "login"){
-                                 _sendloginotp(phone);
-                               }
-                               else{
-                                 _sendregisterotp(phone);
-                               }
+                            onTap: () {
+                              if (type == "login") {
+                                _sendloginotp(phone);
+                              } else {
+                                _sendregisterotp(phone);
+                              }
                             },
                             child: const Padding(
-                                padding: EdgeInsets.only(top: 20.0, bottom: 10.0),
-                                child: Text("Code not received?", textAlign: TextAlign.center, style: TextStyle(color: Colors.indigo, fontSize: 12))
-                            ),
+                                padding:
+                                    EdgeInsets.only(top: 20.0, bottom: 10.0),
+                                child: Text("Code not received?",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Colors.indigo, fontSize: 12))),
                           )
-
                         ],
                       ),
                     ),
@@ -223,14 +249,13 @@ class _OtpScreenState extends State<OtpScreen> {
               if (value.length == 0 && first == false) {
                 FocusScope.of(context).previousFocus();
               }
-              if(userotp == null || userotp == ""){
+              if (userotp == null || userotp == "") {
                 setState(() {
-                   userotp = value;
+                  userotp = value;
                 });
-              }
-              else{
+              } else {
                 setState(() {
-                  userotp = userotp+value;
+                  userotp = userotp + value;
                 });
               }
               print(userotp);
@@ -243,11 +268,10 @@ class _OtpScreenState extends State<OtpScreen> {
             keyboardType: TextInputType.number,
             maxLength: 1,
             decoration: InputDecoration(
-              contentPadding: EdgeInsets.only(bottom: 2.0),
-              counter: Offstage(),
-              hintText: "0",
-              border: InputBorder.none
-            ),
+                contentPadding: EdgeInsets.only(bottom: 2.0),
+                counter: Offstage(),
+                hintText: "0",
+                border: InputBorder.none),
           ),
         ),
       ),
@@ -260,12 +284,15 @@ class _OtpScreenState extends State<OtpScreen> {
         "Submit",
         style: TextStyle(color: Colors.white),
       ),
-      onPressed: (){
-        if(_connectionStatus.toString() == ConnectivityResult.none.toString()){
-          _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text("Please check your internet connection.", style: TextStyle(color: Colors.white)),backgroundColor: Colors.red));
-        }
-        else{
-          _verifyotp(phone, otp);
+      onPressed: () {
+        if (_connectionStatus.toString() ==
+            ConnectivityResult.none.toString()) {
+          _scaffoldKey.currentState.showSnackBar(SnackBar(
+              content: Text("Please check your internet connection.",
+                  style: TextStyle(color: Colors.white)),
+              backgroundColor: Colors.red));
+        } else {
+          _verifyotp(phone, otp, fcmToken);
           /*if(userotp != otp){
             print(userotp);
             print(otp);
@@ -276,43 +303,42 @@ class _OtpScreenState extends State<OtpScreen> {
             _verifyotp(phone, otp);
           }*/
         }
-
       },
       style: ElevatedButton.styleFrom(
           primary: Colors.indigo,
           padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-          textStyle: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500)),
+          textStyle: const TextStyle(
+              color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500)),
     );
   }
 
-  Future _verifyotp(String phone, String otp) async {
-    SharedPreferences prefs =  await SharedPreferences.getInstance();
+  Future _verifyotp(String phone, String otp, String fcm) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-       _loading = true;
+      _loading = true;
     });
-    var res = await http.post(Uri.parse(BASE_URL + verifyotp),
-      body: {
-        "phone": phone,
-        "otp" : otp
-      },
+    var res = await http.post(
+      Uri.parse(BASE_URL + verifyotp),
+      body: {"phone": phone, "otp": otp, "fcm": fcm.toString()},
     );
+    print(jsonEncode({"phone": phone, "otp": otp, "fcm": fcm.toString()}));
     if (res.statusCode == 200) {
       setState(() {
         _loading = false;
       });
       var data = json.decode(res.body);
-      if(data['ErrorCode'].toString() == "0"){
+      if (data['ErrorCode'].toString() == "0") {
         showToast(data['Response'].toString());
         prefs.setString('token', data['token'].toString());
-        if(type == "login"){
+        if (type == "login") {
           prefs.setString('loginsuccess', "true");
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => DashBoardScreen()));
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => Dashboard()));
+        } else {
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => AccountVerifiedScreen()));
         }
-        else{
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AccountVerifiedScreen()));
-        }
-      }
-      else{}
+      } else {}
     }
   }
 
@@ -320,22 +346,22 @@ class _OtpScreenState extends State<OtpScreen> {
     setState(() {
       _loading = true;
     });
-    var res = await http.post(Uri.parse(BASE_URL + loginsendotp),
+    var res = await http.post(
+      Uri.parse(BASE_URL + loginsendotp),
       body: {
         "phone": phone,
       },
     );
-    if(res.statusCode == 200) {
+    if (res.statusCode == 200) {
       setState(() {
         _loading = false;
       });
       var data = json.decode(res.body);
       print(data);
-      if(data['ErrorCode'].toString() == "100"){
+      if (data['ErrorCode'].toString() == "100") {
         showToast("OTP : ${data['Response']['otp'].toString().trim()}");
       }
-    }
-    else{
+    } else {
       setState(() {
         _loading = false;
       });
@@ -344,18 +370,17 @@ class _OtpScreenState extends State<OtpScreen> {
   }
 
   Future _sendregisterotp(String phone) async {
-    var res = await http.post(Uri.parse(BASE_URL + sendotp),
+    var res = await http.post(
+      Uri.parse(BASE_URL + sendotp),
       body: {
         "phone": phone,
       },
     );
     if (res.statusCode == 200) {
       var data = json.decode(res.body);
-      if(data['ErrorCode'].toString() == "100"){
+      if (data['ErrorCode'].toString() == "100") {
         showToast("OTP : ${data['Response']['otp'].toString().trim()}");
-      }
-      else{}
+      } else {}
     }
   }
-
 }

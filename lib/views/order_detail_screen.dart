@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unnecessary_new
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unnecessary_new, deprecated_member_use
 
 import 'dart:convert';
 import 'dart:isolate';
@@ -18,6 +18,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tayal/network/api.dart';
 import 'package:tayal/themes/constant.dart';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 
 class OrderDetailScreen extends StatefulWidget {
   String orderid;
@@ -129,7 +130,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                   ),
                   SizedBox(height: 5),
                   Container(
-                      height: size.height * 0.76,
+                      height: size.height * 0.72,
                       width: double.infinity,
                       child: ListView(
                         shrinkWrap: true,
@@ -157,6 +158,16 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                             double.parse(element['offer_price']
                                                 .toString());
                                       });
+
+                                      List tax = [];
+
+                                      Map m = snapshot.data['tax'];
+                                      m.forEach((key, value) {
+                                        if (isNumeric(key.toString())) {
+                                          tax.add(value);
+                                        }
+                                      });
+                                      print(tax);
                                       return Column(
                                         children: [
                                           Container(
@@ -781,167 +792,43 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                                       ],
                                                     ),
                                                   ),
-                                                  // Padding(
-                                                  //   padding:
-                                                  //       EdgeInsets.symmetric(
-                                                  //           horizontal: 10),
-                                                  //   child: Row(
-                                                  //     mainAxisAlignment:
-                                                  //         MainAxisAlignment
-                                                  //             .spaceBetween,
-                                                  //     children: [
-                                                  //       Text(snapshot.data[
-                                                  //                   'tax']["2"][""],
-                                                  //           style: TextStyle(
-                                                  //               color:
-                                                  //                   Colors.grey,
-                                                  //               fontSize: 14)),
-                                                  //       snapshot.data[
-                                                  //                   'tax'] ==
-                                                  //               null
-                                                  //           ? Text("\u20B9 0",
-                                                  //               style: TextStyle(
-                                                  //                   color: Colors
-                                                  //                       .grey,
-                                                  //                   fontSize:
-                                                  //                       14))
-                                                  //           : Text(
-                                                  //               "\u20B9 " +
-                                                  //                   snapshot
-                                                  //                       .data[
-                                                  //                           'tax']
-                                                  //                       .toString(),
-                                                  //               style: TextStyle(
-                                                  //                   color: Colors
-                                                  //                       .grey,
-                                                  //                   fontSize:
-                                                  //                       14))
-                                                  //     ],
-                                                  //   ),
-                                                  // ),
-
-                                                  Padding(
-                                                    padding: const EdgeInsets
-                                                        .fromLTRB(10, 2, 10, 2),
-                                                    child: Column(
-                                                      children: [
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceBetween,
-                                                          children: [
-                                                            Text(
-                                                                "SGST (" +
-                                                                    snapshot
-                                                                        .data[
-                                                                            'tax']
-                                                                            [
-                                                                            '2']
-                                                                            [
-                                                                            'rate']
-                                                                        .toString() +
-                                                                    " %)",
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .grey,
-                                                                    fontSize:
-                                                                        14)),
-                                                            Text(
-                                                                "\u20B9 " +
-                                                                    snapshot
-                                                                        .data[
-                                                                            'tax']
-                                                                            [
-                                                                            '2']
-                                                                            [
-                                                                            'tax_amount']
-                                                                        .toString(),
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .grey,
-                                                                    fontSize:
-                                                                        14))
-                                                          ],
+                                                  tax.length == 0
+                                                      ? SizedBox()
+                                                      : Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .fromLTRB(
+                                                                  10, 2, 10, 2),
+                                                          child: Column(
+                                                            children: tax
+                                                                .map(
+                                                                  (e) => Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .spaceBetween,
+                                                                    children: [
+                                                                      Text(
+                                                                          e['title'].toString() +
+                                                                              " (" +
+                                                                              e['rate']
+                                                                                  .toString() +
+                                                                              ")",
+                                                                          style: TextStyle(
+                                                                              color: Colors.grey,
+                                                                              fontSize: 14)),
+                                                                      Text(
+                                                                          "\u20B9 " +
+                                                                              e['tax_amount']
+                                                                                  .toString(),
+                                                                          style: TextStyle(
+                                                                              color: Colors.grey,
+                                                                              fontSize: 14))
+                                                                    ],
+                                                                  ),
+                                                                )
+                                                                .toList(),
+                                                          ),
                                                         ),
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceBetween,
-                                                          children: [
-                                                            Text(
-                                                                "CGST (" +
-                                                                    snapshot
-                                                                        .data[
-                                                                            'tax']
-                                                                            [
-                                                                            '1']
-                                                                            [
-                                                                            'rate']
-                                                                        .toString() +
-                                                                    " %)",
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .grey,
-                                                                    fontSize:
-                                                                        14)),
-                                                            Text(
-                                                                "\u20B9 " +
-                                                                    snapshot
-                                                                        .data[
-                                                                            'tax']
-                                                                            [
-                                                                            '1']
-                                                                            [
-                                                                            'tax_amount']
-                                                                        .toString(),
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .grey,
-                                                                    fontSize:
-                                                                        14))
-                                                          ],
-                                                        ),
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceBetween,
-                                                          children: [
-                                                            Text(
-                                                                "IGST (" +
-                                                                    snapshot
-                                                                        .data[
-                                                                            'tax']
-                                                                            [
-                                                                            '0']
-                                                                            [
-                                                                            'rate']
-                                                                        .toString() +
-                                                                    " %)",
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .grey,
-                                                                    fontSize:
-                                                                        14)),
-                                                            Text(
-                                                                "\u20B9 " +
-                                                                    snapshot
-                                                                        .data[
-                                                                            'tax']
-                                                                            [
-                                                                            '0']
-                                                                            [
-                                                                            'tax_amount']
-                                                                        .toString(),
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .grey,
-                                                                    fontSize:
-                                                                        14))
-                                                          ],
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
                                                   const Padding(
                                                     padding:
                                                         const EdgeInsets.only(
@@ -1001,19 +888,24 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
               left: 0,
               bottom: 0,
               right: 0,
-              child: Container(
-                height: 45,
-                color: Colors.indigo,
-                alignment: Alignment.center,
-                width: double.infinity,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.add_call, color: Colors.white, size: 24),
-                    SizedBox(width: 10),
-                    Text("customer support",
-                        style: TextStyle(color: Colors.white, fontSize: 16))
-                  ],
+              child: InkWell(
+                onTap: () async {
+                  await launch("https://wa.me/9368705182");
+                },
+                child: Container(
+                  height: 30,
+                  color: Colors.indigo,
+                  alignment: Alignment.center,
+                  width: double.infinity,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.add_call, color: Colors.white, size: 24),
+                      SizedBox(width: 10),
+                      Text("customer support",
+                          style: TextStyle(color: Colors.white, fontSize: 16))
+                    ],
+                  ),
                 ),
               ))
         ],
@@ -1029,7 +921,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
     };
     var response = await http.post(Uri.parse(BASE_URL + orderdetail),
         body: body, headers: {'Authorization': 'Bearer $mytoken'});
-    print(response.body);
+
     if (response.statusCode == 200) {
       var data = json.decode(response.body)['Response'];
       return data;
@@ -1377,5 +1269,12 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                   );
                           })),
                 ])));
+  }
+
+  bool isNumeric(String s) {
+    if (s == null) {
+      return false;
+    }
+    return int.tryParse(s) != null;
   }
 }

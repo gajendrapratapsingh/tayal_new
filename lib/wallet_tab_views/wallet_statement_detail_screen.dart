@@ -25,12 +25,19 @@ class _WalletStatementTabScrrenState extends State<WalletStatementTabScrren> {
   List<dynamic> _txnlist = [];
 
   int _value = 0;
-
+  bool isLoading = true;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    // _gettxndata(startDate, endDate, "tilldate");
+    setState(() {
+      startDate = DateTime(DateTime.now().year, DateTime.now().month, 1)
+          .toString()
+          .split(" ")[0];
+      endDate = DateTime.now().toString().split(" ")[0];
+    });
+
+    _gettxndata(startDate, endDate, "datewise");
   }
 
   @override
@@ -183,51 +190,55 @@ class _WalletStatementTabScrrenState extends State<WalletStatementTabScrren> {
             Expanded(
                 child: Padding(
               padding: EdgeInsets.only(bottom: 45.0),
-              child: _txnlist.isEmpty || _txnlist.length == 0
-                  ? Padding(
-                      padding: EdgeInsets.only(bottom: size.height * 0.08),
-                      child: Center(
-                        child: Text("Data not found",
-                            style:
-                                TextStyle(color: Colors.black, fontSize: 16)),
-                      ),
+              child: isLoading
+                  ? Center(
+                      child: CircularProgressIndicator(),
                     )
-                  : ListView.separated(
-                      itemCount: _txnlist.length,
-                      padding: EdgeInsets.zero,
-                      separatorBuilder: (BuildContext context, int index) =>
-                          const Divider(height: 1, color: Colors.grey),
-                      itemBuilder: (BuildContext context, int index) {
-                        if (_txnlist.isEmpty || _txnlist.length == 0) {
-                          return Center(
-                              child: CircularProgressIndicator(
-                                  color: Colors.indigo));
-                        } else {
-                          return ListTile(
-                            title: Text(
-                                '${_txnlist[index]['created_at'].toString()}',
+                  : _txnlist.isEmpty || _txnlist.length == 0
+                      ? Padding(
+                          padding: EdgeInsets.only(bottom: size.height * 0.08),
+                          child: Center(
+                            child: Text("Data not found",
                                 style: TextStyle(
-                                    color: Colors.indigo.shade400,
-                                    fontSize: 16)),
-                            subtitle: Text(
-                                '${_txnlist[index]['description'].toString()}',
-                                style: const TextStyle(
-                                    color: Colors.grey, fontSize: 12)),
-                            trailing: _txnlist[index]['transaction_type']
-                                        .toString() ==
-                                    "credit"
-                                ? Text(
-                                    '\u20B9 ${_txnlist[index]['points'].toString()} Cr',
+                                    color: Colors.black, fontSize: 16)),
+                          ),
+                        )
+                      : ListView.separated(
+                          itemCount: _txnlist.length,
+                          padding: EdgeInsets.zero,
+                          separatorBuilder: (BuildContext context, int index) =>
+                              const Divider(height: 1, color: Colors.grey),
+                          itemBuilder: (BuildContext context, int index) {
+                            if (_txnlist.isEmpty || _txnlist.length == 0) {
+                              return Center(
+                                  child: CircularProgressIndicator(
+                                      color: Colors.indigo));
+                            } else {
+                              return ListTile(
+                                title: Text(
+                                    '${_txnlist[index]['created_at'].toString()}',
+                                    style: TextStyle(
+                                        color: Colors.indigo.shade400,
+                                        fontSize: 16)),
+                                subtitle: Text(
+                                    '${_txnlist[index]['description'].toString()}',
                                     style: const TextStyle(
-                                        color: Colors.green, fontSize: 12))
-                                : Text(
-                                    '\u20B9 ${_txnlist[index]['points'].toString()} Dr',
-                                    style: const TextStyle(
-                                        color: Colors.red, fontSize: 12)),
-                          );
-                        }
-                      },
-                    ),
+                                        color: Colors.grey, fontSize: 12)),
+                                trailing: _txnlist[index]['transaction_type']
+                                            .toString() ==
+                                        "credit"
+                                    ? Text(
+                                        '\u20B9 ${_txnlist[index]['points'].toString()} Cr',
+                                        style: const TextStyle(
+                                            color: Colors.green, fontSize: 12))
+                                    : Text(
+                                        '\u20B9 ${_txnlist[index]['points'].toString()} Dr',
+                                        style: const TextStyle(
+                                            color: Colors.red, fontSize: 12)),
+                              );
+                            }
+                          },
+                        ),
             )),
           ],
         ),
@@ -371,9 +382,11 @@ class _WalletStatementTabScrrenState extends State<WalletStatementTabScrren> {
       });
   }
 
-  bool isLoading = false;
   Future _gettxndata(
       String startdate, String enddate, String filtertype) async {
+    setState(() {
+      isLoading = true;
+    });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String mytoken = prefs.getString('token').toString();
     print(jsonEncode({
@@ -390,6 +403,9 @@ class _WalletStatementTabScrrenState extends State<WalletStatementTabScrren> {
           'Authorization': 'Bearer $mytoken',
           'Content-Type': 'application/json'
         });
+    setState(() {
+      isLoading = false;
+    });
     if (response.statusCode == 200) {
       if (json.decode(response.body)['ErrorCode'].toString() == "0") {
         if (filtertype == "datewise") {

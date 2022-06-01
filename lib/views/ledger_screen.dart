@@ -271,7 +271,7 @@ class _LedgerStatementScreenState extends State<LedgerStatementScreen>
             ),
           ),
           Container(
-              height: MediaQuery.of(context).size.height / 1.6,
+              height: MediaQuery.of(context).size.height / 1.7,
               child: isLoading
                   ? Center(
                       child: CircularProgressIndicator(),

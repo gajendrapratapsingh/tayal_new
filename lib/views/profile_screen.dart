@@ -4,14 +4,18 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tayal/helper/dialog_helper.dart';
+import 'package:tayal/main.dart';
 import 'package:tayal/models/profiledata.dart';
 import 'package:tayal/network/api.dart';
 import 'package:tayal/themes/constant.dart';
+import 'package:tayal/views/dashboard.dart';
 import 'package:tayal/views/dashboard_screen.dart';
 import 'package:tayal/views/profile_detail_screen.dart';
 
@@ -34,6 +38,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
     Future<List<ProfileResponse>> temp = _getprofile();
     temp.then((value) {
       setState(() {
@@ -68,7 +73,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       children: [
                         InkWell(
                           onTap: () {
-                            _willPopCallback();
+                            Navigator.of(context).pop();
                           },
                           child: SvgPicture.asset('assets/images/back.svg',
                               fit: BoxFit.fill),
@@ -331,7 +336,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
       ),
-      onWillPop: _willPopCallback,
+      onWillPop: () async {
+        Navigator.of(context).pop();
+      },
     );
   }
 
@@ -478,10 +485,5 @@ class _ProfileScreenState extends State<ProfileScreen> {
     setState(() {
       _profilepath = image.path;
     });
-  }
-
-  Future<bool> _willPopCallback() async {
-    return Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => DashBoardScreen()));
   }
 }

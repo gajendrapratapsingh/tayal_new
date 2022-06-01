@@ -1,4 +1,4 @@
-package com.example.tayal
+package com.tayal.tayalFintech
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -11,6 +11,7 @@ import 'package:tayal/network/api.dart';
 import 'package:tayal/themes/constant.dart';
 import 'package:http/http.dart' as http;
 import 'package:tayal/views/report_issue.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HelpScreen extends StatefulWidget {
   const HelpScreen({Key key}) : super(key: key);
@@ -57,23 +58,14 @@ class _HelpScreenState extends State<HelpScreen> {
             padding: EdgeInsets.only(top: 30),
             child: Column(
               children: [
-                Row(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    InkWell(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: SvgPicture.asset('assets/images/back.svg',
-                            fit: BoxFit.fill)),
-                    SizedBox(width: MediaQuery.of(context).size.width * 0.18),
-                    Text("Help",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontStyle: FontStyle.normal,
-                            fontSize: 21,
-                            fontWeight: FontWeight.bold)),
-                  ],
+                Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Text("Help",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontStyle: FontStyle.normal,
+                          fontSize: 21,
+                          fontWeight: FontWeight.bold)),
                 ),
                 Expanded(
                   child: Padding(
@@ -194,25 +186,45 @@ class _HelpScreenState extends State<HelpScreen> {
           // ),
         ],
       ),
-      bottomSheet: InkWell(
-        onTap: () {
-          // showOrderTracking();
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => ReportIssues()));
-        },
-        child: Container(
-          height: 55,
-          // width: double.infinity,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: Colors.indigo,
+      bottomSheet: Container(
+        height: 55,
+        // width: double.infinity,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          // borderRadius: BorderRadius.only(
+          //   topLeft: Radius.circular(10),
+          //   topRight: Radius.circular(10),
+          // ),
+          color: Colors.indigo,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              InkWell(
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => ReportIssues()));
+                },
+                child: const Text("Report and Issue",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16)),
+              ),
+              InkWell(
+                  onTap: () async {
+                    await launch("https://wa.me/9368705182");
+                  },
+                  child: Icon(
+                    Icons.whatsapp_rounded,
+                    color: Colors.white,
+                    size: 30,
+                  )),
+            ],
           ),
-          child: const Text("Report and Issue",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18)),
         ),
       ),
     );

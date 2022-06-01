@@ -29,7 +29,7 @@ class _PaymentStatementScreenState extends State<PaymentStatementScreen>
   String walletblnc = "";
   double pendingTotal = 0;
   TabController _tabController;
-
+  bool isLoading = true;
   List lastTenTrans = [];
   static const platform = const MethodChannel("razorpay_flutter");
 
@@ -47,10 +47,15 @@ class _PaymentStatementScreenState extends State<PaymentStatementScreen>
 
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(() => setState(() {}));
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => _lastTenTransaction().then((value) => setState(() {
-              lastTenTrans.addAll(value);
-            })));
+    // WidgetsBinding.instance.addPostFrameCallback(
+    //     (_) => _lastTenTransaction().then((value) => setState(() {
+    //           lastTenTrans.addAll(value);
+    //         })));
+    _lastTenTransaction().then((value) => setState(() {
+          isLoading = false;
+          lastTenTrans.clear();
+          lastTenTrans.addAll(value);
+        }));
     _razorpay = Razorpay();
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
@@ -173,82 +178,106 @@ class _PaymentStatementScreenState extends State<PaymentStatementScreen>
                 child: TabBarView(
               controller: _tabController,
               children: [
-                lastTenTrans.length == 0
+                isLoading
                     ? Center(
-                        child: Text("Date not found"),
+                        child: CircularProgressIndicator(),
                       )
-                    : ListView.separated(
-                        itemCount: lastTenTrans.length,
-                        padding: EdgeInsets.zero,
-                        separatorBuilder: (BuildContext context, int index) =>
-                            const Divider(height: 1, color: Colors.grey),
-                        itemBuilder: (BuildContext context, int index) {
-                          if (lastTenTrans.isEmpty ||
-                              lastTenTrans.length == 0) {
-                            return Center(
-                                child: CircularProgressIndicator(
-                                    color: Colors.indigo));
-                          } else {
-                            return ListTile(
-                              title: Text(
-                                  lastTenTrans[index]['created_at'].toString(),
-                                  style: TextStyle(
-                                      color: Colors.indigo.shade400,
-                                      fontSize: 16)),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                      'Order Id - ' +
-                                          lastTenTrans[index]['order_id']
+                    : lastTenTrans.length == 0
+                        ? Center(
+                            child: Text("Date not found"),
+                          )
+                        : ListView.separated(
+                            itemCount: lastTenTrans.length,
+                            padding: EdgeInsets.zero,
+                            separatorBuilder: (BuildContext context,
+                                    int index) =>
+                                const Divider(height: 1, color: Colors.grey),
+                            itemBuilder: (BuildContext context, int index) {
+                              if (lastTenTrans.isEmpty ||
+                                  lastTenTrans.length == 0) {
+                                return Center(
+                                    child: CircularProgressIndicator(
+                                        color: Colors.indigo));
+                              } else {
+                                return ListTile(
+                                  title: Text(
+                                      lastTenTrans[index]['created_at']
+                                          .toString(),
+                                      style: TextStyle(
+                                          color: Colors.indigo.shade400,
+                                          fontSize: 16)),
+                                  subtitle: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                          'Order Id - ' +
+                                              lastTenTrans[index]['order_id']
+                                                  .toString(),
+                                          style: TextStyle(
+                                              color: Colors.grey,
+                                              fontSize: 12)),
+
+                                      // Text(
+                                      //     'Payment Mode - ' +
+                                      //         lastTenTrans[index]['payment_method'],
+                                      //     style: TextStyle(
+                                      //         color: Colors.grey, fontSize: 12)),
+                                      Text(
+                                          'Status - ' +
+                                              lastTenTrans[index]
+                                                      ['payment_status']
+                                                  .toString()
+                                                  .toUpperCase(),
+                                          style: TextStyle(
+                                              color: Colors.grey,
+                                              fontSize: 12)),
+                                    ],
+                                  ),
+                                  onTap: () {
+                                    if (lastTenTrans[index]['checked'] ==
+                                        true) {
+                                      setState(() {
+                                        lastTenTrans[index]['checked'] = false;
+                                        selectAll = false;
+                                      });
+                                    } else {
+                                      setState(() {
+                                        lastTenTrans[index]['checked'] = true;
+                                      });
+                                      int totalCheck = 0;
+                                      lastTenTrans.forEach((element) {
+                                        if (element['checked'] == true) {
+                                          totalCheck = totalCheck + 1;
+                                        }
+                                      });
+                                      if (totalCheck == lastTenTrans.length) {
+                                        setState(() {
+                                          selectAll = true;
+                                        });
+                                      }
+                                    }
+                                  },
+                                  minLeadingWidth: 2,
+                                  leading: lastTenTrans[index]['checked']
+                                      ? Icon(
+                                          Icons.check_box,
+                                          color: Colors.grey,
+                                        )
+                                      : Icon(
+                                          Icons.check_box_outline_blank,
+                                          color: Colors.grey,
+                                        ),
+                                  trailing: Text(
+                                      '\u20B9 ' +
+                                          lastTenTrans[index]['amount']
                                               .toString(),
                                       style: TextStyle(
-                                          color: Colors.grey, fontSize: 12)),
-
-                                  // Text(
-                                  //     'Payment Mode - ' +
-                                  //         lastTenTrans[index]['payment_method'],
-                                  //     style: TextStyle(
-                                  //         color: Colors.grey, fontSize: 12)),
-                                  Text(
-                                      'Status - ' +
-                                          lastTenTrans[index]['payment_status']
-                                              .toString()
-                                              .toUpperCase(),
-                                      style: TextStyle(
-                                          color: Colors.grey, fontSize: 12)),
-                                ],
-                              ),
-                              onTap: () {
-                                if (lastTenTrans[index]['checked'] == true) {
-                                  setState(() {
-                                    lastTenTrans[index]['checked'] = false;
-                                  });
-                                } else {
-                                  setState(() {
-                                    lastTenTrans[index]['checked'] = true;
-                                  });
-                                }
-                              },
-                              minLeadingWidth: 2,
-                              leading: lastTenTrans[index]['checked']
-                                  ? Icon(
-                                      Icons.check_box,
-                                      color: Colors.grey,
-                                    )
-                                  : Icon(
-                                      Icons.check_box_outline_blank,
-                                      color: Colors.grey,
-                                    ),
-                              trailing: Text(
-                                  '\u20B9 ' +
-                                      lastTenTrans[index]['amount'].toString(),
-                                  style: TextStyle(
-                                      color: Colors.red, fontSize: 12)),
-                            );
-                          }
-                        },
-                      ),
+                                          color: Colors.red, fontSize: 12)),
+                                );
+                              }
+                            },
+                          ),
                 PaymentStatementTabScreen()
               ],
             ))
@@ -256,7 +285,7 @@ class _PaymentStatementScreenState extends State<PaymentStatementScreen>
         ),
         bottomSheet: _tabController.index == 0
             ? Container(
-                height: 70,
+                height: 50,
                 width: double.infinity,
                 color: Colors.indigo,
                 alignment: Alignment.center,
@@ -312,12 +341,9 @@ class _PaymentStatementScreenState extends State<PaymentStatementScreen>
                             }
                           }
 
-                          print(temp);
-                          showLaoding(context);
                           SharedPreferences prefs =
                               await SharedPreferences.getInstance();
                           String mytoken = prefs.getString('token').toString();
-                          print(jsonEncode({"order_ids": temp}));
                           var response = await http.post(
                               Uri.parse(BASE_URL + paymentsettlement),
                               headers: {
@@ -325,7 +351,7 @@ class _PaymentStatementScreenState extends State<PaymentStatementScreen>
                                 'Content-Type': 'application/json'
                               },
                               body: jsonEncode({"order_ids": temp}));
-                          Navigator.of(context).pop();
+
                           if (response.statusCode == 200) {
                             openCheckout(jsonDecode(response.body)['Response']
                                     ['razorpay_order_id']
@@ -369,13 +395,14 @@ class _PaymentStatementScreenState extends State<PaymentStatementScreen>
   }
 
   Future<List> _lastTenTransaction() async {
-    showLaoding(context);
+    // showLaoding(context);
     List data = [];
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String mytoken = prefs.getString('token').toString();
     var response = await http.post(Uri.parse(BASE_URL + txnstatement),
         headers: {'Authorization': 'Bearer $mytoken'});
-    Navigator.of(context).pop();
+    // Navigator.of(context).pop();
+
     if (response.statusCode == 200) {
       List temp = jsonDecode(response.body)['Response']['order_id'];
 
@@ -392,6 +419,7 @@ class _PaymentStatementScreenState extends State<PaymentStatementScreen>
 
       return data;
     }
+
     return [];
   }
 
@@ -422,7 +450,6 @@ class _PaymentStatementScreenState extends State<PaymentStatementScreen>
   }
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) async {
-    showLaoding(context);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String mytoken = prefs.getString('token').toString();
     var response1 = await http
@@ -433,12 +460,15 @@ class _PaymentStatementScreenState extends State<PaymentStatementScreen>
       "razorpay_transaction_id": response.paymentId.toString(),
       "status": "success"
     });
-    Navigator.of(context).pop();
     if (response1.statusCode == 200) {
+      setState(() {
+        isLoading = true;
+      });
       Fluttertoast.showToast(msg: "Payment Successfull");
       _lastTenTransaction().then((value) => setState(() {
             lastTenTrans.clear();
             lastTenTrans.addAll(value);
+            isLoading = false;
           }));
     } else {
       Fluttertoast.showToast(msg: "Playment Filed");

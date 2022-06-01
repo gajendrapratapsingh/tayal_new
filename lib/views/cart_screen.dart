@@ -1,8 +1,12 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -10,6 +14,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:html/parser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tayal/components/loader.dart';
+import 'package:tayal/helper/dialog_helper.dart';
 import 'package:tayal/models/cartlistdata.dart';
 import 'package:tayal/network/api.dart';
 import 'package:http/http.dart' as http;
@@ -37,6 +42,7 @@ class _CartScreenState extends State<CartScreen> {
   String nodata = "";
   List mainData = [];
   String addressType = "Home-";
+  bool isLoading = true;
   @override
   void initState() {
     // TODO: implement initState
@@ -51,364 +57,426 @@ class _CartScreenState extends State<CartScreen> {
     totalitems = int.parse(prefs.getString('cartcount'));
   }
 
+  TextStyle textStyle = TextStyle(color: Colors.white, fontSize: 12);
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return WillPopScope(
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        backgroundColor: kBackgroundShapeColor,
-        body: nodata == "" || nodata == null
-            ? Stack(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(top: 30),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisSize: MainAxisSize.max,
+        child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          backgroundColor: kBackgroundShapeColor,
+          body: isLoading
+              ? Center(
+                  child: CircularProgressIndicator(),
+                )
+              : nodata == "" || nodata == null
+                  ? Padding(
+                      padding: EdgeInsets.only(top: 10),
+                      child: SingleChildScrollView(
+                        child: Column(
                           children: [
-                            InkWell(
-                              onTap: () {
-                                _willPopCallback();
-                              },
-                              child: SvgPicture.asset('assets/images/back.svg',
-                                  fit: BoxFit.fill),
+                            Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: SvgPicture.asset(
+                                      'assets/images/back.svg',
+                                      fit: BoxFit.fill),
+                                ),
+                                SizedBox(
+                                    width: MediaQuery.of(context).size.width *
+                                        0.14),
+                                const Text("My Cart",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontStyle: FontStyle.normal,
+                                        fontSize: 21,
+                                        fontWeight: FontWeight.bold)),
+                              ],
                             ),
-                            SizedBox(
-                                width:
-                                    MediaQuery.of(context).size.width * 0.14),
-                            const Text("My Cart",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontStyle: FontStyle.normal,
-                                    fontSize: 21,
-                                    fontWeight: FontWeight.bold)),
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 0.0, horizontal: 5.0),
-                          child: Card(
-                            color: Colors.indigo.shade100,
-                            elevation: 0.0,
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 10, horizontal: 10),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 0.0, horizontal: 5.0),
+                              child: Card(
+                                color: Colors.indigo.shade100,
+                                elevation: 0.0,
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 10, horizontal: 10),
+                                  child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Icon(Icons.location_on_outlined,
-                                          color: Colors.black, size: 20),
-                                      SizedBox(width: 2),
-                                      Expanded(
-                                          child: Text(
-                                              "Deliver to : " + addressType)),
-                                      GestureDetector(
-                                        onTap: () {},
-                                        child: Container(
-                                          height: 25,
-                                          width: 90,
-                                          alignment: Alignment.center,
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(6.0),
-                                              border: Border.all(
-                                                  color: Colors.indigo,
-                                                  width: 1)),
-                                          child: GestureDetector(
-                                            child: Text(
-                                              address != null
-                                                  ? 'Change'
-                                                  : 'Add New',
-                                              style: const TextStyle(
-                                                color: Colors.indigo,
-                                                fontSize: 11,
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Icon(Icons.location_on_outlined,
+                                              color: Colors.black, size: 20),
+                                          SizedBox(width: 2),
+                                          Expanded(
+                                              child: Text("Deliver to : " +
+                                                  addressType)),
+                                          GestureDetector(
+                                            onTap: () {},
+                                            child: Container(
+                                              height: 25,
+                                              width: 90,
+                                              alignment: Alignment.center,
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          6.0),
+                                                  border: Border.all(
+                                                      color: Colors.indigo,
+                                                      width: 1)),
+                                              child: GestureDetector(
+                                                child: Text(
+                                                  address != null
+                                                      ? 'Change'
+                                                      : 'Add New',
+                                                  style: const TextStyle(
+                                                    color: Colors.indigo,
+                                                    fontSize: 11,
+                                                  ),
+                                                ),
+                                                onTap: () {
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              ChangeAddressPage()));
+                                                },
                                               ),
                                             ),
-                                            onTap: () {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          ChangeAddressPage()));
-                                            },
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  // SizedBox(
-                                  //     width: MediaQuery.of(context).size.width *
-                                  //         0.65,
-                                  //     child: address == null || address == ""
-                                  //         ? Text("")
-                                  //         : Text(
-                                  //             address.toString().toUpperCase(),
-                                  //             style: TextStyle(
-                                  //                 color: Colors.black,
-                                  //                 fontSize: 12)))
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        const Padding(
-                          padding: EdgeInsets.only(left: 10),
-                          child: Align(
-                            alignment: Alignment.topLeft,
-                            child: Text(
-                              'Cart Items',
-                              textAlign: TextAlign.left,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Expanded(
-                            child: Column(
-                          children: [
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height / 2.15,
-                              child: Padding(
-                                  padding: EdgeInsets.only(bottom: 20),
-                                  child: ListView.separated(
-                                      itemCount: mainData.length,
-                                      padding: EdgeInsets.zero,
-                                      separatorBuilder:
-                                          (BuildContext context, int index) =>
-                                              const Divider(
-                                                  height: 3,
-                                                  color: Colors.grey),
-                                      itemBuilder: (context, index) {
-                                        return itemContainer(
-                                            index,
-                                            mainData,
-                                            mainData[index]['id'].toString(),
-                                            mainData[index]['cart_id']
-                                                .toString(),
-                                            mainData[index]['product_name']
-                                                .toString(),
-                                            mainData[index]['product_image']
-                                                .toString(),
-                                            mainData[index]['quantity']
-                                                .toString(),
-                                            mainData[index]['amount']
-                                                .toString(),
-                                            mainData[index]['offer_price']
-                                                .toString(),
-                                            mainData[index]['short_description']
-                                                .toString(),
-                                            (parse(parse(mainData[index]
-                                                                ['group_price']
-                                                            .toString())
-                                                        .body
-                                                        .text)
-                                                    .documentElement
-                                                    .text)
-                                                .toString());
-                                      })),
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 12, right: 12),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.indigo,
-                                    borderRadius: BorderRadius.circular(10)),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text("Sub-Total",
-                                              style: TextStyle(
-                                                  color: Colors.white)),
-                                          Text("\u20B9 " + subtotal,
-                                              style: TextStyle(
-                                                  color: Colors.white)),
+                                          )
                                         ],
                                       ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text("Delivery",
-                                              style: TextStyle(
-                                                  color: Colors.white)),
-                                          Text("\u20B9 " + delevivery,
-                                              style: TextStyle(
-                                                  color: Colors.white)),
-                                        ],
-                                      ),
-                                      Column(
-                                        children: taxList
-                                            .map((e) => Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      e['title'].toString() +
-                                                          " (%" +
-                                                          e['rate'].toString() +
-                                                          ")",
-                                                      style: TextStyle(
-                                                          color: Colors.white),
-                                                    ),
-                                                    Text(
-                                                      "\u20B9 " +
-                                                          e['tax_amount']
-                                                              .toString(),
-                                                      style: TextStyle(
-                                                          color: Colors.white),
-                                                    )
-                                                  ],
-                                                ))
-                                            .toList(),
-                                      ),
+                                      // SizedBox(
+                                      //     width: MediaQuery.of(context).size.width *
+                                      //         0.65,
+                                      //     child: address == null || address == ""
+                                      //         ? Text("")
+                                      //         : Text(
+                                      //             address.toString().toUpperCase(),
+                                      //             style: TextStyle(
+                                      //                 color: Colors.black,
+                                      //                 fontSize: 12)))
                                     ],
                                   ),
                                 ),
                               ),
                             ),
-                          ],
-                        )),
-                      ],
-                    ),
-                  ),
-                  Positioned(
-                      left: 10,
-                      right: 10,
-                      bottom: 20,
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => PaymentOptionsScreen(
-                                      payableAmount: totalprice,
-                                      walletAmount: userwallet,
-                                      cashBack: cashback)));
-                        },
-                        child: Container(
-                          height: 50,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            color: Colors.indigo,
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 10),
-                            child: Row(
+                            const SizedBox(height: 10),
+                            const Padding(
+                              padding: EdgeInsets.only(left: 10),
+                              child: Align(
+                                alignment: Alignment.topLeft,
+                                child: Text(
+                                  'Cart Items',
+                                  textAlign: TextAlign.left,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Column(
                               children: [
-                                totalitems.toString() == "1"
-                                    ? Text(totalitems.toString() + " Item",
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.white,
-                                        ))
-                                    : Text(totalitems.toString() + " Items",
-                                        style: const TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w500)),
-                                const SizedBox(width: 10),
-                                const Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 5),
-                                  child: VerticalDivider(
-                                      width: 2, color: Colors.white),
+                                SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height / 1.95,
+                                  child: Padding(
+                                      padding: EdgeInsets.only(bottom: 20),
+                                      child: ListView.separated(
+                                          itemCount: mainData.length,
+                                          padding: EdgeInsets.zero,
+                                          separatorBuilder:
+                                              (BuildContext context,
+                                                      int index) =>
+                                                  const Divider(
+                                                      height: 3,
+                                                      color: Colors.grey),
+                                          itemBuilder: (context, index) {
+                                            return itemContainer(
+                                                index,
+                                                mainData,
+                                                mainData[index]['id']
+                                                    .toString(),
+                                                mainData[index]['cart_id']
+                                                    .toString(),
+                                                mainData[index]['product_name']
+                                                    .toString(),
+                                                mainData[index]['product_image']
+                                                    .toString(),
+                                                mainData[index]['quantity']
+                                                    .toString(),
+                                                mainData[index]['amount']
+                                                    .toString(),
+                                                mainData[index]['offer_price']
+                                                    .toString(),
+                                                mainData[index]
+                                                        ['short_description']
+                                                    .toString(),
+                                                (parse(parse(mainData[index][
+                                                                    'group_price']
+                                                                .toString())
+                                                            .body
+                                                            .text)
+                                                        .documentElement
+                                                        .text)
+                                                    .toString());
+                                          })),
                                 ),
-                                SizedBox(width: 10),
-                                Expanded(
-                                  child: Text(
-                                    totalprice.toString() != null
-                                        ? "\u20B9 $totalprice"
-                                        : 0.toString(),
-                                    style: const TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 16),
+                                InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                PaymentOptionsScreen(
+                                                    payableAmount: totalprice,
+                                                    walletAmount: userwallet,
+                                                    cashBack: cashback)));
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        color: Colors.indigo,
+                                        borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(10),
+                                            topRight: Radius.circular(10))),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(10),
+                                      child: Column(
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text("Sub-Total",
+                                                  style: textStyle),
+                                              Text("\u20B9 " + subtotal,
+                                                  style: textStyle),
+                                            ],
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text("Delivery",
+                                                  style: textStyle),
+                                              Text("\u20B9 " + delevivery,
+                                                  style: textStyle),
+                                            ],
+                                          ),
+                                          Column(
+                                            children: taxList
+                                                .map((e) => Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Text(
+                                                          e['title']
+                                                                  .toString() +
+                                                              " (%" +
+                                                              e['rate']
+                                                                  .toString() +
+                                                              ")",
+                                                          style: textStyle,
+                                                        ),
+                                                        Text(
+                                                          "\u20B9 " +
+                                                              e['tax_amount']
+                                                                  .toString(),
+                                                          style: textStyle,
+                                                        )
+                                                      ],
+                                                    ))
+                                                .toList(),
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              totalitems.toString() == "1"
+                                                  ? Text(
+                                                      totalitems.toString() +
+                                                          " Item",
+                                                      style: textStyle)
+                                                  : Text(
+                                                      totalitems.toString() +
+                                                          " Items",
+                                                      style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 18)),
+                                              // const SizedBox(width: 10),
+                                              // const Padding(
+                                              //   padding: EdgeInsets.symmetric(
+                                              //       horizontal: 5),
+                                              //   child: VerticalDivider(
+                                              //       width: 2, color: Colors.white),
+                                              // ),
+                                              // SizedBox(width: 10),
+                                              Text(
+                                                totalprice.toString() != null
+                                                    ? "(\u20B9 $totalprice) " +
+                                                        "Pay"
+                                                    : 0.toString(),
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 18),
+                                              )
+
+                                              // const Icon(
+                                              //     Icons.arrow_forward_ios_rounded,
+                                              //     color: Colors.white,
+                                              //     size: 16)
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ),
                                 ),
-                                const Text("Proceed to pay",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500)),
-                                const SizedBox(width: 5),
-                                const Icon(Icons.arrow_forward_ios_rounded,
-                                    color: Colors.white, size: 16)
+                                // InkWell(
+                                //   onTap: () {
+                                //     Navigator.push(
+                                //         context,
+                                //         MaterialPageRoute(
+                                //             builder: (context) =>
+                                //                 PaymentOptionsScreen(
+                                //                     payableAmount: totalprice,
+                                //                     walletAmount: userwallet,
+                                //                     cashBack: cashback)));
+                                //   },
+                                //   child: Container(
+                                //     // height: 50,
+                                //     decoration: BoxDecoration(
+                                //       borderRadius: BorderRadius.circular(12),
+                                //       color: Colors.indigo,
+                                //     ),
+                                //     child: Padding(
+                                //       padding:
+                                //           EdgeInsets.symmetric(horizontal: 10),
+                                //       child: Row(
+                                //         children: [
+                                //           totalitems.toString() == "1"
+                                //               ? Text(
+                                //                   totalitems.toString() + " Item",
+                                //                   style: const TextStyle(
+                                //                     fontSize: 16,
+                                //                     color: Colors.white,
+                                //                   ))
+                                //               : Text(
+                                //                   totalitems.toString() +
+                                //                       " Items",
+                                //                   style: const TextStyle(
+                                //                       fontSize: 16,
+                                //                       color: Colors.white,
+                                //                       fontWeight:
+                                //                           FontWeight.w500)),
+                                //           const SizedBox(width: 10),
+                                //           const Padding(
+                                //             padding: EdgeInsets.symmetric(
+                                //                 horizontal: 5),
+                                //             child: VerticalDivider(
+                                //                 width: 2, color: Colors.white),
+                                //           ),
+                                //           SizedBox(width: 10),
+                                //           Expanded(
+                                //             child: Text(
+                                //               totalprice.toString() != null
+                                //                   ? "\u20B9 $totalprice"
+                                //                   : 0.toString(),
+                                //               style: const TextStyle(
+                                //                   color: Colors.white,
+                                //                   fontWeight: FontWeight.w500,
+                                //                   fontSize: 16),
+                                //             ),
+                                //           ),
+                                //           const Text("Proceed to pay",
+                                //               style: TextStyle(
+                                //                   color: Colors.white,
+                                //                   fontSize: 16,
+                                //                   fontWeight: FontWeight.w500)),
+                                //           const SizedBox(width: 5),
+                                //           const Icon(
+                                //               Icons.arrow_forward_ios_rounded,
+                                //               color: Colors.white,
+                                //               size: 16)
+                                //         ],
+                                //       ),
+                                //     ),
+                                //   ),
+                                // )
                               ],
                             ),
-                          ),
-                        ),
-                      ))
-                ],
-              )
-            : Stack(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(top: 30),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                _willPopCallback();
-                              },
-                              child: SvgPicture.asset('assets/images/back.svg',
-                                  fit: BoxFit.fill),
-                            ),
-                            SizedBox(
-                                width:
-                                    MediaQuery.of(context).size.width * 0.14),
-                            const Text("My Cart",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontStyle: FontStyle.normal,
-                                    fontSize: 21,
-                                    fontWeight: FontWeight.bold)),
                           ],
                         ),
+                      ),
+                    )
+                  : Stack(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(top: 30),
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  InkWell(
+                                    onTap: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: SvgPicture.asset(
+                                        'assets/images/back.svg',
+                                        fit: BoxFit.fill),
+                                  ),
+                                  SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.14),
+                                  const Text("My Cart",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontStyle: FontStyle.normal,
+                                          fontSize: 21,
+                                          fontWeight: FontWeight.bold)),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                            height: size.height,
+                            width: size.width,
+                            child: Center(
+                                child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                  Container(
+                                    height: 90,
+                                    width: 90,
+                                    child: Image.asset(
+                                        'assets/images/empty_cart.png'),
+                                  ),
+                                  SizedBox(height: 10),
+                                  Text(nodata.toString().toUpperCase(),
+                                      textAlign: TextAlign.center)
+                                ])))
                       ],
                     ),
-                  ),
-                  Container(
-                      height: size.height,
-                      width: size.width,
-                      child: Center(
-                          child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                            Container(
-                              height: 90,
-                              width: 90,
-                              child:
-                                  Image.asset('assets/images/empty_cart.png'),
-                            ),
-                            SizedBox(height: 10),
-                            Text(nodata.toString().toUpperCase(),
-                                textAlign: TextAlign.center)
-                          ])))
-                ],
-              ),
-      ),
-      onWillPop: _willPopCallback,
-    );
+        ),
+        onWillPop: () async {
+          Navigator.of(context).pop();
+        });
   }
 
   Widget newElevatedButton() {
@@ -542,106 +610,71 @@ class _CartScreenState extends State<CartScreen> {
                           color: Colors.black,
                           fontSize: 14,
                           fontWeight: FontWeight.bold)),
-                  SizedBox(height: 20),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 2.0),
-                    child: Container(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              showLaoding(context);
-                              setState(() {
-                                data[index]['quantity'] =
-                                    (int.parse(qty) - 1).toString();
-                              });
-                              _addtocart(
-                                      data[index]['id'].toString(),
-                                      data[index]['offer_price'].toString(),
-                                      data[index]['quantity'].toString(),
-                                      data[index]['amount'].toString())
-                                  .then((value) {
-                                _getCartData();
-                                Navigator.of(context).pop();
-                              });
-                            },
-                            child: Container(
-                              height: 25,
-                              width: 25,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.black,
-                                  width: 1,
-                                ),
-                                borderRadius: BorderRadius.circular(25 / 2),
-                              ),
-                              child: const Center(
-                                child: Icon(
-                                  Icons.remove,
-                                  size: 20,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Text("$qty",
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 14)),
-                          const SizedBox(width: 10),
-                          InkWell(
-                            onTap: () {
+                  Container(
+                    width: 80,
+                    child: TextFormField(
+                      keyboardType: TextInputType.number,
+                      controller: data[index]["controller"],
+                      onChanged: (val) {
+                        setState(() {
+                          data[index]['quantity'] = int.parse(val);
+                          data[index]['isChange'] = true;
+                        });
+                      },
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      maxLength: 5,
+                      decoration: InputDecoration(
+
+                          // suffix: Icon(
+                          //     Icons.add),
+                          counterText: "",
+                          contentPadding: EdgeInsets.only(left: 5),
+                          isDense: true,
+                          isCollapsed: true,
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(0),
+                              borderSide:
+                                  BorderSide(color: Colors.black, width: 5))),
+                    ),
+                  ),
+                  Container(
+                      width: 80,
+                      height: 20,
+                      child: ElevatedButton(
+                          style: ButtonStyle(
+                              backgroundColor: data[index]['isChange']
+                                  ? MaterialStateProperty.all(Colors.indigo)
+                                  : MaterialStateProperty.all(
+                                      Colors.indigo[300]),
+                              shape: MaterialStateProperty.all<
+                                      RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(0),
+                              )),
+                              padding:
+                                  MaterialStateProperty.all(EdgeInsets.zero)),
+                          onPressed: () {
+                            if (data[index]['isChange']) {
+                              FocusScope.of(context).unfocus();
                               if (data[index]['quantity'] <
                                   data[index]['avaliable_stock']) {
                                 showLaoding(context);
-                                setState(() {
-                                  data[index]['quantity'] =
-                                      (int.parse(qty) + 1).toString();
-                                });
                                 _addtocart(
                                         data[index]['id'].toString(),
                                         data[index]['offer_price'].toString(),
                                         data[index]['quantity'].toString(),
                                         data[index]['amount'].toString())
                                     .then((value) {
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pop();
                                   _getCartData();
-                                  Navigator.of(context).pop();
                                 });
                               } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        duration: Duration(
-                                            seconds: 1, milliseconds: 500),
-                                        backgroundColor: Colors.red,
-                                        content: Text('Stock not available',
-                                            style: TextStyle(
-                                                color: Colors.white))));
+                                Fluttertoast.showToast(msg: "Out of Stock");
                               }
-                            },
-                            child: Container(
-                              height: 25,
-                              width: 25,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.black,
-                                  width: 1,
-                                ),
-                                borderRadius: BorderRadius.circular(25 / 2),
-                              ),
-                              child: const Center(
-                                child: Icon(
-                                  Icons.add,
-                                  size: 20,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                            }
+                          },
+                          child: Text("UPDATE")))
                 ],
               )
             ],
@@ -672,7 +705,10 @@ class _CartScreenState extends State<CartScreen> {
     String mytoken = prefs.getString('token').toString();
     var response = await http.post(Uri.parse(BASE_URL + cartlist),
         headers: {'Authorization': 'Bearer $mytoken'});
-    // print(response.body);
+    print(response.body);
+    setState(() {
+      isLoading = false;
+    });
     if (response.statusCode == 200) {
       if (json.decode(response.body)['ErrorCode'].toString() != "0") {
         setState(() {
@@ -732,6 +768,14 @@ class _CartScreenState extends State<CartScreen> {
           //totalitems = json.decode(response.body)['Response']['items'].length;
         });
         Iterable list = json.decode(response.body)['Response']['items'];
+
+        list.forEach((element) {
+          setState(() {
+            element["controller"] =
+                TextEditingController(text: element['quantity'].toString());
+            element["isChange"] = false;
+          });
+        });
         setState(() {
           mainData.clear();
           mainData = list;
@@ -853,10 +897,5 @@ class _CartScreenState extends State<CartScreen> {
       print(response.body);
       throw Exception('Failed to get data due to ${response.body}');
     }
-  }
-
-  Future<bool> _willPopCallback() async {
-    return Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => CategoryScreen()));
   }
 }

@@ -15,44 +15,54 @@ class TransactionlistScreen extends StatefulWidget {
 
 class _TransactionlistScreenState extends State<TransactionlistScreen> {
   List<dynamic> _txnlist = [];
-  Future _mywallettxn;
-
+  bool isLoading = true;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _mywallettxn = _gettxndata();
+    _gettxndata().then((value) {
+      setState(() {
+        isLoading = false;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView.separated(
-        itemCount: _txnlist.length,
-        padding: EdgeInsets.zero,
-        separatorBuilder: (BuildContext context, int index) =>
-            const Divider(height: 1, color: Colors.grey),
-        itemBuilder: (BuildContext context, int index) {
-          if (_txnlist.isEmpty || _txnlist.length == 0) {
-            return Center(
-                child: CircularProgressIndicator(color: Colors.indigo));
-          } else {
-            return ListTile(
-              title: Text('${_txnlist[index]['created_at'].toString()}',
-                  style:
-                      TextStyle(color: Colors.indigo.shade400, fontSize: 16)),
-              subtitle: Text('${_txnlist[index]['description'].toString()}',
-                  style: TextStyle(color: Colors.grey, fontSize: 12)),
-              trailing: _txnlist[index]['transaction_type'].toString() ==
-                      "credit"
-                  ? Text('\u20B9 ${_txnlist[index]['points'].toString()} Cr',
-                      style: TextStyle(color: Colors.green, fontSize: 12))
-                  : Text('\u20B9 ${_txnlist[index]['points'].toString()} Dr',
-                      style: TextStyle(color: Colors.red, fontSize: 12)),
-            );
-          }
-        },
-      ),
+      body: isLoading
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : ListView.separated(
+              itemCount: _txnlist.length,
+              padding: EdgeInsets.zero,
+              separatorBuilder: (BuildContext context, int index) =>
+                  const Divider(height: 1, color: Colors.grey),
+              itemBuilder: (BuildContext context, int index) {
+                if (_txnlist.isEmpty || _txnlist.length == 0) {
+                  return Center(
+                      child: CircularProgressIndicator(color: Colors.indigo));
+                } else {
+                  return ListTile(
+                    title: Text('${_txnlist[index]['created_at'].toString()}',
+                        style: TextStyle(
+                            color: Colors.indigo.shade400, fontSize: 16)),
+                    subtitle: Text(
+                        '${_txnlist[index]['description'].toString()}',
+                        style: TextStyle(color: Colors.grey, fontSize: 12)),
+                    trailing: _txnlist[index]['transaction_type'].toString() ==
+                            "credit"
+                        ? Text(
+                            '\u20B9 ${_txnlist[index]['points'].toString()} Cr',
+                            style: TextStyle(color: Colors.green, fontSize: 12))
+                        : Text(
+                            '\u20B9 ${_txnlist[index]['points'].toString()} Dr',
+                            style: TextStyle(color: Colors.red, fontSize: 12)),
+                  );
+                }
+              },
+            ),
     );
   }
 

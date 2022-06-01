@@ -213,64 +213,72 @@ class _PaymentStatementTabScreenState extends State<PaymentStatementTabScreen> {
             Expanded(
                 child: Padding(
               padding: EdgeInsets.only(bottom: 45.0),
-              child: _txnlist.length == 0
-                  ? Padding(
-                      padding: EdgeInsets.only(bottom: size.height * 0.08),
-                      child: Center(
-                        child: Text("Data not found",
-                            style:
-                                TextStyle(color: Colors.black, fontSize: 16)),
-                      ),
+              child: isLoading
+                  ? Center(
+                      child: CircularProgressIndicator(),
                     )
-                  : ListView.separated(
-                      itemCount: _txnlist.length,
-                      padding: EdgeInsets.zero,
-                      separatorBuilder: (BuildContext context, int index) =>
-                          const Divider(height: 1, color: Colors.grey),
-                      itemBuilder: (BuildContext context, int index) {
-                        if (_txnlist.isEmpty || _txnlist.length == 0) {
-                          return Center(
-                              child: CircularProgressIndicator(
-                                  color: Colors.indigo));
-                        } else {
-                          return ListTile(
-                              title: Text(
-                                  _txnlist[index]['created_at'].toString(),
-                                  style: TextStyle(
-                                      color: Colors.indigo.shade400,
-                                      fontSize: 16)),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                      'Order Id - ' +
-                                          _txnlist[index]['order_id']
-                                              .toString(),
+                  : _txnlist.length == 0
+                      ? Padding(
+                          padding: EdgeInsets.only(bottom: size.height * 0.08),
+                          child: Center(
+                            child: Text("Data not found",
+                                style: TextStyle(
+                                    color: Colors.black, fontSize: 16)),
+                          ),
+                        )
+                      : ListView.separated(
+                          itemCount: _txnlist.length,
+                          padding: EdgeInsets.zero,
+                          separatorBuilder: (BuildContext context, int index) =>
+                              const Divider(height: 1, color: Colors.grey),
+                          itemBuilder: (BuildContext context, int index) {
+                            if (_txnlist.isEmpty || _txnlist.length == 0) {
+                              return Center(
+                                  child: CircularProgressIndicator(
+                                      color: Colors.indigo));
+                            } else {
+                              return ListTile(
+                                  title: Text(
+                                      _txnlist[index]['created_at'].toString(),
                                       style: TextStyle(
-                                          color: Colors.grey, fontSize: 12)),
-                                  Text(
-                                      'Payment Mode - ' +
-                                          _txnlist[index]['payment_method'],
+                                          color: Colors.indigo.shade400,
+                                          fontSize: 16)),
+                                  subtitle: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                          'Order Id - ' +
+                                              _txnlist[index]['order_id']
+                                                  .toString(),
+                                          style: TextStyle(
+                                              color: Colors.grey,
+                                              fontSize: 12)),
+                                      Text(
+                                          'Payment Mode - ' +
+                                              _txnlist[index]['payment_method'],
+                                          style: TextStyle(
+                                              color: Colors.grey,
+                                              fontSize: 12)),
+                                      Text(
+                                          'Status - ' +
+                                              _txnlist[index]['payment_status']
+                                                  .toString()
+                                                  .toUpperCase(),
+                                          style: TextStyle(
+                                              color: Colors.grey,
+                                              fontSize: 12)),
+                                    ],
+                                  ),
+                                  trailing: Text(
+                                      '\u20B9 ' +
+                                          _txnlist[index]['amount'].toString() +
+                                          ' Cr',
                                       style: TextStyle(
-                                          color: Colors.grey, fontSize: 12)),
-                                  Text(
-                                      'Status - ' +
-                                          _txnlist[index]['payment_status']
-                                              .toString()
-                                              .toUpperCase(),
-                                      style: TextStyle(
-                                          color: Colors.grey, fontSize: 12)),
-                                ],
-                              ),
-                              trailing: Text(
-                                  '\u20B9 ' +
-                                      _txnlist[index]['amount'].toString() +
-                                      ' Cr',
-                                  style: TextStyle(
-                                      color: Colors.green, fontSize: 12)));
-                        }
-                      },
-                    ),
+                                          color: Colors.green, fontSize: 12)));
+                            }
+                          },
+                        ),
             )),
           ],
         ),
@@ -425,9 +433,12 @@ class _PaymentStatementTabScreenState extends State<PaymentStatementTabScreen> {
       });
   }
 
-  bool isLoading = false;
+  bool isLoading = true;
   Future _gettxndata(String startdate, String enddate) async {
-    showLaoding(context);
+    // showLaoding(context);
+    setState(() {
+      isLoading = true;
+    });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String mytoken = prefs.getString('token').toString();
 
@@ -444,8 +455,10 @@ class _PaymentStatementTabScreenState extends State<PaymentStatementTabScreen> {
           'Content-Type': 'application/json'
         });
 
-    Navigator.of(context).pop();
-
+    // Navigator.of(context).pop();
+    setState(() {
+      isLoading = false;
+    });
     if (response.statusCode == 200) {
       if (json.decode(response.body)['ErrorCode'] == 0) {
         // if (filtertype == "datewise") {
@@ -473,13 +486,19 @@ class _PaymentStatementTabScreenState extends State<PaymentStatementTabScreen> {
   }
 
   Future _lastTenTransaction() async {
+    setState(() {
+      isLoading = true;
+    });
     List data = [];
-    showLaoding(context);
+    // showLaoding(context);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String mytoken = prefs.getString('token').toString();
     var response = await http.post(Uri.parse(BASE_URL + txnstatement),
         headers: {'Authorization': 'Bearer $mytoken'});
-    Navigator.of(context).pop();
+    // Navigator.of(context).pop();
+    setState(() {
+      isLoading = false;
+    });
     if (response.statusCode == 200) {
       List temp = jsonDecode(response.body)['Response']['order_id'];
 

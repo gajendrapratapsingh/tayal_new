@@ -9,6 +9,7 @@ import 'package:multi_select_flutter/chip_display/multi_select_chip_display.dart
 import 'package:multi_select_flutter/dialog/mult_select_dialog.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tayal/helper/dialog_helper.dart';
 import 'package:tayal/models/productdata.dart';
 import 'package:tayal/network/api.dart';
 import 'package:tayal/themes/constant.dart';
@@ -157,7 +158,7 @@ class _ProductScreenState extends State<ProductScreen> {
                     children: [
                       InkWell(
                         onTap: () {
-                          _willPopCallback();
+                          Navigator.of(context).pop();
                         },
                         child: SvgPicture.asset('assets/images/back.svg',
                             fit: BoxFit.fill),
@@ -605,7 +606,9 @@ class _ProductScreenState extends State<ProductScreen> {
           ],
         ),
       ),
-      onWillPop: _willPopCallback,
+      onWillPop: () async {
+        Navigator.of(context).pop();
+      },
     );
   }
 
@@ -746,11 +749,6 @@ class _ProductScreenState extends State<ProductScreen> {
           });
         },
         selectedColor: Color(0xffeadffd));
-  }
-
-  Future<bool> _willPopCallback() async {
-    return Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => DashBoardScreen()));
   }
 }
 

@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:tayal/network/api.dart';
+import 'package:tayal/views/dashboard.dart';
 
 class Conversation extends StatefulWidget {
   String query_id;
@@ -73,7 +74,7 @@ class _ConversationState extends State<Conversation> {
             child: Column(
               children: [
                 SizedBox(
-                  height: MediaQuery.of(context).size.height / 1.26,
+                  height: MediaQuery.of(context).size.height / 1.34,
                   child: ListView(
                     reverse: true,
                     scrollDirection: Axis.vertical,

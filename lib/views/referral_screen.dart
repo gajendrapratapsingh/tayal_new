@@ -1,10 +1,12 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_share/flutter_share.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tayal/components/loader.dart';
+import 'package:tayal/helper/dialog_helper.dart';
 import 'package:tayal/models/profiledata.dart';
 import 'package:tayal/network/api.dart';
 import 'package:http/http.dart' as http;
@@ -62,7 +64,7 @@ class _ReferralScreenState extends State<ReferralScreen> {
                     children: [
                       InkWell(
                         onTap: () {
-                          _willPopCallback();
+                          Navigator.of(context).pop();
                         },
                         child: SvgPicture.asset('assets/images/back.svg',
                             fit: BoxFit.fill),
@@ -454,9 +456,16 @@ class _ReferralScreenState extends State<ReferralScreen> {
 
   void _onShare(BuildContext context, String referralcode) async {
     final box = context.findRenderObject() as RenderBox;
-    await Share.share("My Referrral code is : $referralcode",
-        subject: "Referral Code",
-        sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+    await FlutterShare.share(
+        title: 'Referral Code',
+        text: 'Referral Code - ' + referralcode.toString(),
+        linkUrl:
+            'https://play.google.com/store/apps/details?id=com.mri.mrimaster',
+        chooserTitle: 'Referral Code');
+    // await Share.share(
+    //     'My Referrral code is : $referralcode\n<a href="https://www.google.com/">App Link</a>',
+    //     subject: "Referral Code",
+    //     sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
   }
 
   Future<List<ProfileResponse>> _getprofile() async {
@@ -472,10 +481,5 @@ class _ReferralScreenState extends State<ReferralScreen> {
     } else {
       throw Exception('Failed to get data due to ${response.body}');
     }
-  }
-
-  Future<bool> _willPopCallback() async {
-    return Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => MyBizScreen()));
   }
 }

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tayal/helper/dialog_helper.dart';
 import 'package:tayal/network/api.dart';
 import 'package:tayal/themes/constant.dart';
 import 'package:tayal/views/cart_screen.dart';
@@ -73,7 +74,7 @@ class _FavouriteProductScreenState extends State<FavouriteProductScreen> {
                       children: [
                         InkWell(
                           onTap: () {
-                            _willPopCallback();
+                            Navigator.of(context).pop();
                           },
                           child: SvgPicture.asset('assets/images/back.svg',
                               fit: BoxFit.fill),
@@ -516,7 +517,9 @@ class _FavouriteProductScreenState extends State<FavouriteProductScreen> {
             ],
           ),
         ),
-        onWillPop: _willPopCallback);
+        onWillPop: () async {
+          Navigator.of(context).pop();
+        });
   }
 
   Widget showItemWidget() {
@@ -642,10 +645,5 @@ class _FavouriteProductScreenState extends State<FavouriteProductScreen> {
     } else {
       throw Exception('Failed to get data due to ${response.body}');
     }
-  }
-
-  Future<bool> _willPopCallback() async {
-    return Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => DashBoardScreen()));
   }
 }

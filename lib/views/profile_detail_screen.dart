@@ -95,7 +95,7 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                     children: [
                       InkWell(
                         onTap: () {
-                          _willPopCallback();
+                          Navigator.of(context).pop();
                         },
                         child: SvgPicture.asset('assets/images/back.svg',
                             fit: BoxFit.fill),
@@ -753,10 +753,5 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
         } catch (e) {}
       });
     });
-  }
-
-  Future<bool> _willPopCallback() async {
-    return Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => ProfileScreen()));
   }
 }
