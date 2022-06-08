@@ -52,6 +52,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   String rate;
   String amount;
   String offerprice;
+  String tradeprice;
 
   String itemlength;
   String itemwidth;
@@ -295,20 +296,43 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               SizedBox(height: 5),
                               Padding(
                                   padding: EdgeInsets.only(left: 20, right: 20),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                  child: Column(
                                     children: [
-                                      Text("\u20B9 $rate",
-                                          style: TextStyle(
-                                              color: Colors.grey,
-                                              fontSize: 14,
-                                              decoration:
-                                                  TextDecoration.lineThrough)),
-                                      Text("\u20B9 $offerprice",
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 14)),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text("MRP"),
+                                          Text("\u20B9 $rate",
+                                              style: TextStyle(
+                                                  color: Colors.grey,
+                                                  fontSize: 14,
+                                                  decoration: TextDecoration
+                                                      .lineThrough)),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text("DEALER PRICE"),
+                                          Text("\u20B9 $offerprice",
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 14)),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text("SCHEME PRICE"),
+                                          Text("\u20B9 $tradeprice",
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 14)),
+                                        ],
+                                      )
                                     ],
                                   )),
                               groupprice == "" || groupprice == null
@@ -610,6 +634,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           'Authorization': 'Bearer $mytoken',
           'Content-Type': 'application/json'
         });
+    print(productid);
     print(response.statusCode);
     if (response.statusCode == 200) {
       setState(() {
@@ -639,6 +664,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             json.decode(response.body)['Response']['details']['mrp'].toString();
         offerprice = json
             .decode(response.body)['Response']['details']['discount_price']
+            .toString();
+        tradeprice = json
+            .decode(response.body)['Response']['details']['trade_price']
             .toString();
         amount =
             json.decode(response.body)['Response']['details']['mrp'].toString();

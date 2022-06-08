@@ -22,46 +22,53 @@ class _AccountVerifiedScreenState extends State<AccountVerifiedScreen> {
       body: Stack(
         children: [
           Padding(
-            padding: EdgeInsets.only(top: 30),
+            padding: EdgeInsets.only(top: 70),
             child: Column(
               children: [
-                Row(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    SvgPicture.asset('assets/images/back.svg', fit: BoxFit.fill),
-                    SizedBox(width: MediaQuery.of(context).size.width * 0.18),
-                    Text("Login", textAlign: TextAlign.center, style: TextStyle(fontStyle: FontStyle.normal, fontSize: 21, fontWeight: FontWeight.bold)),
-                  ],
-                ),
+                // const Text("Login",
+                //     textAlign: TextAlign.center,
+                //     style: TextStyle(
+                //         fontStyle: FontStyle.normal,
+                //         fontSize: 21,
+                //         fontWeight: FontWeight.bold)),
                 Expanded(
                   child: SingleChildScrollView(
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        const Padding(
-                          padding: EdgeInsets.only(left: 15.0),
-                          child: Align(
-                            alignment: Alignment.topLeft,
-                            child: Text("Your Account has been verified", style: TextStyle(color: Colors.black, fontStyle: FontStyle.normal, fontSize: 14)),
-                          ),
-                        ),
+                        const Text(
+                            "Thank You.\nYou have successfully registered.",
+                            style: TextStyle(
+                                color: Colors.black,
+                                // fontStyle: Fon,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20)),
                         SizedBox(height: 50),
                         Container(
                           height: 300,
-                          child: Image.asset('assets/images/login_main_image.png', fit: BoxFit.fill),
+                          child: Image.asset(
+                              'assets/images/login_main_image.png',
+                              fit: BoxFit.fill),
                         ),
                         const SizedBox(height: 20),
+                        const Text("Your account is under review.",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontStyle: FontStyle.normal,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold)),
                         const Padding(
-                          padding: EdgeInsets.only(left: 25.0, top: 10.0, bottom: 10.0),
+                          padding: EdgeInsets.only(
+                              left: 25.0, top: 10.0, bottom: 10.0, right: 25.0),
                           child: Align(
                             alignment: Alignment.center,
-                            child: Text("Thank you!", style: TextStyle(color: Colors.black, fontStyle: FontStyle.normal, fontSize: 24, fontWeight: FontWeight.bold)),
-                          ),
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.only(left: 25.0, top: 10.0, bottom: 10.0, right: 25.0),
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Text("Your data is being processed and you can already enjoy all features of the application", textAlign: TextAlign.center, style: TextStyle(color: Colors.black, fontStyle: FontStyle.normal, fontSize: 15)),
+                            child: Text(
+                                "We will notify you once your account reviewed.",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontStyle: FontStyle.normal,
+                                    fontSize: 15)),
                           ),
                         ),
                         SizedBox(height: 20),
@@ -73,7 +80,6 @@ class _AccountVerifiedScreenState extends State<AccountVerifiedScreen> {
                             child: newElevatedButton(),
                           ),
                         ),
-
                       ],
                     ),
                   ),
@@ -89,11 +95,12 @@ class _AccountVerifiedScreenState extends State<AccountVerifiedScreen> {
   Widget newElevatedButton() {
     return ElevatedButton(
       child: const Text(
-        "Let's go",
+        "Go to Login",
         style: TextStyle(color: Colors.white, fontSize: 18),
       ),
-      onPressed: () async{
-         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen()));
+      onPressed: () async {
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => LoginScreen()));
       },
       style: ElevatedButton.styleFrom(
           primary: Colors.indigo,

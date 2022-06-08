@@ -290,7 +290,7 @@ class _LedgerStatementScreenState extends State<LedgerStatementScreen>
                             if (index == ledgerList.length) {
                               return ListTile(
                                 title: Center(
-                                    child: totalPageCount != count
+                                    child: totalPageCount != count || count == 1
                                         ? Text("List End")
                                         : CircularProgressIndicator()),
                               );

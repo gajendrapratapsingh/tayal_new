@@ -16,6 +16,7 @@ import 'package:tayal/views/payment_options_screen.dart';
 import 'package:tayal/views/product_detail_screen.dart';
 import 'package:tayal/views/product_screen.dart';
 import 'package:tayal/views/profile_screen.dart';
+import 'package:tayal/views/select_catagory.dart';
 import 'package:tayal/views/selected_product_screen.dart';
 import 'package:tayal/views/signup_screen.dart';
 import 'package:tayal/views/splash_screen.dart';

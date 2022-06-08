@@ -3,13 +3,16 @@ import 'dart:convert';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tayal/components/OrDivider.dart';
 import 'package:tayal/network/api.dart';
 import 'package:tayal/themes/constant.dart';
 import 'package:http/http.dart' as http;
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:tayal/views/dashboard.dart';
 import 'package:tayal/views/dashboard_screen.dart';
 import 'package:tayal/views/otp_screen.dart';
+import 'package:tayal/views/select_catagory.dart';
 import 'package:tayal/views/selected_product_screen.dart';
 import 'package:tayal/views/signup_screen.dart';
 
@@ -21,7 +24,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-
   String phoneNumber = "";
   int phonemaxLength = 10;
 
@@ -46,12 +48,16 @@ class _LoginScreenState extends State<LoginScreen> {
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       GestureDetector(
-                        onTap: () {
-                        },
+                        onTap: () {},
                         child: SvgPicture.asset('assets/images/back.svg'),
                       ),
                       SizedBox(width: MediaQuery.of(context).size.width * 0.18),
-                      Text("Login", textAlign: TextAlign.center, style: TextStyle(fontStyle: FontStyle.normal, fontSize: 21, fontWeight: FontWeight.bold)),
+                      Text("Login",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontStyle: FontStyle.normal,
+                              fontSize: 21,
+                              fontWeight: FontWeight.bold)),
                       SizedBox(height: 15),
                     ],
                   ),
@@ -62,15 +68,24 @@ class _LoginScreenState extends State<LoginScreen> {
                           const Padding(
                             padding: EdgeInsets.only(left: 15.0),
                             child: Align(
-                               alignment: Alignment.topLeft,
-                               child: Text("Welcome Back", style: TextStyle(color: Colors.black, fontStyle: FontStyle.normal, fontSize: 28, fontWeight: FontWeight.bold)),
+                              alignment: Alignment.topLeft,
+                              child: Text("Welcome Back",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontStyle: FontStyle.normal,
+                                      fontSize: 28,
+                                      fontWeight: FontWeight.bold)),
                             ),
                           ),
                           const Padding(
                             padding: EdgeInsets.only(left: 15.0),
                             child: Align(
                               alignment: Alignment.topLeft,
-                              child: Text("Sign in to continue", style: TextStyle(color: Colors.grey, fontStyle: FontStyle.normal, fontSize: 16)),
+                              child: Text("Sign in to continue",
+                                  style: TextStyle(
+                                      color: Colors.grey,
+                                      fontStyle: FontStyle.normal,
+                                      fontSize: 16)),
                             ),
                           ),
                           SizedBox(height: 20),
@@ -81,8 +96,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               width: double.infinity,
                               child: Card(
                                 elevation: 5,
-                                shape:  RoundedRectangleBorder(
-                                  side: BorderSide(color: Colors.white, width: 1),
+                                shape: RoundedRectangleBorder(
+                                  side:
+                                      BorderSide(color: Colors.white, width: 1),
                                   borderRadius: BorderRadius.circular(5),
                                 ),
                                 child: Row(
@@ -90,8 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     SizedBox(
                                       width: size.width * 0.28,
                                       child: CountryCodePicker(
-                                        onChanged: (value){
-                                        },
+                                        onChanged: (value) {},
                                         initialSelection: 'IN',
                                         favorite: ['+91', 'IN'],
                                         // optional. Shows only country name and flag
@@ -104,7 +119,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                       ),
                                     ),
                                     const Padding(
-                                      padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+                                      padding: EdgeInsets.only(
+                                          top: 10.0, bottom: 10.0),
                                       child: VerticalDivider(
                                         thickness: 1,
                                         width: 1,
@@ -116,13 +132,17 @@ class _LoginScreenState extends State<LoginScreen> {
                                       child: Align(
                                         alignment: Alignment.topLeft,
                                         child: TextField(
+                                          maxLength: 10,
                                           keyboardType: TextInputType.phone,
                                           decoration: const InputDecoration(
-                                            border: InputBorder.none,
-                                            hintText: "Phone Number",
-                                          ),
+                                              border: InputBorder.none,
+                                              hintText: "Phone Number",
+                                              counterText: ""),
                                           onChanged: (value) {
                                             phoneNumber = value;
+                                            if (value.length == 10) {
+                                              FocusScope.of(context).unfocus();
+                                            }
                                           },
                                         ),
                                       ),
@@ -186,23 +206,29 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           Padding(
-                              padding: EdgeInsets.only(left: 5, top: 25, right: 5, bottom: 10),
-                              child: OrDivider(),
+                            padding: EdgeInsets.only(
+                                left: 5, top: 25, right: 5, bottom: 10),
+                            child: OrDivider(),
                           ),
                           GestureDetector(
-                            onTap: (){
-                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => SignupScreen()));
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => SignupScreen()));
                             },
                             child: Container(
                               margin: EdgeInsets.symmetric(vertical: 8),
-                              padding: EdgeInsets.symmetric(horizontal: 18, vertical: 15),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 18, vertical: 15),
                               width: size.width * 0.8,
                               decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(29),
-                                  border: Border.all(color: Colors.grey.shade400, width: 1)
-                              ),
-                              child: Text("Sign up with Email", textAlign: TextAlign.center, style: TextStyle(color: Colors.grey, fontSize: 14.0)),
+                                  border: Border.all(
+                                      color: Colors.grey.shade400, width: 1)),
+                              child: Text("Sign up with Email",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.grey, fontSize: 14.0)),
                             ),
                           ),
                         ],
@@ -216,8 +242,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 left: size.width * 0.20,
                 bottom: 15,
                 right: size.width * 0.20,
-                child: Text("Terms of use & Privacy Policy", textAlign: TextAlign.center, style: TextStyle(color: Colors.grey.shade500, fontSize: 14.0, fontWeight: FontWeight.w700))
-            )
+                child: Text("Terms of use & Privacy Policy",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        color: Colors.grey.shade500,
+                        fontSize: 14.0,
+                        fontWeight: FontWeight.w700)))
           ],
         ),
       ),
@@ -226,20 +256,31 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget newElevatedButton() {
     return ElevatedButton(
-      child: const Text("Log in", style: TextStyle(color: Colors.white, fontSize: 18)),
-      onPressed: (){
-        if(phoneNumber.toString().trim().length == 0 || phoneNumber.toString().trim().length != 10){
+      child: const Text("Log in",
+          style: TextStyle(color: Colors.white, fontSize: 18)),
+      onPressed: () async {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        if (phoneNumber.toString().trim().length == 0 ||
+            phoneNumber.toString().trim().length != 10) {
           showToast("Enter valid mobile number");
-        }
-        else{
+        } else {
+          // if (phoneNumber == "9868409013") {
+          //   print("testing");
+          //   prefs.setString('token',
+          //       "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIzIiwianRpIjoiMDViMTk5NjQzMzk5YWQ1ODRjZGQ1MjdkZjNmNjNjY2I2N2NhODJjYTg0OTZkODE4OGEyMDUwZmIxNWRkODAzOWQwOWI5NTE0YWExODkxN2IiLCJpYXQiOjE2NTQxNjY4MDEsIm5iZiI6MTY1NDE2NjgwMSwiZXhwIjoxNjg1NzAyODAxLCJzdWIiOiIyNjUiLCJzY29wZXMiOltdfQ.W5cnMIR0xpXCa4mhRfhCJBgDOEvVcaNMtFLA2YLnCXj9MAX7HxtWKjPW8dbSzv_ttmhDqMUzIec-HTHP7RgtibneTHYrxTkKZJXtYLyajZwZufMeP-mkSGuDskPBuYtcdAJKuT0Jk8j4YCteioAixx3leQRMrxs0anvKODMaFKyJr2WclRKbrjmfpIJCuZ4LPrcpbYH3ht6SjHxZLKPoUSAJl6whx7rLrcxQqfLQQwJgBSDheXLWkEq8Xcg2tQ9p-scqjwpG7veaUCMZGWEBGSGvC6GsxGfF-HxRGTVLAMGs35l34JjrZ0UuqoBrqF3hyqaqgGaYFZOknA5z7Cpj8VwRVsmWIsh5WVVRCtoxkXG3EfAmz8y4_lyNJ4x7aywfehAD3kA5ENpS0C9dAA6uJ52D_iXkpPw_Y-JkWbD4w7SXFmFiiUvcP58XZMr4cgM0La7zr6-bgCgbx3I3JeoqDpoxGQIiUiGdfXLrz4ZVG4UQ98jYqWAje573xC3dHprt22knwqT76D-DYR_4pke0VUXXPvMBfDUwYjLbzVdoOvXqVFYsh0x2QOVGzRaOnvYzWdNFYCesqCoRjtTRKCXExJFwBjBe3ToY97YeHIbto2LSaO3O7w9eteOZ_KMgX47dyBM_Es5lbAQSJBWgcwCoDBNMraIP48G7Y2Tr9yu3vSs");
+          //   prefs.setString('loginsuccess', "true");
+          //   Navigator.pushReplacement(
+          //       context, MaterialPageRoute(builder: (context) => Dashboard()));
+          // } else {
           _sendOtp(phoneNumber);
+          // }
         }
-
       },
       style: ElevatedButton.styleFrom(
           primary: Colors.indigo,
           padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-          textStyle: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500)),
+          textStyle: const TextStyle(
+              color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500)),
     );
   }
 
@@ -247,34 +288,35 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       _loading = true;
     });
-    var res = await http.post(Uri.parse(BASE_URL + loginsendotp),
+    var res = await http.post(
+      Uri.parse(BASE_URL + loginsendotp),
       body: {
         "phone": phone,
       },
     );
-    if(res.statusCode == 200) {
+    if (res.statusCode == 200) {
       setState(() {
         _loading = false;
       });
       var data = json.decode(res.body);
       print(data);
-      if(data['ErrorCode'].toString() == "100"){
+      if (data['ErrorCode'].toString() == "100") {
         showToast("OTP : ${data['Response']['otp'].toString().trim()}");
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => OtpScreen(
-          phone : phone,
-          otp : data['Response']['otp'].toString().trim(),
-          type : "login"
-        )));
-      }
-      else if(data['ErrorCode'].toString() == "902"){
-         showToast('Your Account is under review yet.');
-      }
-      else{
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => OtpScreen(
+                    phone: phone,
+                    otp: data['Response']['otp'].toString().trim(),
+                    type: "login")));
+      } else if (data['ErrorCode'].toString() == "902") {
+        showToast('Your Account is under review yet.');
+      } else {
         showToast('User not exists');
-        Navigator.push(context, MaterialPageRoute(builder: (context) => SignupScreen()));
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => SignupScreen()));
       }
-    }
-    else{
+    } else {
       setState(() {
         _loading = false;
       });

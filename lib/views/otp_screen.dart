@@ -12,6 +12,7 @@ import 'package:tayal/themes/constant.dart';
 import 'package:tayal/views/account_verified_screen.dart';
 import 'package:tayal/views/dashboard.dart';
 import 'package:tayal/views/dashboard_screen.dart';
+import 'package:tayal/views/select_catagory.dart';
 
 class OtpScreen extends StatefulWidget {
   String phone;
@@ -105,14 +106,14 @@ class _OtpScreenState extends State<OtpScreen> {
               padding: EdgeInsets.only(top: 30),
               child: Column(
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      SvgPicture.asset('assets/images/back.svg',
-                          fit: BoxFit.fill),
-                    ],
-                  ),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.start,
+                  //   mainAxisSize: MainAxisSize.max,
+                  //   children: [
+                  //     SvgPicture.asset('assets/images/back.svg',
+                  //         fit: BoxFit.fill),
+                  //   ],
+                  // ),
                   Expanded(
                     child: SingleChildScrollView(
                       child: Column(
@@ -193,6 +194,10 @@ class _OtpScreenState extends State<OtpScreen> {
                           ),
                           InkWell(
                             onTap: () {
+                              FocusScope.of(context).unfocus();
+                              setState(() {
+                                userotp = "";
+                              });
                               if (type == "login") {
                                 _sendloginotp(phone);
                               } else {
@@ -214,16 +219,16 @@ class _OtpScreenState extends State<OtpScreen> {
                 ],
               ),
             ),
-            Positioned(
-                left: size.width * 0.20,
-                bottom: 15,
-                right: size.width * 0.20,
-                child: Text("Terms of use & Privacy Policy",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        color: Colors.grey.shade500,
-                        fontSize: 14.0,
-                        fontWeight: FontWeight.w700)))
+            // Positioned(
+            //     left: size.width * 0.20,
+            //     bottom: 15,
+            //     right: size.width * 0.20,
+            //     child: Text("Terms of use & Privacy Policy",
+            //         textAlign: TextAlign.center,
+            //         style: TextStyle(
+            //             color: Colors.grey.shade500,
+            //             fontSize: 14.0,
+            //             fontWeight: FontWeight.w700)))
           ],
         ),
       ),
@@ -270,7 +275,7 @@ class _OtpScreenState extends State<OtpScreen> {
             decoration: InputDecoration(
                 contentPadding: EdgeInsets.only(bottom: 2.0),
                 counter: Offstage(),
-                hintText: "0",
+                hintText: "",
                 border: InputBorder.none),
           ),
         ),
@@ -292,7 +297,7 @@ class _OtpScreenState extends State<OtpScreen> {
                   style: TextStyle(color: Colors.white)),
               backgroundColor: Colors.red));
         } else {
-          _verifyotp(phone, otp, fcmToken);
+          _verifyotp(phone, userotp, fcmToken);
           /*if(userotp != otp){
             print(userotp);
             print(otp);
@@ -321,22 +326,35 @@ class _OtpScreenState extends State<OtpScreen> {
       Uri.parse(BASE_URL + verifyotp),
       body: {"phone": phone, "otp": otp, "fcm": fcm.toString()},
     );
-    print(jsonEncode({"phone": phone, "otp": otp, "fcm": fcm.toString()}));
+    print({"phone": phone, "otp": otp, "fcm": fcm.toString()});
+    print(res.body);
     if (res.statusCode == 200) {
       setState(() {
         _loading = false;
       });
       var data = json.decode(res.body);
+      print(jsonDecode(res.body)['register_category_count']);
+      print(jsonDecode(res.body)['user_category']);
+      print(jsonDecode(res.body)['show_category_selection']);
+      prefs.setString('show_category_selection',
+          jsonDecode(res.body)['show_category_selection'].toString());
       if (data['ErrorCode'].toString() == "0") {
         showToast(data['Response'].toString());
         prefs.setString('token', data['token'].toString());
+
         if (type == "login") {
           prefs.setString('loginsuccess', "true");
-          Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => Dashboard()));
+
+          if (jsonDecode(res.body)['show_category_selection']) {
+            Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => SelectCatagory()));
+          } else {
+            Navigator.pushReplacement(
+                context, MaterialPageRoute(builder: (context) => Dashboard()));
+          }
         } else {
-          Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => AccountVerifiedScreen()));
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => SelectCatagory()));
         }
       } else {}
     }

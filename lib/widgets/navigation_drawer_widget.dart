@@ -10,9 +10,10 @@ import 'package:http/http.dart' as http;
 import 'package:tayal/views/dashboard_screen.dart';
 import 'package:tayal/views/favourite_products_screen.dart';
 import 'package:tayal/views/profile_screen.dart';
+import 'package:tayal/views/splash_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class NavigationDrawerWidget extends StatefulWidget {
-
   @override
   State<NavigationDrawerWidget> createState() => _NavigationDrawerWidgetState();
 }
@@ -40,10 +41,10 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
     _setUserdetail(name, email);
   }
 
-  void _setUserdetail(String name, String email) async{
-     SharedPreferences prefs = await SharedPreferences.getInstance();
-     prefs.setString('name', name);
-     prefs.setString('email', email);
+  void _setUserdetail(String name, String email) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('name', name);
+    prefs.setString('email', email);
   }
 
   @override
@@ -54,11 +55,10 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
         child: ListView(
           children: <Widget>[
             buildHeader(
-              urlImage: urlImage,
-              name: name,
-              email: email,
-              onClicked: () => Navigator.of(context).pop()
-            ),
+                urlImage: urlImage,
+                name: name,
+                email: email,
+                onClicked: () => Navigator.of(context).pop()),
             Container(
               padding: padding,
               child: Column(
@@ -81,17 +81,35 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
                     icon: Icons.settings,
                     onClicked: () => selectedItem(context, 2),
                   ),
-                  Divider(color: Colors.white70),
-                  buildMenuItem(
-                    text: 'Favourite',
-                    icon: Icons.favorite,
-                    onClicked: () => selectedItem(context, 3),
-                  ),
+                  // Divider(color: Colors.white70),
+                  // buildMenuItem(
+                  //   text: 'Favourite',
+                  //   icon: Icons.favorite,
+                  //   onClicked: () => selectedItem(context, 3),
+                  // ),
                   Divider(color: Colors.white70),
                   buildMenuItem(
                     text: 'Message',
                     icon: Icons.message,
                     onClicked: () => selectedItem(context, 4),
+                  ),
+                  Divider(color: Colors.white70),
+                  buildMenuItem(
+                    text: 'Privacy Policy',
+                    icon: Icons.wallet_travel_outlined,
+                    onClicked: () => selectedItem(context, 6),
+                  ),
+                  Divider(color: Colors.white70),
+                  buildMenuItem(
+                    text: 'Terms & Conditions',
+                    icon: Icons.wallet_travel_outlined,
+                    onClicked: () => selectedItem(context, 7),
+                  ),
+                  Divider(color: Colors.white70),
+                  buildMenuItem(
+                    text: 'Refund Policy',
+                    icon: Icons.wallet_travel_outlined,
+                    onClicked: () => selectedItem(context, 8),
                   ),
                   Divider(color: Colors.white70),
                   buildMenuItem(
@@ -129,15 +147,25 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
         ClipRRect(
           borderRadius: BorderRadius.circular(40),
           child: Container(
-             height: 80,
-             width: 80,
-             child: urlImage == "" || urlImage == null ? Image.asset('assets/images/logo_user.png', fit: BoxFit.fill) : Image.network(urlImage, fit: BoxFit.fill),
+            height: 80,
+            width: 80,
+            child: urlImage == "" || urlImage == null
+                ? Image.asset('assets/images/logo_user.png', fit: BoxFit.fill)
+                : Image.network(urlImage, fit: BoxFit.fill),
           ),
         ),
         SizedBox(height: 10.0),
-        name == "" || name == null ? Text("") : Text(name, style: TextStyle(color: Colors.white, fontSize: 21, fontWeight: FontWeight.w700)),
+        name == "" || name == null
+            ? Text("")
+            : Text(name,
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 21,
+                    fontWeight: FontWeight.w700)),
         SizedBox(height: 5.0),
-        email == "" || email == null ? Text("") : Text(email, style: TextStyle(color: Colors.white, fontSize: 14))
+        email == "" || email == null
+            ? Text("")
+            : Text(email, style: TextStyle(color: Colors.white, fontSize: 14))
       ],
     );
   }
@@ -158,7 +186,7 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
     );
   }
 
-  void selectedItem(BuildContext context, int index) {
+  void selectedItem(BuildContext context, int index) async {
     Navigator.of(context).pop();
 
     switch (index) {
@@ -174,30 +202,39 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
         break;
       case 2:
         break;
-      case 3:
-        Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => FavouriteProductScreen(),
-        ));
-        break;
+      // case 3:
+      //   Navigator.of(context).push(MaterialPageRoute(
+      //     builder: (context) => FavouriteProductScreen(),
+      //   ));
+      //   break;
       case 4:
         break;
       case 5:
         DialogHelper.logout(context);
+
+        break;
+      case 6:
+        launchUrl(Uri.parse("https://tayalgroup.in/privacy-policy"));
+        break;
+      case 7:
+        launchUrl(Uri.parse("https://tayalgroup.in/tnc"));
+        break;
+      case 8:
+        launchUrl(Uri.parse("https://tayalgroup.in/refund"));
         break;
     }
   }
 
-  Future<List<ProfileResponse>> _getprofile() async{
+  Future<List<ProfileResponse>> _getprofile() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String mytoken = prefs.getString('token').toString();
-    var response = await http.post(Uri.parse(BASE_URL+profile),
-        headers : {'Authorization': 'Bearer $mytoken'}
-    );
-    if (response.statusCode == 200)
-    {
+    var response = await http.post(Uri.parse(BASE_URL + profile),
+        headers: {'Authorization': 'Bearer $mytoken'});
+    if (response.statusCode == 200) {
       print(response.body);
       Iterable list = json.decode(response.body)['Response'];
-      List<ProfileResponse> _list = list.map((m) => ProfileResponse.fromJson(m)).toList();
+      List<ProfileResponse> _list =
+          list.map((m) => ProfileResponse.fromJson(m)).toList();
       return _list;
     } else {
       throw Exception('Failed to get data due to ${response.body}');

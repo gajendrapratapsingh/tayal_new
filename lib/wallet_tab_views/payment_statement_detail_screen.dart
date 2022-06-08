@@ -446,7 +446,6 @@ class _PaymentStatementTabScreenState extends State<PaymentStatementTabScreen> {
       "start_date": startdate.toString().split(" ")[0],
       "end_date": enddate.toString().split(" ")[0]
     };
-    print(mytoken);
     var response = await http.post(
         Uri.parse(BASE_URL + paymenttransactionfilter),
         body: json.encode(body),

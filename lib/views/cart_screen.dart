@@ -38,7 +38,7 @@ class _CartScreenState extends State<CartScreen> {
   String userwallet = "";
   String cashback = "";
   int totalitems = 0;
-
+  String utilizeAmount = "";
   String nodata = "";
   List mainData = [];
   String addressType = "Home-";
@@ -57,7 +57,8 @@ class _CartScreenState extends State<CartScreen> {
     totalitems = int.parse(prefs.getString('cartcount'));
   }
 
-  TextStyle textStyle = TextStyle(color: Colors.white, fontSize: 12);
+  TextStyle textStyle = TextStyle(color: Colors.black, fontSize: 12);
+  TextStyle textStylePay = TextStyle(color: Colors.indigo, fontSize: 12);
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -76,6 +77,7 @@ class _CartScreenState extends State<CartScreen> {
                         child: Column(
                           children: [
                             Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               mainAxisSize: MainAxisSize.max,
                               children: [
                                 InkWell(
@@ -86,15 +88,48 @@ class _CartScreenState extends State<CartScreen> {
                                       'assets/images/back.svg',
                                       fit: BoxFit.fill),
                                 ),
-                                SizedBox(
-                                    width: MediaQuery.of(context).size.width *
-                                        0.14),
+                                // SizedBox(
+                                //     width: MediaQuery.of(context).size.width *
+                                //         0.14),
                                 const Text("My Cart",
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                         fontStyle: FontStyle.normal,
                                         fontSize: 21,
                                         fontWeight: FontWeight.bold)),
+                                IconButton(
+                                    onPressed: () {
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) => AlertDialog(
+                                                title: Text("Empty Cart"),
+                                                content: Text(
+                                                    "Do you want to empty cart."),
+                                                actionsAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceAround,
+                                                actions: [
+                                                  ElevatedButton(
+                                                      onPressed: () {
+                                                        Navigator.of(context,
+                                                                rootNavigator:
+                                                                    true)
+                                                            .pop();
+                                                      },
+                                                      child: Text("Cancel")),
+                                                  ElevatedButton(
+                                                      onPressed: () {
+                                                        Navigator.of(context,
+                                                                rootNavigator:
+                                                                    true)
+                                                            .pop();
+                                                        _emptyCart();
+                                                      },
+                                                      child: Text("Empty"))
+                                                ],
+                                              ));
+                                    },
+                                    icon: Icon(Icons.delete))
                               ],
                             ),
                             Padding(
@@ -173,16 +208,28 @@ class _CartScreenState extends State<CartScreen> {
                               ),
                             ),
                             const SizedBox(height: 10),
-                            const Padding(
+                            Padding(
                               padding: EdgeInsets.only(left: 10),
                               child: Align(
                                 alignment: Alignment.topLeft,
-                                child: Text(
-                                  'Cart Items',
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
+                                child: RichText(
+                                  text: TextSpan(
+                                    text: '',
+                                    style: DefaultTextStyle.of(context).style,
+                                    children: const [
+                                      TextSpan(
+                                          text: 'Cart Items',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                          )),
+                                      TextSpan(
+                                          text: ' (Swipe item left to delete)',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                              fontSize: 10)),
+                                    ],
                                   ),
                                 ),
                               ),
@@ -191,8 +238,11 @@ class _CartScreenState extends State<CartScreen> {
                             Column(
                               children: [
                                 SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height / 1.95,
+                                  height: roundoff != "null"
+                                      ? MediaQuery.of(context).size.height /
+                                          2.22
+                                      : MediaQuery.of(context).size.height /
+                                          2.12,
                                   child: Padding(
                                       padding: EdgeInsets.only(bottom: 20),
                                       child: ListView.separated(
@@ -242,13 +292,15 @@ class _CartScreenState extends State<CartScreen> {
                                         MaterialPageRoute(
                                             builder: (context) =>
                                                 PaymentOptionsScreen(
+                                                    utilizeAmount:
+                                                        utilizeAmount,
                                                     payableAmount: totalprice,
                                                     walletAmount: userwallet,
                                                     cashBack: cashback)));
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
-                                        color: Colors.indigo,
+                                        color: Colors.grey[200],
                                         borderRadius: BorderRadius.only(
                                             topLeft: Radius.circular(10),
                                             topRight: Radius.circular(10))),
@@ -262,7 +314,12 @@ class _CartScreenState extends State<CartScreen> {
                                             children: [
                                               Text("Sub-Total",
                                                   style: textStyle),
-                                              Text("\u20B9 " + subtotal,
+                                              Text(
+                                                  "\u20B9 " +
+                                                      double.parse(subtotal
+                                                              .toString())
+                                                          .toStringAsFixed(2)
+                                                          .toString(),
                                                   style: textStyle),
                                             ],
                                           ),
@@ -270,7 +327,7 @@ class _CartScreenState extends State<CartScreen> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Text("Delivery",
+                                              Text("Delivery (incl. tax)",
                                                   style: textStyle),
                                               Text("\u20B9 " + delevivery,
                                                   style: textStyle),
@@ -306,40 +363,74 @@ class _CartScreenState extends State<CartScreen> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
-                                              totalitems.toString() == "1"
-                                                  ? Text(
-                                                      totalitems.toString() +
-                                                          " Item",
-                                                      style: textStyle)
-                                                  : Text(
-                                                      totalitems.toString() +
-                                                          " Items",
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 18)),
-                                              // const SizedBox(width: 10),
-                                              // const Padding(
-                                              //   padding: EdgeInsets.symmetric(
-                                              //       horizontal: 5),
-                                              //   child: VerticalDivider(
-                                              //       width: 2, color: Colors.white),
-                                              // ),
-                                              // SizedBox(width: 10),
-                                              Text(
-                                                totalprice.toString() != null
-                                                    ? "(\u20B9 $totalprice) " +
-                                                        "Pay"
-                                                    : 0.toString(),
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 18),
-                                              )
-
-                                              // const Icon(
-                                              //     Icons.arrow_forward_ios_rounded,
-                                              //     color: Colors.white,
-                                              //     size: 16)
+                                              Text("Discount",
+                                                  style: textStyle),
+                                              Text("\u20B9 " + discount,
+                                                  style: textStyle),
                                             ],
+                                          ),
+                                          roundoff == "null"
+                                              ? SizedBox()
+                                              : Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Text("Round Off",
+                                                        style: textStyle),
+                                                    Text("\u20B9 " + roundoff,
+                                                        style: textStyle),
+                                                  ],
+                                                ),
+                                          Card(
+                                            color: Colors.green,
+                                            margin: EdgeInsets.zero,
+                                            elevation: 10,
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  totalitems.toString() == "1"
+                                                      ? Text(
+                                                          totalitems
+                                                                  .toString() +
+                                                              " Item",
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontSize: 18))
+                                                      : Text(
+                                                          totalitems
+                                                                  .toString() +
+                                                              " Items",
+                                                          style:
+                                                              TextStyle(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontSize:
+                                                                      18)),
+                                                  Text(
+                                                    totalprice.toString() !=
+                                                            null
+                                                        ? "(\u20B9 " +
+                                                            double.parse(totalprice
+                                                                    .toString())
+                                                                .toStringAsFixed(
+                                                                    2) +
+                                                            ") " +
+                                                            "Pay"
+                                                        : 0.toString(),
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 18),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -567,23 +658,81 @@ class _CartScreenState extends State<CartScreen> {
                       style: TextStyle(color: Colors.black, fontSize: 16)),
                   SizedBox(
                       width: MediaQuery.of(context).size.width * 0.40,
-                      child: Row(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                              "\u20B9 " +
-                                  mainData[index]['offer_price'].toString(),
-                              maxLines: 2,
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 14)),
-                          SizedBox(
-                            width: 10,
+                          RichText(
+                            text: TextSpan(
+                              text: '',
+                              style: DefaultTextStyle.of(context).style,
+                              children: [
+                                TextSpan(
+                                    text:
+                                        '\u20B9 ${mainData[index]['rate'].toString()}',
+                                    style: TextStyle(
+                                        color: Colors.grey,
+                                        decoration: TextDecoration.lineThrough,
+                                        fontWeight: FontWeight.bold)),
+                                TextSpan(
+                                    text: ' MRP',
+                                    style: TextStyle(fontSize: 9)),
+                              ],
+                            ),
                           ),
-                          Text("\u20B9 " + mainData[index]['rate'].toString(),
-                              maxLines: 2,
-                              style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 14,
-                                  decoration: TextDecoration.lineThrough)),
+                          mainData[index]['discount_price'] == null
+                              ? SizedBox()
+                              : RichText(
+                                  text: TextSpan(
+                                    text: '',
+                                    style: DefaultTextStyle.of(context).style,
+                                    children: [
+                                      TextSpan(
+                                          text:
+                                              '\u20B9 ${mainData[index]['discount_price'].toString()}',
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold)),
+                                      TextSpan(
+                                          text: ' DEALER PR.',
+                                          style: TextStyle(fontSize: 9)),
+                                    ],
+                                  ),
+                                ),
+                          mainData[index]['trade_price'] == null
+                              ? SizedBox()
+                              : RichText(
+                                  text: TextSpan(
+                                    text: '',
+                                    style: DefaultTextStyle.of(context).style,
+                                    children: [
+                                      TextSpan(
+                                          text:
+                                              '\u20B9 ${mainData[index]['trade_price'].toString()}',
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold)),
+                                      TextSpan(
+                                          text: ' SCHEME PR.',
+                                          style: TextStyle(fontSize: 9)),
+                                    ],
+                                  ),
+                                ),
+
+                          // Text(
+                          //     "\u20B9 " +
+                          //         mainData[index]['offer_price'].toString(),
+                          //     maxLines: 2,
+                          //     style:
+                          //         TextStyle(color: Colors.black, fontSize: 14)),
+                          // SizedBox(
+                          //   width: 10,
+                          // ),
+                          // Text("\u20B9 " + mainData[index]['rate'].toString(),
+                          //     maxLines: 2,
+                          //     style: TextStyle(
+                          //         color: Colors.grey,
+                          //         fontSize: 14,
+                          //         decoration: TextDecoration.lineThrough)),
                         ],
                       )),
                   SizedBox(
@@ -700,12 +849,13 @@ class _CartScreenState extends State<CartScreen> {
   List taxList = [];
   String delevivery = "-";
   String subtotal = "-";
+  String discount = "-";
+  String roundoff = "-";
   Future<void> _getCartData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String mytoken = prefs.getString('token').toString();
     var response = await http.post(Uri.parse(BASE_URL + cartlist),
         headers: {'Authorization': 'Bearer $mytoken'});
-    print(response.body);
     setState(() {
       isLoading = false;
     });
@@ -743,6 +893,12 @@ class _CartScreenState extends State<CartScreen> {
           subtotal = "";
           subtotal =
               jsonDecode(response.body)['Response']['sub_total'].toString();
+          discount = "";
+          discount =
+              jsonDecode(response.body)['Response']['discount'].toString();
+          roundoff = "";
+          roundoff =
+              jsonDecode(response.body)['Response']['roundoff'].toString();
         });
         print(delevivery);
 
@@ -757,6 +913,11 @@ class _CartScreenState extends State<CartScreen> {
 
           userwallet =
               json.decode(response.body)['Response']['user_wallet'].toString();
+
+          utilizeAmount = json
+              .decode(response.body)['Response']['utilizeAmount']
+              .toString();
+
           cashback = (parse(parse(json
                           .decode(response.body)['Response']['pay_now_bonus']
                           .toString())
@@ -765,7 +926,7 @@ class _CartScreenState extends State<CartScreen> {
                   .documentElement
                   .text)
               .toString();
-          //totalitems = json.decode(response.body)['Response']['items'].length;
+          totalitems = json.decode(response.body)['Response']['items'].length;
         });
         Iterable list = json.decode(response.body)['Response']['items'];
 
@@ -842,13 +1003,13 @@ class _CartScreenState extends State<CartScreen> {
     Widget cancelButton = FlatButton(
       child: const Text("Cancel"),
       onPressed: () {
-        Navigator.pop(context);
+        Navigator.of(context, rootNavigator: true).pop();
       },
     );
     Widget continueButton = FlatButton(
       child: const Text("Delete"),
       onPressed: () {
-        Navigator.pop(context);
+        Navigator.of(context, rootNavigator: true).pop();
         _deleteitemfromCart(itemid);
       },
     );
@@ -893,6 +1054,24 @@ class _CartScreenState extends State<CartScreen> {
               json.decode(response.body)['Response']['count'].toString());
         });
       }
+    } else {
+      print(response.body);
+      throw Exception('Failed to get data due to ${response.body}');
+    }
+  }
+
+  Future _emptyCart() async {
+    showLaoding(context);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String mytoken = prefs.getString('token').toString();
+
+    var response = await http.post(Uri.parse(BASE_URL + cartempty), headers: {
+      'Authorization': 'Bearer $mytoken',
+      'Content-Type': 'application/json'
+    });
+    Navigator.of(context, rootNavigator: true).pop();
+    if (response.statusCode == 200) {
+      Navigator.of(context).pop();
     } else {
       print(response.body);
       throw Exception('Failed to get data due to ${response.body}');

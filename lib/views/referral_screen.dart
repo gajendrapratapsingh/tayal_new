@@ -460,7 +460,7 @@ class _ReferralScreenState extends State<ReferralScreen> {
         title: 'Referral Code',
         text: 'Referral Code - ' + referralcode.toString(),
         linkUrl:
-            'https://play.google.com/store/apps/details?id=com.mri.mrimaster',
+            'https://play.google.com/store/apps/details?id=com.tayal.tayalFintech',
         chooserTitle: 'Referral Code');
     // await Share.share(
     //     'My Referrral code is : $referralcode\n<a href="https://www.google.com/">App Link</a>',

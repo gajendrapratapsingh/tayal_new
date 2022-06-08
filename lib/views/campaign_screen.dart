@@ -104,12 +104,16 @@ class _CampaignScreenState extends State<CampaignScreen> {
                                 // backgroundColor: Colors.orange,
                                 enableLoadingAnimation: true,
                                 animationDuration: 2000,
-
-                                // title: GaugeTitle(
-                                //     text: 'Speedometer',
-                                //     textStyle: const TextStyle(
-                                //         fontSize: 20.0,
-                                //         fontWeight: FontWeight.bold)),
+                                title: GaugeTitle(
+                                    alignment: GaugeAlignment.center,
+                                    text: "Total Points Earned - " +
+                                        NumberFormat.compact()
+                                            .format(double.parse(
+                                                annual_campaign_achive))
+                                            .toString(),
+                                    textStyle: const TextStyle(
+                                        fontSize: 18.0,
+                                        fontWeight: FontWeight.bold)),
                                 axes: <RadialAxis>[
                                   RadialAxis(
                                       minimum: double.parse(minvalue),
@@ -336,7 +340,6 @@ class _CampaignScreenState extends State<CampaignScreen> {
   Future _getcampaigndata() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String mytoken = prefs.getString('token').toString();
-    print(mytoken);
     var response = await http.post(Uri.parse(BASE_URL + campaign), headers: {
       'Authorization': 'Bearer $mytoken',
       'Content-Type': 'application/json'

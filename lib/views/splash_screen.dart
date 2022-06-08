@@ -11,6 +11,7 @@ import 'package:tayal/views/login_screen.dart';
 import 'package:tayal/views/mobile_login_screen.dart';
 import 'package:tayal/views/otp_screen.dart';
 import 'package:tayal/views/profile_screen.dart';
+import 'package:tayal/views/select_catagory.dart';
 import 'package:tayal/views/selected_product_screen.dart';
 import 'package:tayal/views/signup_screen.dart';
 
@@ -23,7 +24,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   bool _loggedIn = false;
-  final splashDelay = 3;
+  final splashDelay = 1;
 
   String loginsuccess = "";
 
@@ -59,16 +60,24 @@ class _SplashScreenState extends State<SplashScreen> {
       loginsuccess = prefs.getString('loginsuccess');
     });
     //Get.off(homeOrLog());
-    Navigator.pushReplacement(context,
-        MaterialPageRoute(builder: (BuildContext context) => homeOrLog()));
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (BuildContext context) =>
+                homeOrLog(preferences.getString("show_category_selection"))));
   }
 
-  Widget homeOrLog() {
+  Widget homeOrLog(String action) {
     if (this._loggedIn) {
       return IntroScreen();
     } else {
       if (loginsuccess == "true") {
-        return Dashboard();
+        if (action == "true") {
+          return LoginScreen();
+        } else {
+          return Dashboard();
+        }
       } else {
         return LoginScreen();
       }

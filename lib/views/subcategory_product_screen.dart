@@ -229,7 +229,7 @@ class _SubCategoryProductScreenState extends State<SubCategoryProductScreen> {
                                                 gridDelegate:
                                                     SliverGridDelegateWithFixedCrossAxisCount(
                                                         crossAxisCount: 2,
-                                                        childAspectRatio: 0.6),
+                                                        childAspectRatio: 0.52),
                                                 itemBuilder: (context, index) {
                                                   return Card(
                                                       elevation: 5.0,
@@ -381,23 +381,73 @@ class _SubCategoryProductScreenState extends State<SubCategoryProductScreen> {
                                                                         top:
                                                                             2.0,
                                                                         right:
-                                                                            7.0),
+                                                                            2.0),
                                                                     child:
                                                                         Column(
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .start,
                                                                       mainAxisAlignment:
                                                                           MainAxisAlignment
                                                                               .spaceBetween,
                                                                       children: [
-                                                                        Text(
-                                                                            "\u20B9 ${_searchResult[index]['mrp'].toString()}",
-                                                                            style: TextStyle(
-                                                                                color: Colors.grey,
-                                                                                decoration: TextDecoration.lineThrough,
-                                                                                fontWeight: FontWeight.bold)),
-                                                                        Text(
-                                                                            "\u20B9 ${_searchResult[index]['discount_price'].toString()}",
+                                                                        RichText(
+                                                                          text:
+                                                                              TextSpan(
+                                                                            text:
+                                                                                '',
                                                                             style:
-                                                                                TextStyle(color: Colors.black, fontWeight: FontWeight.bold))
+                                                                                DefaultTextStyle.of(context).style,
+                                                                            children: [
+                                                                              TextSpan(text: '\u20B9 ${_searchResult[index]['mrp'].toString()}', style: TextStyle(color: Colors.grey, decoration: TextDecoration.lineThrough, fontWeight: FontWeight.bold)),
+                                                                              TextSpan(text: ' MRP', style: TextStyle(fontSize: 9)),
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                        _searchResult[index]['discount_price'] ==
+                                                                                null
+                                                                            ? SizedBox()
+                                                                            : RichText(
+                                                                                text: TextSpan(
+                                                                                  text: '',
+                                                                                  style: DefaultTextStyle.of(context).style,
+                                                                                  children: [
+                                                                                    TextSpan(text: '\u20B9 ${_searchResult[index]['discount_price'].toString()}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                                                                                    TextSpan(text: ' DEALER PR.', style: TextStyle(fontSize: 9)),
+                                                                                  ],
+                                                                                ),
+                                                                              ),
+                                                                        _searchResult[index]['trade_price'] ==
+                                                                                null
+                                                                            ? SizedBox()
+                                                                            : RichText(
+                                                                                text: TextSpan(
+                                                                                  text: '',
+                                                                                  style: DefaultTextStyle.of(context).style,
+                                                                                  children: [
+                                                                                    TextSpan(text: '\u20B9 ${_searchResult[index]['trade_price'].toString()}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                                                                                    TextSpan(text: ' SCHEME PR.', style: TextStyle(fontSize: 9)),
+                                                                                  ],
+                                                                                ),
+                                                                              ),
+                                                                        Text(
+                                                                            "(GST Inclusive)",
+                                                                            style:
+                                                                                TextStyle(fontSize: 9, fontWeight: FontWeight.bold))
+                                                                        // Text(
+                                                                        //     "MRP: \u20B9 ${_searchResult[index]['mrp'].toString()}",
+                                                                        //     style: TextStyle(
+                                                                        //         color: Colors.grey,
+                                                                        //         decoration: TextDecoration.lineThrough,
+                                                                        //         fontWeight: FontWeight.bold)),
+                                                                        // Text(
+                                                                        //     "TR. Pr.: \u20B9 ${_searchResult[index]['trade_price'].toString()}",
+                                                                        //     style:
+                                                                        //         TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                                                                        // Text(
+                                                                        //     "DIS. Pr.\u20B9 ${_searchResult[index]['discount_price'].toString()}",
+                                                                        //     style:
+                                                                        //         TextStyle(color: Colors.black, fontWeight: FontWeight.bold))
                                                                       ],
                                                                     )),
                                                               )
@@ -425,8 +475,11 @@ class _SubCategoryProductScreenState extends State<SubCategoryProductScreen> {
                                                                           (val) {
                                                                         setState(
                                                                             () {
-                                                                          _searchResult[index]['quantity'] =
-                                                                              int.parse(val);
+                                                                          if (val.length !=
+                                                                              0) {
+                                                                            _searchResult[index]['quantity'] =
+                                                                                int.parse(val);
+                                                                          }
                                                                         });
                                                                       },
                                                                       inputFormatters: [
@@ -671,8 +724,11 @@ class _SubCategoryProductScreenState extends State<SubCategoryProductScreen> {
   Widget showItemWidget() {
     return InkWell(
         onTap: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => CartScreen()));
+          Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => CartScreen()))
+              .then((value) {
+            _getCartData();
+          });
         },
         child: Container(
           height: 55,
@@ -704,7 +760,8 @@ class _SubCategoryProductScreenState extends State<SubCategoryProductScreen> {
                 child: Padding(
                     padding: EdgeInsets.only(
                         left: 5.0, top: 15.0, bottom: 15.0, right: 5.0),
-                    child: Text("\u20B9 ${_totalprice.toString()}",
+                    child: Text(
+                        "\u20B9 ${double.parse(_totalprice.toString()).toStringAsFixed(2).toString()}",
                         style: TextStyle(color: Colors.white, fontSize: 14.0))),
               ),
               const Padding(
@@ -873,16 +930,18 @@ class _SubCategoryProductScreenState extends State<SubCategoryProductScreen> {
     String mytoken = prefs.getString('token').toString();
     final body = {
       "product_id": id,
-      "offer_price": offerprice,
+      "offer_price": "0",
       "rate": (double.parse(rate) * 1).toInt(),
       "quantity": quantity
     };
+    print(jsonEncode(body));
     var response = await http.post(Uri.parse(BASE_URL + addcart),
         body: json.encode(body),
         headers: {
           'Authorization': 'Bearer $mytoken',
           'Content-Type': 'application/json'
         });
+    print(response.body);
     if (response.statusCode == 200) {
       if (json.decode(response.body)['ErrorCode'].toString() == "0") {
         //showToast('Product added successfully');

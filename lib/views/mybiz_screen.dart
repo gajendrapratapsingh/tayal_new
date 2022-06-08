@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tayal/themes/constant.dart';
 import 'package:tayal/views/category_screen.dart';
+import 'package:tayal/views/favourite_products_screen.dart';
 import 'package:tayal/views/help_screen.dart';
 import 'package:tayal/views/ledger_screen.dart';
 import 'package:tayal/views/notification_screen.dart';
@@ -72,9 +73,9 @@ class _MyBizScreenState extends State<MyBizScreen> {
       "page": ReferralScreen()
     },
     {
-      "label": "Notifications",
-      "image": "assets/icons/notification_icon.png",
-      "page": NotificationScreen()
+      "label": "Favourite",
+      "image": "assets/icons/fav.png",
+      "page": FavouriteProductScreen()
     }
   ];
   @override
@@ -170,7 +171,9 @@ class _MyBizScreenState extends State<MyBizScreen> {
                                       children: [
                                         SizedBox(width: 15),
                                         Image.asset(e['image'].toString(),
-                                            scale: 7),
+                                            scale: labels.indexOf(e) == 7
+                                                ? 15
+                                                : 7),
                                         SizedBox(width: 10.0),
                                         Text(e['label'],
                                             style: TextStyle(

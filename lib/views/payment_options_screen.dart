@@ -14,19 +14,25 @@ class PaymentOptionsScreen extends StatefulWidget {
   String payableAmount;
   String walletAmount;
   String cashBack;
-  PaymentOptionsScreen({this.payableAmount, this.walletAmount, this.cashBack});
+  String utilizeAmount;
+  PaymentOptionsScreen(
+      {this.payableAmount,
+      this.walletAmount,
+      this.cashBack,
+      this.utilizeAmount});
 
   @override
-  _PaymentOptionsScreenState createState() =>
-      _PaymentOptionsScreenState(payableAmount, walletAmount, cashBack);
+  _PaymentOptionsScreenState createState() => _PaymentOptionsScreenState(
+      payableAmount, walletAmount, cashBack, utilizeAmount);
 }
 
 class _PaymentOptionsScreenState extends State<PaymentOptionsScreen> {
   String payableAmount;
   String walletAmount;
+  String utilizeAmount;
   String cashBack;
   _PaymentOptionsScreenState(
-      this.payableAmount, this.walletAmount, this.cashBack);
+      this.payableAmount, this.walletAmount, this.cashBack, this.utilizeAmount);
 
   bool _walletVisibility = false;
   bool _cashVisibility = false;
@@ -140,7 +146,8 @@ class _PaymentOptionsScreenState extends State<PaymentOptionsScreen> {
                   child: Center(
                     child: Text(
                       "Total Payable Amount : " +
-                          widget.payableAmount.toString(),
+                          double.parse(widget.payableAmount.toString())
+                              .toStringAsFixed(2),
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                     ),
@@ -177,6 +184,9 @@ class _PaymentOptionsScreenState extends State<PaymentOptionsScreen> {
                               Text("Available Amount: \u20B9 $walletAmount",
                                   style: TextStyle(
                                       color: Colors.grey, fontSize: 12.0)),
+                              Text("Utilized Amount: \u20B9 $utilizeAmount",
+                                  style: TextStyle(
+                                      color: Colors.grey, fontSize: 12.0)),
                               // SizedBox(height: 4.0),
                               // selectedIndex == 0 &&
                               //         double.parse(payableAmount) >
@@ -204,11 +214,11 @@ class _PaymentOptionsScreenState extends State<PaymentOptionsScreen> {
                                 setState(() {
                                   walletCheckBox = !walletCheckBox;
                                   if (walletCheckBox) {
-                                    if (double.parse(walletAmount) <
+                                    if (double.parse(utilizeAmount) <
                                         double.parse(payableAmount)) {
                                       payableAmount =
                                           (double.parse(payableAmount) -
-                                                  double.parse(walletAmount))
+                                                  double.parse(utilizeAmount))
                                               .toString();
                                       setState(() {
                                         showWalletCheck = false;
@@ -796,8 +806,8 @@ class _PaymentOptionsScreenState extends State<PaymentOptionsScreen> {
   }
 
   void _getWalletBalance() {
-    if (double.parse(walletAmount) > 0) {
-      if (double.parse(walletAmount) > double.parse(payableAmount)) {
+    if (double.parse(utilizeAmount) > 0) {
+      if (double.parse(utilizeAmount) > double.parse(payableAmount)) {
         setState(() {
           showWalletCheck = true;
         });
@@ -806,7 +816,7 @@ class _PaymentOptionsScreenState extends State<PaymentOptionsScreen> {
           showWalletCheck = false;
           // _walletVisibility = true;
           payableAmount =
-              (double.parse(payableAmount) - double.parse(walletAmount))
+              (double.parse(payableAmount) - double.parse(utilizeAmount))
                   .toString();
         });
       }

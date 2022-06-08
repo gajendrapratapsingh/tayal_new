@@ -87,7 +87,8 @@ class _ThankuScreenState extends State<ThankuScreen> {
           ),
         ),
         onWillPop: () async {
-          Navigator.of(context).pop();
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => DashBoardScreen()));
         });
   }
 }

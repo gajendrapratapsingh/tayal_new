@@ -554,8 +554,8 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                                             TableCellVerticalAlignment
                                                                 .top,
                                                         columnWidths: {
-                                                          0: FlexColumnWidth(4),
-                                                          1: FlexColumnWidth(2),
+                                                          0: FlexColumnWidth(3),
+                                                          1: FlexColumnWidth(3),
                                                           2: FlexColumnWidth(1),
                                                           3: FlexColumnWidth(2),
                                                         },
@@ -603,8 +603,8 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                                             TableCellVerticalAlignment
                                                                 .top,
                                                         columnWidths: {
-                                                          0: FlexColumnWidth(4),
-                                                          1: FlexColumnWidth(2),
+                                                          0: FlexColumnWidth(3),
+                                                          1: FlexColumnWidth(3),
                                                           2: FlexColumnWidth(1),
                                                           3: FlexColumnWidth(2),
                                                         },
@@ -650,14 +650,49 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                                                           crossAxisAlignment:
                                                                               CrossAxisAlignment.start,
                                                                           children: [
-                                                                            Text(e['offer_price'].toString()),
-                                                                            Text(
-                                                                              e['price'].toString(),
-                                                                              style: TextStyle(
-                                                                                decoration: TextDecoration.lineThrough,
-                                                                                color: Colors.grey,
+                                                                            RichText(
+                                                                              text: TextSpan(
+                                                                                text: '',
+                                                                                style: DefaultTextStyle.of(context).style,
+                                                                                children: [
+                                                                                  TextSpan(text: '${e['price'].toString()}', style: TextStyle(color: Colors.grey, decoration: TextDecoration.lineThrough, fontWeight: FontWeight.bold)),
+                                                                                  TextSpan(text: ' MRP', style: TextStyle(fontSize: 9)),
+                                                                                ],
                                                                               ),
                                                                             ),
+                                                                            e['discount_price'].toString() == null
+                                                                                ? SizedBox()
+                                                                                : RichText(
+                                                                                    text: TextSpan(
+                                                                                      text: '',
+                                                                                      style: DefaultTextStyle.of(context).style,
+                                                                                      children: [
+                                                                                        TextSpan(text: '${e['discount_price'].toString().toString()}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                                                                                        TextSpan(text: ' DEALER PR.', style: TextStyle(fontSize: 9)),
+                                                                                      ],
+                                                                                    ),
+                                                                                  ),
+                                                                            e['trade_price'].toString() == null
+                                                                                ? SizedBox()
+                                                                                : RichText(
+                                                                                    text: TextSpan(
+                                                                                      text: '',
+                                                                                      style: DefaultTextStyle.of(context).style,
+                                                                                      children: [
+                                                                                        TextSpan(text: '${e['trade_price'].toString().toString()}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                                                                                        TextSpan(text: ' SCHEME PR.', style: TextStyle(fontSize: 9)),
+                                                                                      ],
+                                                                                    ),
+                                                                                  ),
+
+                                                                            // Text(e['offer_price'].toString()),
+                                                                            // Text(
+                                                                            //   e['price'].toString(),
+                                                                            //   style: TextStyle(
+                                                                            //     decoration: TextDecoration.lineThrough,
+                                                                            //     color: Colors.grey,
+                                                                            //   ),
+                                                                            // ),
                                                                           ],
                                                                         ),
                                                                       ),
@@ -683,8 +718,8 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                                             TableCellVerticalAlignment
                                                                 .top,
                                                         columnWidths: {
-                                                          0: FlexColumnWidth(4),
-                                                          1: FlexColumnWidth(2),
+                                                          0: FlexColumnWidth(3),
+                                                          1: FlexColumnWidth(3),
                                                           2: FlexColumnWidth(1),
                                                           3: FlexColumnWidth(2),
                                                         },
@@ -829,6 +864,58 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                                                 .toList(),
                                                           ),
                                                         ),
+                                                  Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 10),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Text("Discount",
+                                                            style: TextStyle(
+                                                                color:
+                                                                    Colors.grey,
+                                                                fontSize: 14)),
+                                                        Text(
+                                                            "\u20B9 ${snapshot.data['discount'].toString()}",
+                                                            style: TextStyle(
+                                                                color:
+                                                                    Colors.grey,
+                                                                fontSize: 14))
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  snapshot.data['roundoff'] ==
+                                                          null
+                                                      ? SizedBox()
+                                                      : Padding(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  horizontal:
+                                                                      10),
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              Text("Round Off",
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .grey,
+                                                                      fontSize:
+                                                                          14)),
+                                                              Text(
+                                                                  "\u20B9 ${snapshot.data['roundoff'].toString()}",
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .grey,
+                                                                      fontSize:
+                                                                          14))
+                                                            ],
+                                                          ),
+                                                        ),
                                                   const Padding(
                                                     padding:
                                                         const EdgeInsets.only(
@@ -921,7 +1008,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
     };
     var response = await http.post(Uri.parse(BASE_URL + orderdetail),
         body: body, headers: {'Authorization': 'Bearer $mytoken'});
-
+    print(response.body);
     if (response.statusCode == 200) {
       var data = json.decode(response.body)['Response'];
       return data;

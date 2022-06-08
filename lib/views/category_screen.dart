@@ -52,12 +52,16 @@ class _CategoryScreenState extends State<CategoryScreen> {
     String mytoken = prefs.getString('token').toString();
     var response = await http.post(Uri.parse(BASE_URL + cartlist),
         headers: {'Authorization': 'Bearer $mytoken'});
+    print(response.body);
     if (response.statusCode == 200) {
-      if (json.decode(response.body)['ErrorCode'].toString() != "0") {
-      } else {
+      if (json.decode(response.body)['ErrorCode'] == 0) {
         setState(() {
           _counter = 0;
           _counter = json.decode(response.body)['Response']['items'].length;
+        });
+      } else {
+        setState(() {
+          _counter = 0;
         });
       }
     } else {
@@ -169,7 +173,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       //       fit: BoxFit.fill),
                       // ),
                       //SizedBox(width: size.width * 0.17),
-                      Text("Choose Category",
+                      Text("Category",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontStyle: FontStyle.normal,
@@ -193,9 +197,12 @@ class _CategoryScreenState extends State<CategoryScreen> {
                               // Get.offNamed('/cart');
                               //Get.off(CartScreen());
                               Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => CartScreen()));
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => CartScreen()))
+                                  .then((value) {
+                                _getCountBadge();
+                              });
                             } else {
                               showToast('Your cart is empty');
                             }
@@ -248,19 +255,19 @@ class _CategoryScreenState extends State<CategoryScreen> {
                    ),
                  ),
                ),*/
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: const Card(
-                    elevation: 10,
-                    child: ListTile(
-                      title: Text("All Category",
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700)),
-                    ),
-                  ),
-                ),
+                // Padding(
+                //   padding: const EdgeInsets.all(8.0),
+                //   child: const Card(
+                //     elevation: 10,
+                //     child: ListTile(
+                //       title: Text("All Category",
+                //           style: TextStyle(
+                //               color: Colors.black,
+                //               fontSize: 16,
+                //               fontWeight: FontWeight.w700)),
+                //     ),
+                //   ),
+                // ),
                 // const Padding(
                 //   padding: EdgeInsets.symmetric(vertical: 15, horizontal: 5),
                 //   child: Align(
@@ -273,14 +280,18 @@ class _CategoryScreenState extends State<CategoryScreen> {
                 // ),
                 Expanded(
                     child: _searchResult.length == 0
-                        ? Center(
-                            child: Container(
-                              height: 24,
-                              width: 24,
-                              child: CircularProgressIndicator(
-                                  color: Colors.indigo),
-                            ),
-                          )
+                        ? errprMessage.length == 0
+                            ? Center(
+                                child: Container(
+                                  height: 24,
+                                  width: 24,
+                                  child: CircularProgressIndicator(
+                                      color: Colors.indigo),
+                                ),
+                              )
+                            : Center(
+                                child: Text(errprMessage),
+                              )
                         : Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: GridView.count(
@@ -330,12 +341,15 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               20),
-                                                      child: Image(
-                                                        image: NetworkImage(
-                                                            e['icon']
-                                                                .toString()),
-                                                        fit: BoxFit.fill,
-                                                      ),
+                                                      child: e['icon'] == ""
+                                                          ? Image.asset(
+                                                              "assets/images/no_image.jpg")
+                                                          : Image(
+                                                              image: NetworkImage(e[
+                                                                      'icon']
+                                                                  .toString()),
+                                                              fit: BoxFit.fill,
+                                                            ),
                                                     ),
                                                   ),
                                                 ),
@@ -432,18 +446,26 @@ class _CategoryScreenState extends State<CategoryScreen> {
     );
   }
 
+  String errprMessage = "";
   Future _getcategory() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String mytoken = prefs.getString('token').toString();
     var response = await http.post(Uri.parse(BASE_URL + category),
         headers: {'Authorization': 'Bearer $mytoken'});
+    print(response.statusCode);
+    print(response.body);
     if (response.statusCode == 200) {
-      Iterable list = json.decode(response.body)['Response']['category'];
-      setState(() {
-        _searchResult.addAll(list);
-        _categorylist.addAll(list);
-      });
-      //return list;
+      if (jsonDecode(response.body)['ErrorCode'] == 0) {
+        Iterable list = json.decode(response.body)['Response']['category'];
+        setState(() {
+          _searchResult.addAll(list);
+          _categorylist.addAll(list);
+        });
+      } else {
+        setState(() {
+          errprMessage = json.decode(response.body)['ErrorMessage'].toString();
+        });
+      }
     } else {
       throw Exception('Failed to get data due to ${response.body}');
     }
