@@ -1,5 +1,7 @@
 // ignore_for_file: use_key_in_widget_constructors
 
+import 'package:tayal/themes/constant.dart';
+
 import 'dashboard.dart';
 import 'package:flutter/material.dart';
 import 'tabItem.dart';
@@ -17,12 +19,14 @@ class BottomNavigation extends StatelessWidget {
     return Container(
       height: 60,
       child: BottomNavigationBar(
-        // selectedLabelStyle: TextStyle(color: Colors.black),
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.grey[600],
-        // backgroundColor: Colors.red,
 
-        selectedFontSize: 12,
+        selectedItemColor: Colors.white,
+        backgroundColor: appbarcolor,
+        unselectedItemColor: Colors.white,
+        // elevation: 10,
+
+        selectedFontSize: 9,
         items: tabs
             .map(
               (e) => _buildItem(
@@ -53,9 +57,31 @@ class BottomNavigation extends StatelessWidget {
     //       label: tabName);
     // } else {
     return BottomNavigationBarItem(
-      icon: Icon(
-        icon,
-        color: _tabColor(index: index),
+      icon: Padding(
+        padding: const EdgeInsets.only(bottom: 8),
+        child: Icon(
+          icon,
+          shadows: DashboardState.currentTab == index
+              ? [
+                  Shadow(
+                      blurRadius: 0.5,
+                      color: Colors.white,
+                      offset: Offset(0, 0.5)),
+                  Shadow(
+                      blurRadius: 0.5,
+                      color: Colors.white,
+                      offset: Offset(0.5, 0.5)),
+                  Shadow(
+                      blurRadius: 0.5,
+                      color: Colors.white,
+                      offset: Offset(0.5, 0)),
+                  // Shadow(
+                  //     blurRadius: 10, color: Colors.white, offset: Offset(0, 1))
+                ]
+              : [],
+          color: Colors.white,
+          size: 22,
+        ),
       ),
       label: tabName,
     );

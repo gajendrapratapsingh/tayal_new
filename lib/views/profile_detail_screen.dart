@@ -81,493 +81,444 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: kBackgroundShapeColor,
+      appBar: AppBar(
+        backgroundColor: appbarcolor,
+        leading: GestureDetector(
+            onTap: () {
+              Navigator.of(context).pop();
+            },
+            child: Image.asset(
+              "assets/images/back.png",
+              scale: 20,
+              color: Colors.white,
+            )),
+        centerTitle: true,
+        title: Text("Profile",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontStyle: FontStyle.normal,
+                fontSize: 21,
+                fontWeight: FontWeight.bold)),
+      ),
       body: ModalProgressHUD(
         color: Colors.indigo,
         inAsyncCall: _loading,
-        child: Stack(
-          children: [
-            Padding(
-              padding: EdgeInsets.only(top: 30),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: SvgPicture.asset('assets/images/back.svg',
-                            fit: BoxFit.fill),
-                      ),
-                      SizedBox(width: MediaQuery.of(context).size.width * 0.15),
-                      const Text("Profile",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontStyle: FontStyle.normal,
-                              fontSize: 21,
-                              fontWeight: FontWeight.bold)),
-                    ],
-                  ),
-                  Expanded(
-                      child: SingleChildScrollView(
-                    child: Column(
-                      children: <Widget>[
-                        Align(
-                            alignment: Alignment.center,
-                            child: Card(
-                                shape: RoundedRectangleBorder(
-                                  side:
-                                      BorderSide(color: Colors.white, width: 1),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 5.0, horizontal: 25.0),
-                                  child: Column(
-                                    children: [
-                                      SizedBox(height: 10.0),
-                                      InkWell(
-                                        onTap: () {
-                                          _showDocPicker(context, "profile");
-                                        },
-                                        child: _profilepath.toString() == "" ||
-                                                _profilepath.toString() ==
-                                                    "null"
-                                            ? ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(40),
-                                                child: Container(
-                                                  height: 80,
-                                                  width: 80,
-                                                  child: profileimage == "" ||
-                                                          profileimage == null
-                                                      ? Image.asset(
-                                                          'assets/images/logo_user.png',
-                                                          fit: BoxFit.fill)
-                                                      : Image.network(
-                                                          profileimage,
-                                                          fit: BoxFit.fill),
-                                                ),
-                                              )
-                                            : ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(40),
-                                                child: Container(
-                                                  height: 80,
-                                                  width: 80,
-                                                  decoration: BoxDecoration(
-                                                      image: DecorationImage(
-                                                          fit: BoxFit.cover,
-                                                          image: FileImage(File(
-                                                              _profilepath)))),
-                                                ),
-                                              ),
-                                      ),
-                                      SizedBox(height: 15.0),
-                                      Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 3.0, horizontal: 15.0),
-                                        child: name == "" || name == null
-                                            ? Text("")
-                                            : Text(name,
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 18.0,
-                                                    fontWeight:
-                                                        FontWeight.bold)),
-                                      )
-                                    ],
-                                  ),
-                                ))),
-                        Padding(
-                          padding: EdgeInsets.all(20.0),
+        child: Padding(
+          padding: EdgeInsets.only(top: 30),
+          child: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                Align(
+                    alignment: Alignment.center,
+                    child: Card(
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(color: Colors.white, width: 1),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 5.0, horizontal: 25.0),
                           child: Column(
                             children: [
-                              const Align(
-                                alignment: Alignment.topLeft,
-                                child: Text("Name",
-                                    style: TextStyle(
-                                        color: Colors.grey, fontSize: 14.0)),
-                              ),
-                              TextField(
-                                controller: nameCont,
-                                keyboardType: TextInputType.text,
-                                //focusNode: focusNode,
-                                decoration: InputDecoration(
-                                  hintText:
-                                      name == "" || name == null ? "" : name,
-                                  enabledBorder: const UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.white),
-                                  ),
-                                  focusedBorder: const UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.blue),
-                                  ),
-                                ),
-                                onChanged: (value) {
-                                  setState(() {
-                                    name = value.toString();
-                                  });
+                              SizedBox(height: 10.0),
+                              InkWell(
+                                onTap: () {
+                                  _showDocPicker(context, "profile");
                                 },
-                              ),
-                              const SizedBox(height: 20),
-                              const Align(
-                                alignment: Alignment.topLeft,
-                                child: Text("Phone Number",
-                                    style: TextStyle(
-                                        color: Colors.grey, fontSize: 14.0)),
-                              ),
-                              TextField(
-                                  controller:
-                                      TextEditingController(text: mobile),
-                                  keyboardType: TextInputType.number,
-                                  readOnly: true,
-                                  decoration: InputDecoration(
-                                    hintText: mobile == "" || mobile == null
-                                        ? ""
-                                        : mobile,
-                                    //suffix: Text("Edit", style: TextStyle(color: Colors.grey, fontSize: 14)),
-                                    enabledBorder: const UnderlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: Colors.white),
-                                    ),
-                                    focusedBorder: const UnderlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: Colors.blue),
-                                    ),
-                                  )),
-                              const SizedBox(height: 20),
-                              const Align(
-                                alignment: Alignment.topLeft,
-                                child: Text("Email",
-                                    style: TextStyle(
-                                        color: Colors.grey, fontSize: 14.0)),
-                              ),
-                              TextField(
-                                controller: emailCont,
-                                keyboardType: TextInputType.emailAddress,
-                                decoration: InputDecoration(
-                                  hintText:
-                                      email == "" || email == null ? "" : email,
-                                  enabledBorder: const UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.white),
-                                  ),
-                                  focusedBorder: const UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.blue),
-                                  ),
-                                ),
-                                onChanged: (value) {
-                                  setState(() {
-                                    email = value.toString();
-                                  });
-                                },
-                              ),
-                              const SizedBox(height: 20),
-                              const Align(
-                                alignment: Alignment.topLeft,
-                                child: Text("Pan No.",
-                                    style: TextStyle(
-                                        color: Colors.grey, fontSize: 14.0)),
-                              ),
-                              TextField(
-                                controller: pannoCont,
-                                decoration: InputDecoration(
-                                  hintText:
-                                      panno == "" || panno == null ? "" : panno,
-                                  //suffix: Text("Change", style: TextStyle(fontSize: 14)),
-                                  enabledBorder: const UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.white),
-                                  ),
-                                  focusedBorder: const UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.blue),
-                                  ),
-                                ),
-                                onChanged: (value) {
-                                  setState(() {
-                                    panno = value.toString();
-                                  });
-                                },
-                              ),
-                              const SizedBox(height: 20),
-                              const Align(
-                                alignment: Alignment.topLeft,
-                                child: Text("GST No.",
-                                    style: TextStyle(
-                                        color: Colors.grey, fontSize: 14.0)),
-                              ),
-                              TextField(
-                                controller: gstnoCont,
-                                decoration: InputDecoration(
-                                  hintText:
-                                      gstno == "" || gstno == null ? "" : gstno,
-                                  //suffix: Text("Change", style: TextStyle(fontSize: 14)),
-                                  enabledBorder: const UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.white),
-                                  ),
-                                  focusedBorder: const UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.blue),
-                                  ),
-                                ),
-                                onChanged: (value) {
-                                  setState(() {
-                                    gstno = value.toString();
-                                  });
-                                },
-                              ),
-                              const SizedBox(height: 20),
-                              const Align(
-                                alignment: Alignment.topLeft,
-                                child: Text("Address",
-                                    style: TextStyle(
-                                        color: Colors.grey, fontSize: 14.0)),
-                              ),
-                              TextField(
-                                controller: addressCont,
-                                decoration: InputDecoration(
-                                  hintText: address == "" || address == null
-                                      ? ""
-                                      : address,
-                                  //suffix: Text("Change", style: TextStyle(fontSize: 14)),
-                                  enabledBorder: const UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.white),
-                                  ),
-                                  focusedBorder: const UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.blue),
-                                  ),
-                                ),
-                                onChanged: (value) {
-                                  setState(() {
-                                    address = value.toString();
-                                  });
-                                },
-                              ),
-                              const SizedBox(height: 20),
-                              const Align(
-                                alignment: Alignment.topLeft,
-                                child: Text("GST Certificate",
-                                    style: TextStyle(
-                                        color: Colors.grey, fontSize: 14.0)),
-                              ),
-                              const SizedBox(height: 20),
-                              Container(
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    InkWell(
-                                      onTap: () {
-                                        DialogHelper.viewimagedialog(
-                                            gstcertificate.toString(), context);
-                                      },
-                                      child: _gstcertificatepath.toString() ==
-                                                  "" ||
-                                              _gstcertificatepath.toString() ==
-                                                  "null"
-                                          ? Container(
-                                              height: 45,
-                                              width: 45,
-                                              child: gstcertificate == "" ||
-                                                      gstcertificate == null
-                                                  ? Image.asset(
-                                                      'assets/images/no_image.jpg',
-                                                      fit: BoxFit.fill)
-                                                  : Image.network(
-                                                      gstcertificate,
-                                                      fit: BoxFit.fill),
-                                            )
-                                          : Container(
-                                              height: 45,
-                                              width: 45,
-                                              decoration: BoxDecoration(
-                                                  image: DecorationImage(
-                                                      fit: BoxFit.cover,
-                                                      image: FileImage(File(
-                                                          _gstcertificatepath)))),
-                                            ),
-                                    ),
-                                    InkWell(
-                                      onTap: () {
-                                        _showDocPicker(
-                                            context, "gstcertificate");
-                                      },
-                                      child: Container(
-                                        height: 35,
-                                        width: 95,
-                                        alignment: Alignment.center,
-                                        decoration: BoxDecoration(
-                                            color: Colors.indigo.shade300,
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(8.0))),
-                                        child: Text("Browse",
-                                            style:
-                                                TextStyle(color: Colors.white)),
+                                child: _profilepath.toString() == "" ||
+                                        _profilepath.toString() == "null"
+                                    ? ClipRRect(
+                                        borderRadius: BorderRadius.circular(40),
+                                        child: Container(
+                                          height: 80,
+                                          width: 80,
+                                          child: profileimage == "" ||
+                                                  profileimage == null
+                                              ? Image.asset(
+                                                  'assets/images/logo_user.png',
+                                                  fit: BoxFit.fill)
+                                              : Image.network(profileimage,
+                                                  fit: BoxFit.fill),
+                                        ),
+                                      )
+                                    : ClipRRect(
+                                        borderRadius: BorderRadius.circular(40),
+                                        child: Container(
+                                          height: 80,
+                                          width: 80,
+                                          decoration: BoxDecoration(
+                                              image: DecorationImage(
+                                                  fit: BoxFit.cover,
+                                                  image: FileImage(
+                                                      File(_profilepath)))),
+                                        ),
                                       ),
-                                    )
-                                  ],
-                                ),
                               ),
-                              const SizedBox(height: 10),
-                              Divider(
-                                  height: 1,
-                                  thickness: 1.2,
-                                  color: Colors.white),
-                              const SizedBox(height: 20),
-                              const Align(
-                                alignment: Alignment.topLeft,
-                                child: Text("Pan Card",
-                                    style: TextStyle(
-                                        color: Colors.grey, fontSize: 14.0)),
-                              ),
-                              const SizedBox(height: 20),
-                              Container(
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    InkWell(
-                                      onTap: () {
-                                        DialogHelper.viewimagedialog(
-                                            pancard.toString(), context);
-                                      },
-                                      child: _pancardpath.toString() == "" ||
-                                              _pancardpath.toString() == "null"
-                                          ? Container(
-                                              height: 45,
-                                              width: 45,
-                                              child: pancard == "" ||
-                                                      pancard == null
-                                                  ? Image.asset(
-                                                      'assets/images/no_image.jpg',
-                                                      fit: BoxFit.fill)
-                                                  : Image.network(pancard,
-                                                      fit: BoxFit.fill),
-                                            )
-                                          : Container(
-                                              height: 45,
-                                              width: 45,
-                                              decoration: BoxDecoration(
-                                                  image: DecorationImage(
-                                                      fit: BoxFit.cover,
-                                                      image: FileImage(
-                                                          File(_pancardpath)))),
-                                            ),
-                                    ),
-                                    InkWell(
-                                      onTap: () {
-                                        _showDocPicker(context, "pancard");
-                                      },
-                                      child: Container(
-                                        height: 35,
-                                        width: 95,
-                                        alignment: Alignment.center,
-                                        decoration: BoxDecoration(
-                                            color: Colors.indigo.shade300,
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(8.0))),
-                                        child: Text("Browse",
-                                            style:
-                                                TextStyle(color: Colors.white)),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              Divider(
-                                  height: 1,
-                                  thickness: 1.2,
-                                  color: Colors.white),
-                              const SizedBox(height: 20),
-                              const Align(
-                                alignment: Alignment.topLeft,
-                                child: Text("Agriculture license",
-                                    style: TextStyle(
-                                        color: Colors.grey, fontSize: 14.0)),
-                              ),
-                              const SizedBox(height: 20),
-                              Container(
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    InkWell(
-                                      onTap: () {
-                                        DialogHelper.viewimagedialog(
-                                            agriculturelicense.toString(),
-                                            context);
-                                      },
-                                      child: _agriculturelicensepath
-                                                      .toString() ==
-                                                  "" ||
-                                              _agriculturelicensepath
-                                                      .toString() ==
-                                                  "null"
-                                          ? Container(
-                                              height: 45,
-                                              width: 45,
-                                              child: agriculturelicense == "" ||
-                                                      agriculturelicense == null
-                                                  ? Image.asset(
-                                                      'assets/images/no_image.jpg',
-                                                      fit: BoxFit.fill)
-                                                  : Image.network(
-                                                      agriculturelicense,
-                                                      fit: BoxFit.fill),
-                                            )
-                                          : Container(
-                                              height: 45,
-                                              width: 45,
-                                              decoration: BoxDecoration(
-                                                  image: DecorationImage(
-                                                      fit: BoxFit.cover,
-                                                      image: FileImage(File(
-                                                          _agriculturelicensepath)))),
-                                            ),
-                                    ),
-                                    InkWell(
-                                      onTap: () {
-                                        _showDocPicker(context, "Agriculture");
-                                      },
-                                      child: Container(
-                                        height: 35,
-                                        width: 95,
-                                        alignment: Alignment.center,
-                                        decoration: BoxDecoration(
-                                            color: Colors.indigo.shade300,
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(8.0))),
-                                        child: Text("Browse",
-                                            style:
-                                                TextStyle(color: Colors.white)),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              Divider(
-                                  height: 1,
-                                  thickness: 1.2,
-                                  color: Colors.white),
-                              const SizedBox(height: 20),
-                              Container(
-                                margin: EdgeInsets.symmetric(vertical: 10),
-                                width: size.width * 0.9,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(29),
-                                  child: newElevatedButton(),
-                                ),
-                              ),
+                              SizedBox(height: 15.0),
+                              Padding(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 3.0, horizontal: 15.0),
+                                child: name == "" || name == null
+                                    ? Text("")
+                                    : Text(name,
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 18.0,
+                                            fontWeight: FontWeight.bold)),
+                              )
                             ],
                           ),
-                        )
-                      ],
-                    ),
-                  )),
-                ],
-              ),
-            )
-          ],
+                        ))),
+                Padding(
+                  padding: EdgeInsets.all(20.0),
+                  child: Column(
+                    children: [
+                      const Align(
+                        alignment: Alignment.topLeft,
+                        child: Text("Name",
+                            style:
+                                TextStyle(color: Colors.grey, fontSize: 14.0)),
+                      ),
+                      TextField(
+                        controller: nameCont,
+                        keyboardType: TextInputType.text,
+                        //focusNode: focusNode,
+                        decoration: InputDecoration(
+                          hintText: name == "" || name == null ? "" : name,
+                          enabledBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                          focusedBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.blue),
+                          ),
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            name = value.toString();
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      const Align(
+                        alignment: Alignment.topLeft,
+                        child: Text("Phone Number",
+                            style:
+                                TextStyle(color: Colors.grey, fontSize: 14.0)),
+                      ),
+                      TextField(
+                          controller: TextEditingController(text: mobile),
+                          keyboardType: TextInputType.number,
+                          readOnly: true,
+                          decoration: InputDecoration(
+                            hintText:
+                                mobile == "" || mobile == null ? "" : mobile,
+                            //suffix: Text("Edit", style: TextStyle(color: Colors.grey, fontSize: 14)),
+                            enabledBorder: const UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                            focusedBorder: const UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.blue),
+                            ),
+                          )),
+                      const SizedBox(height: 20),
+                      const Align(
+                        alignment: Alignment.topLeft,
+                        child: Text("Email",
+                            style:
+                                TextStyle(color: Colors.grey, fontSize: 14.0)),
+                      ),
+                      TextField(
+                        controller: emailCont,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: InputDecoration(
+                          hintText: email == "" || email == null ? "" : email,
+                          enabledBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                          focusedBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.blue),
+                          ),
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            email = value.toString();
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      const Align(
+                        alignment: Alignment.topLeft,
+                        child: Text("Pan No.",
+                            style:
+                                TextStyle(color: Colors.grey, fontSize: 14.0)),
+                      ),
+                      TextField(
+                        controller: pannoCont,
+                        decoration: InputDecoration(
+                          hintText: panno == "" || panno == null ? "" : panno,
+                          //suffix: Text("Change", style: TextStyle(fontSize: 14)),
+                          enabledBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                          focusedBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.blue),
+                          ),
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            panno = value.toString();
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      const Align(
+                        alignment: Alignment.topLeft,
+                        child: Text("GST No.",
+                            style:
+                                TextStyle(color: Colors.grey, fontSize: 14.0)),
+                      ),
+                      TextField(
+                        controller: gstnoCont,
+                        decoration: InputDecoration(
+                          hintText: gstno == "" || gstno == null ? "" : gstno,
+                          //suffix: Text("Change", style: TextStyle(fontSize: 14)),
+                          enabledBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                          focusedBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.blue),
+                          ),
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            gstno = value.toString();
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      const Align(
+                        alignment: Alignment.topLeft,
+                        child: Text("Address",
+                            style:
+                                TextStyle(color: Colors.grey, fontSize: 14.0)),
+                      ),
+                      TextField(
+                        controller: addressCont,
+                        decoration: InputDecoration(
+                          hintText:
+                              address == "" || address == null ? "" : address,
+                          //suffix: Text("Change", style: TextStyle(fontSize: 14)),
+                          enabledBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                          focusedBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.blue),
+                          ),
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            address = value.toString();
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      const Align(
+                        alignment: Alignment.topLeft,
+                        child: Text("GST Certificate",
+                            style:
+                                TextStyle(color: Colors.grey, fontSize: 14.0)),
+                      ),
+                      const SizedBox(height: 20),
+                      Container(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                DialogHelper.viewimagedialog(
+                                    gstcertificate.toString(), context);
+                              },
+                              child: _gstcertificatepath.toString() == "" ||
+                                      _gstcertificatepath.toString() == "null"
+                                  ? Container(
+                                      height: 45,
+                                      width: 45,
+                                      child: gstcertificate == "" ||
+                                              gstcertificate == null
+                                          ? Image.asset(
+                                              'assets/images/no_image.jpg',
+                                              fit: BoxFit.fill)
+                                          : Image.network(gstcertificate,
+                                              fit: BoxFit.fill),
+                                    )
+                                  : Container(
+                                      height: 45,
+                                      width: 45,
+                                      decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                              fit: BoxFit.cover,
+                                              image: FileImage(
+                                                  File(_gstcertificatepath)))),
+                                    ),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                _showDocPicker(context, "gstcertificate");
+                              },
+                              child: Container(
+                                height: 35,
+                                width: 95,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                    color: Colors.indigo.shade300,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0))),
+                                child: Text("Browse",
+                                    style: TextStyle(color: Colors.white)),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Divider(height: 1, thickness: 1.2, color: Colors.white),
+                      const SizedBox(height: 20),
+                      const Align(
+                        alignment: Alignment.topLeft,
+                        child: Text("Pan Card",
+                            style:
+                                TextStyle(color: Colors.grey, fontSize: 14.0)),
+                      ),
+                      const SizedBox(height: 20),
+                      Container(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                DialogHelper.viewimagedialog(
+                                    pancard.toString(), context);
+                              },
+                              child: _pancardpath.toString() == "" ||
+                                      _pancardpath.toString() == "null"
+                                  ? Container(
+                                      height: 45,
+                                      width: 45,
+                                      child: pancard == "" || pancard == null
+                                          ? Image.asset(
+                                              'assets/images/no_image.jpg',
+                                              fit: BoxFit.fill)
+                                          : Image.network(pancard,
+                                              fit: BoxFit.fill),
+                                    )
+                                  : Container(
+                                      height: 45,
+                                      width: 45,
+                                      decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                              fit: BoxFit.cover,
+                                              image: FileImage(
+                                                  File(_pancardpath)))),
+                                    ),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                _showDocPicker(context, "pancard");
+                              },
+                              child: Container(
+                                height: 35,
+                                width: 95,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                    color: Colors.indigo.shade300,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0))),
+                                child: Text("Browse",
+                                    style: TextStyle(color: Colors.white)),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Divider(height: 1, thickness: 1.2, color: Colors.white),
+                      const SizedBox(height: 20),
+                      const Align(
+                        alignment: Alignment.topLeft,
+                        child: Text("Agriculture license",
+                            style:
+                                TextStyle(color: Colors.grey, fontSize: 14.0)),
+                      ),
+                      const SizedBox(height: 20),
+                      Container(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                DialogHelper.viewimagedialog(
+                                    agriculturelicense.toString(), context);
+                              },
+                              child: _agriculturelicensepath.toString() == "" ||
+                                      _agriculturelicensepath.toString() ==
+                                          "null"
+                                  ? Container(
+                                      height: 45,
+                                      width: 45,
+                                      child: agriculturelicense == "" ||
+                                              agriculturelicense == null
+                                          ? Image.asset(
+                                              'assets/images/no_image.jpg',
+                                              fit: BoxFit.fill)
+                                          : Image.network(agriculturelicense,
+                                              fit: BoxFit.fill),
+                                    )
+                                  : Container(
+                                      height: 45,
+                                      width: 45,
+                                      decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                              fit: BoxFit.cover,
+                                              image: FileImage(File(
+                                                  _agriculturelicensepath)))),
+                                    ),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                _showDocPicker(context, "Agriculture");
+                              },
+                              child: Container(
+                                height: 35,
+                                width: 95,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                    color: Colors.indigo.shade300,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0))),
+                                child: Text("Browse",
+                                    style: TextStyle(color: Colors.white)),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Divider(height: 1, thickness: 1.2, color: Colors.white),
+                      const SizedBox(height: 20),
+                      Container(
+                        margin: EdgeInsets.symmetric(vertical: 10),
+                        width: size.width * 0.9,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(29),
+                          child: newElevatedButton(),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
         ),
       ),
     );

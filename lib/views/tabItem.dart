@@ -7,7 +7,7 @@ class TabItem {
   final String tabName;
   final IconData icon;
   final GlobalKey<NavigatorState> key = GlobalKey<NavigatorState>();
-  int _index = 0;
+  int _index = 2;
   Widget _page;
   TabItem({
     this.tabName,

@@ -99,101 +99,85 @@ class _MyBizScreenState extends State<MyBizScreen> {
       //   color: Color(0xffBCBEFD),
       //   child: MyBottomAppBar(),
       // ),
-      body: Stack(children: [
-        Padding(
-          padding: EdgeInsets.only(top: 30),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      _scaffoldKey.currentState.openDrawer();
-                    },
-                    child: SvgPicture.asset('assets/images/menu.svg',
-                        fit: BoxFit.fill),
-                  ),
-                  const Text("My Biz",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontStyle: FontStyle.normal,
-                          fontSize: 21,
-                          fontWeight: FontWeight.bold)),
-                  InkWell(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => NotificationScreen()));
-                    },
-                    child: SvgPicture.asset('assets/images/notifications.svg',
-                        fit: BoxFit.fill),
-                  ),
-                ],
-              ),
-              Expanded(
-                flex: 9,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: GridView.count(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 10,
-                    crossAxisSpacing: 10,
-                    childAspectRatio: 1.9,
-                    physics: ClampingScrollPhysics(),
-                    children: labels
-                        .map(
-                          (e) => InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => e['page']));
-                            },
-                            child: Container(
-                                // height: size.height * 0.12,
-                                // width: size.width * 0.50,
-                                decoration: BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(8.0))),
-                                child: Card(
-                                  elevation: 4.0,
-                                  color: Colors.indigo.shade50,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(top: 15),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        SizedBox(width: 15),
-                                        Image.asset(e['image'].toString(),
-                                            scale: labels.indexOf(e) == 7
-                                                ? 15
-                                                : 7),
-                                        SizedBox(width: 10.0),
-                                        Text(e['label'],
-                                            style: TextStyle(
-                                                color: Colors.indigo,
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 14)),
-                                      ],
-                                    ),
-                                  ),
-                                )),
+      appBar: AppBar(
+          backgroundColor: appbarcolor,
+          leading: GestureDetector(
+              onTap: () {
+                _scaffoldKey.currentState.openDrawer();
+              },
+              child: Image.asset(
+                "assets/images/circle.png",
+                scale: 25,
+                color: Colors.white,
+              )),
+          centerTitle: true,
+          title: Text("My Biz",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontStyle: FontStyle.normal,
+                  fontSize: 21,
+                  fontWeight: FontWeight.bold)),
+          actions: [
+            GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => NotificationScreen()));
+                },
+                child: Image.asset(
+                  "assets/images/bell.png",
+                  scale: 25,
+                  color: Colors.white,
+                ))
+          ]),
+      body: Padding(
+        padding: const EdgeInsets.all(10),
+        child: GridView.count(
+          crossAxisCount: 2,
+          mainAxisSpacing: 10,
+          crossAxisSpacing: 10,
+          childAspectRatio: 1.9,
+          physics: ClampingScrollPhysics(),
+          children: labels
+              .map(
+                (e) => InkWell(
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => e['page']));
+                  },
+                  child: Container(
+                      // height: size.height * 0.12,
+                      // width: size.width * 0.50,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                      child: Card(
+                        elevation: 4.0,
+                        color: Colors.indigo.shade50,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 15),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              SizedBox(width: 15),
+                              Image.asset(e['image'].toString(),
+                                  scale: labels.indexOf(e) == 7 ? 15 : 7),
+                              SizedBox(width: 10.0),
+                              Text(e['label'],
+                                  style: TextStyle(
+                                      color: Colors.indigo,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14)),
+                            ],
                           ),
-                        )
-                        .toList(),
-                  ),
+                        ),
+                      )),
                 ),
               )
-            ],
-          ),
-        )
-      ]),
+              .toList(),
+        ),
+      ),
     );
   }
 }

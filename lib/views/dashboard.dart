@@ -1,8 +1,8 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tayal/main.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
+
 import 'package:tayal/views/bottomNavigation.dart';
 import 'package:tayal/views/campaign_screen.dart';
 import 'package:tayal/views/category_screen.dart';
@@ -19,32 +19,32 @@ class Dashboard extends StatefulWidget {
 class DashboardState extends State<Dashboard> {
   // this is static property so other widget throughout the app
   // can access it simply by AppState.currentTab
-  static int currentTab = 0;
+  static int currentTab = 2;
   // list tabs here
   final List<TabItem> tabs = [
     TabItem(
-      tabName: "Home",
-      icon: Icons.home,
+      tabName: " Dashboard",
+      icon: TablerIcons.home_2,
       page: DashBoardScreen(),
     ),
     TabItem(
       tabName: "My Biz",
-      icon: Icons.view_list_rounded,
+      icon: TablerIcons.grid_dots,
       page: MyBizScreen(),
     ),
     TabItem(
       tabName: "Cart",
-      icon: Icons.add_circle,
+      icon: TablerIcons.shopping_cart_plus,
       page: CategoryScreen(),
     ),
     TabItem(
       tabName: "Campaign",
-      icon: Icons.price_change,
+      icon: TablerIcons.trophy,
       page: CampaignScreen(),
     ),
     TabItem(
       tabName: "Help",
-      icon: Icons.settings,
+      icon: TablerIcons.message,
       page: HelpScreen(),
     ),
   ];
@@ -86,9 +86,9 @@ class DashboardState extends State<Dashboard> {
             !await tabs[currentTab].key.currentState.maybePop();
         if (isFirstRouteInCurrentTab) {
           // if not on the 'main' tab
-          if (currentTab != 0) {
+          if (currentTab != 2) {
             // select 'main' tab
-            _selectTab(0);
+            _selectTab(2);
             // back button handled by app
             return false;
           }

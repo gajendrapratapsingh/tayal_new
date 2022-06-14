@@ -1,12 +1,15 @@
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tayal/helper/dialog_helper.dart';
 import 'package:tayal/models/profiledata.dart';
 import 'package:tayal/network/api.dart';
 import 'package:http/http.dart' as http;
+import 'package:tayal/themes/constant.dart';
 import 'package:tayal/views/dashboard_screen.dart';
 import 'package:tayal/views/favourite_products_screen.dart';
 import 'package:tayal/views/profile_screen.dart';
@@ -50,79 +53,82 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: Material(
-        color: Color.fromRGBO(50, 75, 205, 1),
-        child: ListView(
-          children: <Widget>[
-            buildHeader(
-                urlImage: urlImage,
-                name: name,
-                email: email,
-                onClicked: () => Navigator.of(context).pop()),
-            Container(
-              padding: padding,
-              child: Column(
-                children: [
-                  const SizedBox(height: 20),
-                  buildMenuItem(
-                    text: 'Profile',
-                    icon: Icons.people,
-                    onClicked: () => selectedItem(context, 0),
+      child: Container(
+          color: appbarcolor,
+          child: BackdropFilter(
+            filter: new ImageFilter.blur(
+                sigmaX: 0.5, sigmaY: 0.5, tileMode: TileMode.clamp),
+            child: ListView(
+              children: <Widget>[
+                buildHeader(
+                    urlImage: urlImage,
+                    name: name,
+                    email: email,
+                    onClicked: () => Navigator.of(context).pop()),
+                Container(
+                  padding: padding,
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 20),
+                      buildMenuItem(
+                        text: 'Profile',
+                        icon: TablerIcons.user,
+                        onClicked: () => selectedItem(context, 0),
+                      ),
+                      Divider(color: Colors.white70),
+                      buildMenuItem(
+                        text: 'Home',
+                        icon: TablerIcons.home,
+                        onClicked: () => selectedItem(context, 1),
+                      ),
+                      // Divider(color: Colors.white70),
+                      // buildMenuItem(
+                      //   text: 'Setting',
+                      //   icon: Icons.settings,
+                      //   onClicked: () => selectedItem(context, 2),
+                      // ),
+                      // Divider(color: Colors.white70),
+                      // buildMenuItem(
+                      //   text: 'Favourite',
+                      //   icon: Icons.favorite,
+                      //   onClicked: () => selectedItem(context, 3),
+                      // ),
+                      // Divider(color: Colors.white70),
+                      // buildMenuItem(
+                      //   text: 'Message',
+                      //   icon: Icons.message,
+                      //   onClicked: () => selectedItem(context, 4),
+                      // ),
+                      Divider(color: Colors.white70),
+                      buildMenuItem(
+                        text: 'Privacy Policy',
+                        icon: TablerIcons.message_2,
+                        onClicked: () => selectedItem(context, 6),
+                      ),
+                      Divider(color: Colors.white70),
+                      buildMenuItem(
+                        text: 'Terms & Conditions',
+                        icon: TablerIcons.message_2,
+                        onClicked: () => selectedItem(context, 7),
+                      ),
+                      Divider(color: Colors.white70),
+                      buildMenuItem(
+                        text: 'Refund Policy',
+                        icon: TablerIcons.message_2,
+                        onClicked: () => selectedItem(context, 8),
+                      ),
+                      Divider(color: Colors.white70),
+                      buildMenuItem(
+                        text: 'Sign out',
+                        icon: TablerIcons.logout,
+                        onClicked: () => selectedItem(context, 5),
+                      ),
+                    ],
                   ),
-                  Divider(color: Colors.white70),
-                  buildMenuItem(
-                    text: 'Home',
-                    icon: Icons.home,
-                    onClicked: () => selectedItem(context, 1),
-                  ),
-                  Divider(color: Colors.white70),
-                  buildMenuItem(
-                    text: 'Setting',
-                    icon: Icons.settings,
-                    onClicked: () => selectedItem(context, 2),
-                  ),
-                  // Divider(color: Colors.white70),
-                  // buildMenuItem(
-                  //   text: 'Favourite',
-                  //   icon: Icons.favorite,
-                  //   onClicked: () => selectedItem(context, 3),
-                  // ),
-                  Divider(color: Colors.white70),
-                  buildMenuItem(
-                    text: 'Message',
-                    icon: Icons.message,
-                    onClicked: () => selectedItem(context, 4),
-                  ),
-                  Divider(color: Colors.white70),
-                  buildMenuItem(
-                    text: 'Privacy Policy',
-                    icon: Icons.wallet_travel_outlined,
-                    onClicked: () => selectedItem(context, 6),
-                  ),
-                  Divider(color: Colors.white70),
-                  buildMenuItem(
-                    text: 'Terms & Conditions',
-                    icon: Icons.wallet_travel_outlined,
-                    onClicked: () => selectedItem(context, 7),
-                  ),
-                  Divider(color: Colors.white70),
-                  buildMenuItem(
-                    text: 'Refund Policy',
-                    icon: Icons.wallet_travel_outlined,
-                    onClicked: () => selectedItem(context, 8),
-                  ),
-                  Divider(color: Colors.white70),
-                  buildMenuItem(
-                    text: 'Sign out',
-                    icon: Icons.wallet_travel_outlined,
-                    onClicked: () => selectedItem(context, 5),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          )),
     );
   }
 

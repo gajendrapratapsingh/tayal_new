@@ -10,7 +10,6 @@ import 'package:tayal/themes/constant.dart';
 import 'package:tayal/views/change_address.dart';
 
 class AddAddressPage extends StatefulWidget {
-
   String addressid;
   AddAddressPage({this.addressid});
 
@@ -19,7 +18,6 @@ class AddAddressPage extends StatefulWidget {
 }
 
 class _AddAddressPageState extends State<AddAddressPage> {
-
   String addressid;
   _AddAddressPageState(this.addressid);
 
@@ -49,7 +47,7 @@ class _AddAddressPageState extends State<AddAddressPage> {
   @override
   void initState() {
     super.initState();
-    if(addressid != null || addressid != ""){
+    if (addressid != null || addressid != "") {
       _getUser();
     }
   }
@@ -112,7 +110,7 @@ class _AddAddressPageState extends State<AddAddressPage> {
         initialValue: _initialValue,
         // controller: nameController,
         textCapitalization: TextCapitalization.sentences,
-        onChanged: (value){
+        onChanged: (value) {
           nameController.text = value;
         },
         cursorColor: Colors.blue,
@@ -137,7 +135,7 @@ class _AddAddressPageState extends State<AddAddressPage> {
         initialValue: _initialValue,
         // controller: mobileController,
         keyboardType: TextInputType.number,
-        onChanged: (value){
+        onChanged: (value) {
           mobileController.text = value;
         },
         cursorColor: Colors.blue,
@@ -168,7 +166,7 @@ class _AddAddressPageState extends State<AddAddressPage> {
         // controller: pincodeController,
         keyboardType: TextInputType.number,
         maxLength: 6,
-        onChanged: (value){
+        onChanged: (value) {
           pincodeController.text = value;
         },
         cursorColor: Colors.blue,
@@ -260,7 +258,7 @@ class _AddAddressPageState extends State<AddAddressPage> {
         initialValue: _initialValue,
         // controller: stateController,
         textCapitalization: TextCapitalization.sentences,
-        onChanged: (value){
+        onChanged: (value) {
           addressController.text = value;
         },
         cursorColor: Colors.blue,
@@ -290,7 +288,7 @@ class _AddAddressPageState extends State<AddAddressPage> {
         onSaved: (String value) {
           landmarkController.text = value;
         },
-        onChanged: (value){
+        onChanged: (value) {
           landmarkController.text = value;
         },
         cursorColor: Colors.blue,
@@ -305,7 +303,7 @@ class _AddAddressPageState extends State<AddAddressPage> {
       child: TextFormField(
         initialValue: _initialValue,
         textCapitalization: TextCapitalization.sentences,
-        onChanged: (value){
+        onChanged: (value) {
           addresstypeController.text = value;
         },
         cursorColor: Colors.blue,
@@ -315,8 +313,7 @@ class _AddAddressPageState extends State<AddAddressPage> {
         onSaved: (String value) {
           addresstypeController.text = value;
         },
-        decoration: const InputDecoration(
-            labelText: 'Address type'),
+        decoration: const InputDecoration(labelText: 'Address type'),
       ),
     );
   }
@@ -335,26 +332,28 @@ class _AddAddressPageState extends State<AddAddressPage> {
                 setState(() {
                   _loading = true;
                 });
-                if(address_id != null || address_id != "") {
-                   _updateAddress(
-                       addressid,
-                       nameController.text.toString(),
-                       mobileController.text.toString(),
-                       pincodeController.text.toString(),
-                       addressController.text.toString(),
-                       landmarkController.text.toString(),
-                       initialaddresstype.toString()
-                       //addresstypeController.text.toString()
-                   );
+                if (address_id != null || address_id != "") {
+                  _updateAddress(
+                      addressid,
+                      nameController.text.toString(),
+                      mobileController.text.toString(),
+                      pincodeController.text.toString(),
+                      addressController.text.toString(),
+                      landmarkController.text.toString(),
+                      initialaddresstype.toString()
+                      //addresstypeController.text.toString()
+                      );
                 }
-
               }
             },
             color: Colors.indigo,
             elevation: 0,
             padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-            child: const Text("SUBMIT", style: TextStyle(color: Colors.white),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0)),
+            child: const Text(
+              "SUBMIT",
+              style: TextStyle(color: Colors.white),
             ),
           ),
         ),
@@ -362,7 +361,7 @@ class _AddAddressPageState extends State<AddAddressPage> {
     );
   }
 
-  Widget _addSubmitButton(){
+  Widget _addSubmitButton() {
     return Container(
       margin: EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 20),
       child: Align(
@@ -371,21 +370,24 @@ class _AddAddressPageState extends State<AddAddressPage> {
           minWidth: MediaQuery.of(context).size.width,
           child: RaisedButton(
             onPressed: () async {
-                _addAddress(
-                    nameController.text.toString(),
-                    mobileController.text.toString(),
-                    pincodeController.text.toString(),
-                    addressController.text.toString(),
-                    landmarkController.text.toString(),
-                    initialaddresstype.toString()
-                    //addresstypeController.text.toString()
-                );
-              },
+              _addAddress(
+                  nameController.text.toString(),
+                  mobileController.text.toString(),
+                  pincodeController.text.toString(),
+                  addressController.text.toString(),
+                  landmarkController.text.toString(),
+                  initialaddresstype.toString()
+                  //addresstypeController.text.toString()
+                  );
+            },
             color: Colors.indigo,
             elevation: 0,
             padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-            child: const Text("SUBMIT", style: TextStyle(color: Colors.white),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0)),
+            child: const Text(
+              "SUBMIT",
+              style: TextStyle(color: Colors.white),
             ),
           ),
         ),
@@ -420,37 +422,59 @@ class _AddAddressPageState extends State<AddAddressPage> {
                 child: Column(
                   children: <Widget>[
                     SizedBox(height: 5),
-                    _name != "" || _name != null ? _nameTextbox(_name) : _nameTextbox(""),
-                    _mobile != "" || _mobile != null ? _mobileTextbox(_mobile) : _mobileTextbox(""),
-                    _pincode != "" || _pincode != null ? _pincodeTextbox(_pincode) : _pincodeTextbox(""),
+                    _name != "" || _name != null
+                        ? _nameTextbox(_name)
+                        : _nameTextbox(""),
+                    _mobile != "" || _mobile != null
+                        ? _mobileTextbox(_mobile)
+                        : _mobileTextbox(""),
+                    _pincode != "" || _pincode != null
+                        ? _pincodeTextbox(_pincode)
+                        : _pincodeTextbox(""),
                     //_cityTextbox(""),
                     //_stateTextbox(""),
-                    _address != "" || _address != null ?  _addressTextbox2(_address) : _addressTextbox2(""),
-                    _landmark == "" || _landmark == null || _landmark.toString() == "null" ? _landmarkTextbox("") : _landmarkTextbox(_landmark),
-                     Padding(
-                         padding: EdgeInsets.only(left: 20, top: 10, right: 20),
-                         child: DropdownButton<String>(
-                           hint: Text("$initialaddresstype", style: TextStyle(color: Colors.black, fontSize: 16)),
-                           isExpanded: true,
-                           underline: Divider(height: 2.0, color: Colors.black),
-                           focusColor: Colors.lightBlue,
-                           alignment: Alignment.topLeft,
-                           items: <String>['Home', 'Office', 'Warehouse', 'Shop', "Other"].map((String value) {
-                             return DropdownMenuItem<String>(
-                               value: value,
-                               child: Text(value),
-                             );
-                           }).toList(),
-                           onChanged: (value) {
-                              setState(() {
-                                initialaddresstype = value.toString();
-                                _addresstype = value.toString();
-                              });
-                           },
-                         ),
-                     ),
+                    _address != "" || _address != null
+                        ? _addressTextbox2(_address)
+                        : _addressTextbox2(""),
+                    _landmark == "" ||
+                            _landmark == null ||
+                            _landmark.toString() == "null"
+                        ? _landmarkTextbox("")
+                        : _landmarkTextbox(_landmark),
+                    Padding(
+                      padding: EdgeInsets.only(left: 20, top: 10, right: 20),
+                      child: DropdownButton<String>(
+                        hint: Text("$initialaddresstype",
+                            style:
+                                TextStyle(color: Colors.black, fontSize: 16)),
+                        isExpanded: true,
+                        underline: Divider(height: 2.0, color: Colors.black),
+                        focusColor: Colors.lightBlue,
+                        alignment: Alignment.topLeft,
+                        items: <String>[
+                          'Home',
+                          'Office',
+                          'Warehouse',
+                          'Shop',
+                          "Other"
+                        ].map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            initialaddresstype = value.toString();
+                            _addresstype = value.toString();
+                          });
+                        },
+                      ),
+                    ),
                     //_addresstype != ""  || _addresstype != null ? _addresstypeTextbox(_addresstype) : SizedBox(),
-                     addressid == null || addressid == "" ? _addSubmitButton() : _updateSubmitButton(addressid),
+                    addressid == null || addressid == ""
+                        ? _addSubmitButton()
+                        : _updateSubmitButton(addressid),
                   ],
                 ),
               ),
@@ -467,7 +491,7 @@ class _AddAddressPageState extends State<AddAddressPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Add New Address'),
-        backgroundColor: Colors.indigo,
+        backgroundColor: appbarcolor,
       ),
       body: ModalProgressHUD(
         inAsyncCall: _loading,
@@ -476,20 +500,18 @@ class _AddAddressPageState extends State<AddAddressPage> {
     );
   }
 
-  Future _addAddress(String name, String mobile, String pincode, String address, String landmark, String addresstype) async{
-    if(name == null || name == "" || name.trim().length == 0){
+  Future _addAddress(String name, String mobile, String pincode, String address,
+      String landmark, String addresstype) async {
+    if (name == null || name == "" || name.trim().length == 0) {
       showToast("Please enter your name");
       return;
-    }
-    else if(mobile == null || mobile == "" || mobile.trim().length == 0){
+    } else if (mobile == null || mobile == "" || mobile.trim().length == 0) {
       showToast("Please enter mobile number");
       return;
-    }
-    else if(pincode == null || pincode == "" || pincode.trim().length == 0){
+    } else if (pincode == null || pincode == "" || pincode.trim().length == 0) {
       showToast("Please enter your pincode");
       return;
-    }
-    else if(address == null || address == "" || address.trim().length == 0){
+    } else if (address == null || address == "" || address.trim().length == 0) {
       showToast("Please enter your address");
       return;
     }
@@ -497,33 +519,32 @@ class _AddAddressPageState extends State<AddAddressPage> {
       showToast("Please enter your landmark");
       return;
     }*/
-    else if(addresstype == null || addresstype == "" || addresstype.trim().length == 0){
+    else if (addresstype == null ||
+        addresstype == "" ||
+        addresstype.trim().length == 0) {
       showToast("Please enter your address type");
       return;
-    }
-    else {
+    } else {
       setState(() {
         _loading = true;
       });
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String mytoken = prefs.getString('token').toString();
-      print(
-          jsonEncode({
-            "name": name,
-            "mobile_number" : int.parse(mobile),
-            "pincode" : int.parse(pincode),
-            "address" : address,
-            "landmark" : landmark,
-            "address_type" : addresstype
-          })
-      );
+      print(jsonEncode({
+        "name": name,
+        "mobile_number": int.parse(mobile),
+        "pincode": int.parse(pincode),
+        "address": address,
+        "landmark": landmark,
+        "address_type": addresstype
+      }));
       final body = {
         "name": name,
-        "mobile_number" : int.parse(mobile),
-        "pincode" : int.parse(pincode),
-        "address" : address,
-        "landmark" : landmark,
-        "address_type" : addresstype
+        "mobile_number": int.parse(mobile),
+        "pincode": int.parse(pincode),
+        "address": address,
+        "landmark": landmark,
+        "address_type": addresstype
       };
       var response = await http.post(Uri.parse(BASE_URL + addadress),
           body: json.encode(body),
@@ -541,26 +562,27 @@ class _AddAddressPageState extends State<AddAddressPage> {
         var errorMessage = data['ErrorMessage'];
         if (errorCode == 0) {
           showToast(data['Response'].toString());
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ChangeAddressPage()));
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => ChangeAddressPage()));
         } else {
           showAlertDialog(context, "Alert", errorMessage);
         }
-    }
-
+      }
     }
   }
 
-  Future _updateAddress(String id, String name, String mobile, String pincode, String address, String landmark, String addresstype) async{
+  Future _updateAddress(String id, String name, String mobile, String pincode,
+      String address, String landmark, String addresstype) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String mytoken = prefs.getString('token').toString();
     final body = {
-      "address_id" : id,
+      "address_id": id,
       "name": name,
-      "mobile_number" : mobile,
-      "pincode" : pincode,
-      "address" : address,
-      "landmark" : landmark,
-      "address_type" : addresstype
+      "mobile_number": mobile,
+      "pincode": pincode,
+      "address": address,
+      "landmark": landmark,
+      "address_type": addresstype
     };
     var response = await http.post(Uri.parse(BASE_URL + updateaddress),
         body: json.encode(body),
@@ -577,7 +599,8 @@ class _AddAddressPageState extends State<AddAddressPage> {
       var errorMessage = data['ErrorMessage'];
       if (errorCode == 0) {
         showToast('Your address updated successfully');
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ChangeAddressPage()));
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => ChangeAddressPage()));
       } else {
         showAlertDialog(context, "Alert", errorMessage);
       }

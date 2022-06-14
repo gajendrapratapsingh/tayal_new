@@ -35,6 +35,18 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: kBackgroundShapeColor,
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: appbarcolor,
+        centerTitle: true,
+        title: Text("Login",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                color: Colors.white,
+                fontStyle: FontStyle.normal,
+                fontSize: 20,
+                fontWeight: FontWeight.bold)),
+      ),
       body: ModalProgressHUD(
         color: Colors.indigo,
         inAsyncCall: _loading,
@@ -44,23 +56,6 @@ class _LoginScreenState extends State<LoginScreen> {
               padding: EdgeInsets.only(top: 30),
               child: Column(
                 children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      GestureDetector(
-                        onTap: () {},
-                        child: SvgPicture.asset('assets/images/back.svg'),
-                      ),
-                      SizedBox(width: MediaQuery.of(context).size.width * 0.18),
-                      Text("Login",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontStyle: FontStyle.normal,
-                              fontSize: 21,
-                              fontWeight: FontWeight.bold)),
-                      SizedBox(height: 15),
-                    ],
-                  ),
                   Expanded(
                     child: SingleChildScrollView(
                       child: Column(
@@ -238,16 +233,16 @@ class _LoginScreenState extends State<LoginScreen> {
                 ],
               ),
             ),
-            Positioned(
-                left: size.width * 0.20,
-                bottom: 15,
-                right: size.width * 0.20,
-                child: Text("Terms of use & Privacy Policy",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        color: Colors.grey.shade500,
-                        fontSize: 14.0,
-                        fontWeight: FontWeight.w700)))
+            // Positioned(
+            //     left: size.width * 0.20,
+            //     bottom: 15,
+            //     right: size.width * 0.20,
+            //     child: Text("Terms of use & Privacy Policy",
+            //         textAlign: TextAlign.center,
+            //         style: TextStyle(
+            //             color: Colors.grey.shade500,
+            //             fontSize: 14.0,
+            //             fontWeight: FontWeight.w700)))
           ],
         ),
       ),
@@ -301,8 +296,8 @@ class _LoginScreenState extends State<LoginScreen> {
       var data = json.decode(res.body);
       print(data);
       if (data['ErrorCode'].toString() == "100") {
-        showToast("OTP : ${data['Response']['otp'].toString().trim()}");
-        Navigator.pushReplacement(
+        showToast("OTP Sent");
+        Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => OtpScreen(

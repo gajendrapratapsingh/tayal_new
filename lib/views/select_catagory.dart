@@ -69,7 +69,7 @@ class _SelectCatagoryState extends State<SelectCatagory> {
         return showDialog(
             context: context,
             builder: (context) => AlertDialog(
-                  backgroundColor: Colors.indigo[50],
+                  backgroundColor: appbarcolor,
                   title: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -104,7 +104,7 @@ class _SelectCatagoryState extends State<SelectCatagory> {
       child: Scaffold(
         backgroundColor: kPrimaryLightColor,
         appBar: AppBar(
-          backgroundColor: Colors.indigo,
+          backgroundColor: appbarcolor,
           title: isSearch
               ? TextFormField(
                   onChanged: (val) {
@@ -210,7 +210,7 @@ class _SelectCatagoryState extends State<SelectCatagory> {
               },
               child: Text("Save"),
               style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Colors.indigo)),
+                  backgroundColor: MaterialStateProperty.all(appbarcolor)),
             )),
         body: Container(
           height: MediaQuery.of(context).size.height / 1.2,

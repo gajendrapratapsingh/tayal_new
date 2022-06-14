@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tayal/models/profiledata.dart';
 import 'package:tayal/network/api.dart';
 import 'package:http/http.dart' as http;
+import 'package:tayal/themes/constant.dart';
 import 'package:tayal/wallet_tab_views/transaction_list_screen.dart';
 import 'package:tayal/wallet_tab_views/wallet_statement_detail_screen.dart';
 
@@ -52,7 +53,7 @@ class _WalletStatementScreenState extends State<WalletStatementScreen>
         children: [
           Container(
             height: 145,
-            color: Colors.indigo,
+            color: appbarcolor,
             child: Column(
               children: [
                 Padding(
@@ -132,7 +133,7 @@ class _WalletStatementScreenState extends State<WalletStatementScreen>
           ),
           Container(
             width: double.infinity,
-            color: Colors.indigo,
+            color: appbarcolor,
             child: TabBar(
               isScrollable: true,
               indicatorColor: Colors.white,

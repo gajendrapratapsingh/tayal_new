@@ -8,6 +8,7 @@ import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:tayal/network/api.dart';
+import 'package:tayal/themes/constant.dart';
 import 'package:tayal/views/thanku_screen.dart';
 
 class PaymentOptionsScreen extends StatefulWidget {
@@ -48,6 +49,9 @@ class _PaymentOptionsScreenState extends State<PaymentOptionsScreen> {
   bool showWalletCheck = false;
   @override
   void initState() {
+    setState(() {
+      utilizeAmount = double.parse(utilizeAmount).toStringAsFixed(2).toString();
+    });
     _razorpay = Razorpay();
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
@@ -127,12 +131,23 @@ class _PaymentOptionsScreenState extends State<PaymentOptionsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.indigo,
-        title: Text("Payment options"),
-        leading: InkWell(
-          onTap: () => Navigator.pop(context),
-          child: Icon(Icons.arrow_back, color: Colors.white, size: 24.0),
-        ),
+        backgroundColor: appbarcolor,
+        leading: GestureDetector(
+            onTap: () {
+              Navigator.of(context).pop();
+            },
+            child: Image.asset(
+              "assets/images/back.png",
+              scale: 20,
+              color: Colors.white,
+            )),
+        centerTitle: true,
+        title: Text("Payment Options",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontStyle: FontStyle.normal,
+                fontSize: 21,
+                fontWeight: FontWeight.bold)),
       ),
       body: ModalProgressHUD(
         inAsyncCall: _loading,

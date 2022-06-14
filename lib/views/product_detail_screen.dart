@@ -115,6 +115,60 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       //   color: Color(0xffBCBEFD),
       //   child: MyBottomAppBar(),
       // ),
+      appBar: AppBar(
+          backgroundColor: appbarcolor,
+          centerTitle: true,
+          title: Text("Product Detail",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontStyle: FontStyle.normal,
+                  fontSize: 21,
+                  fontWeight: FontWeight.bold)),
+          leading: GestureDetector(
+              onTap: () {
+                Navigator.of(context).pop();
+              },
+              child: Image.asset(
+                "assets/images/back.png",
+                scale: 20,
+                color: Colors.white,
+              )),
+          actions: [
+            Padding(
+              padding: EdgeInsets.only(right: 10),
+              child: IconButton(
+                icon: Badge(
+                    badgeColor: Colors.white,
+                    animationDuration: Duration(milliseconds: 10),
+                    animationType: BadgeAnimationType.scale,
+                    padding: EdgeInsets.all(5),
+                    badgeContent: Text(
+                      '$_counter',
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 9,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    child: Image.asset(
+                      "assets/images/cart.png",
+                      color: Colors.white,
+                    )),
+                onPressed: () {
+                  if (_counter > 0) {
+                    // Get.offNamed('/cart');
+                    //Get.off(CartScreen());
+                    Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => CartScreen()))
+                        .then((value) {});
+                  } else {
+                    showToast('Your cart is empty');
+                  }
+                },
+              ),
+            )
+          ]),
       body: _loading
           ? Center(
               child: CircularProgressIndicator(),
@@ -125,45 +179,45 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   padding: EdgeInsets.only(top: 20),
                   child: Column(
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              Navigator.pop(context);
-                            },
-                            child: SvgPicture.asset('assets/images/back.svg'),
-                          ),
-                          //SizedBox(width: MediaQuery.of(context).size.width * 0.08),
-                          const Text("Product Detail",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontStyle: FontStyle.normal,
-                                  fontSize: 21,
-                                  fontWeight: FontWeight.bold)),
-                          Padding(
-                            padding: EdgeInsets.only(right: 10),
-                            child: IconButton(
-                              icon: Badge(
-                                animationDuration: Duration(milliseconds: 10),
-                                animationType: BadgeAnimationType.scale,
-                                badgeContent: Text(
-                                  '$_counter',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                child: const Icon(Icons.shopping_basket,
-                                    color: Colors.grey, size: 28),
-                              ),
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => CartScreen()));
-                              },
-                            ),
-                          )
-                        ],
-                      ),
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //   children: [
+                      //     InkWell(
+                      //       onTap: () {
+                      //         Navigator.pop(context);
+                      //       },
+                      //       child: SvgPicture.asset('assets/images/back.svg'),
+                      //     ),
+                      //     //SizedBox(width: MediaQuery.of(context).size.width * 0.08),
+                      //     const Text("Product Detail",
+                      //         textAlign: TextAlign.center,
+                      //         style: TextStyle(
+                      //             fontStyle: FontStyle.normal,
+                      //             fontSize: 21,
+                      //             fontWeight: FontWeight.bold)),
+                      //     Padding(
+                      //       padding: EdgeInsets.only(right: 10),
+                      //       child: IconButton(
+                      //         icon: Badge(
+                      //           animationDuration: Duration(milliseconds: 10),
+                      //           animationType: BadgeAnimationType.scale,
+                      //           badgeContent: Text(
+                      //             '$_counter',
+                      //             style: TextStyle(color: Colors.white),
+                      //           ),
+                      //           child: const Icon(Icons.shopping_basket,
+                      //               color: Colors.grey, size: 28),
+                      //         ),
+                      //         onPressed: () {
+                      //           Navigator.push(
+                      //               context,
+                      //               MaterialPageRoute(
+                      //                   builder: (context) => CartScreen()));
+                      //         },
+                      //       ),
+                      //     )
+                      //   ],
+                      // ),
                       Expanded(
                           child: ListView(
                         shrinkWrap: true,

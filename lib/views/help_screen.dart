@@ -52,139 +52,76 @@ class _HelpScreenState extends State<HelpScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: kBackgroundShapeColor,
-      body: Stack(
-        children: [
-          Padding(
-            padding: EdgeInsets.only(top: 30),
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Text("Help",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontStyle: FontStyle.normal,
-                          fontSize: 21,
-                          fontWeight: FontWeight.bold)),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: ListView.separated(
-                        itemCount: helplist.length,
-                        padding: EdgeInsets.zero,
-                        separatorBuilder: (BuildContext context, int index) =>
-                            const Divider(color: Colors.blue),
-                        itemBuilder: (BuildContext context, int index) {
-                          return ExpandableNotifier(
-                              child: ExpandablePanel(
-                                  header: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                        helplist[index]['question'].toString(),
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                        )),
-                                  ),
-                                  expanded: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        // Text(
-                                        //     helplist[index]['created_at']
-                                        //         .toString()
-                                        //         .split(" ")[0],
-                                        //     style: TextStyle(
-                                        //         fontWeight: FontWeight.bold)),
-                                        Divider(
-                                          thickness: 1,
-                                          height: 10,
-                                        ),
-                                        Text(
-                                          helplist[index]['answer'].toString(),
-                                          textAlign: TextAlign.justify,
-                                        )
-                                      ],
-                                    ),
-                                  )));
+      appBar: AppBar(
+        backgroundColor: appbarcolor,
+        centerTitle: true,
+        title: Text("Help",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontStyle: FontStyle.normal,
+                fontSize: 21,
+                fontWeight: FontWeight.bold)),
+      ),
+      body: Padding(
+        padding: EdgeInsets.only(top: 30),
+        child: ListView.separated(
+            itemCount: helplist.length,
+            padding: EdgeInsets.zero,
+            separatorBuilder: (BuildContext context, int index) =>
+                const Divider(color: Colors.blue),
+            itemBuilder: (BuildContext context, int index) {
+              return ExpandableNotifier(
+                  child: ExpandablePanel(
+                      header: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(helplist[index]['question'].toString(),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            )),
+                      ),
+                      expanded: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Text(
+                            //     helplist[index]['created_at']
+                            //         .toString()
+                            //         .split(" ")[0],
+                            //     style: TextStyle(
+                            //         fontWeight: FontWeight.bold)),
+                            Divider(
+                              thickness: 1,
+                              height: 10,
+                            ),
+                            Text(
+                              helplist[index]['answer'].toString(),
+                              textAlign: TextAlign.justify,
+                            )
+                          ],
+                        ),
+                      )));
 
-                          // Padding(
-                          //   padding: const EdgeInsets.symmetric(
-                          //       vertical: 8.0, horizontal: 20.0),
-                          //   child: Row(
-                          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //     children: [
-                          //       SizedBox(
-                          //         width: size.width * 0.80,
-                          //         child: Text(
-                          //             helplist[index]['question'].toString(),
-                          //             style: TextStyle(
-                          //                 color: Colors.black, fontSize: 16)),
-                          //       ),
-                          //       Icon(Icons.arrow_forward_ios,
-                          //           size: 16, color: Colors.black)
-                          //     ],
-                          //   ),
-                          // );
-                        }),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // Positioned(
-          //   left: 25,
-          //   right: 25,
-          //   bottom: 90,
-          //   child: InkWell(
-          //     onTap: () {
-          //       showOrderTracking();
-          //     },
-          //     child: Container(
-          //       height: 55,
-          //       width: double.infinity,
-          //       alignment: Alignment.center,
-          //       decoration: BoxDecoration(
-          //           color: Colors.indigo,
-          //           borderRadius: BorderRadius.circular(29.0)),
-          //       child: const Text("Report and Issue",
-          //           textAlign: TextAlign.center,
-          //           style: TextStyle(
-          //               color: Colors.white,
-          //               fontWeight: FontWeight.bold,
-          //               fontSize: 18)),
-          //     ),
-          //   ),
-          // ),
-          // Positioned(
-          //   left: 25,
-          //   right: 25,
-          //   bottom: 20,
-          //   child: InkWell(
-          //     onTap: () {
-          //       Navigator.of(context).pop();
-          //     },
-          //     child: Container(
-          //       height: 55,
-          //       width: double.infinity,
-          //       alignment: Alignment.center,
-          //       decoration: BoxDecoration(
-          //           color: Colors.white,
-          //           borderRadius: BorderRadius.circular(29.0),
-          //           border: Border.all(color: Colors.indigo, width: 1)),
-          //       child: Text("Close",
-          //           textAlign: TextAlign.center,
-          //           style: TextStyle(
-          //               color: Colors.indigo,
-          //               fontWeight: FontWeight.bold,
-          //               fontSize: 18)),
-          //     ),
-          //   ),
-          // ),
-        ],
+              // Padding(
+              //   padding: const EdgeInsets.symmetric(
+              //       vertical: 8.0, horizontal: 20.0),
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //     children: [
+              //       SizedBox(
+              //         width: size.width * 0.80,
+              //         child: Text(
+              //             helplist[index]['question'].toString(),
+              //             style: TextStyle(
+              //                 color: Colors.black, fontSize: 16)),
+              //       ),
+              //       Icon(Icons.arrow_forward_ios,
+              //           size: 16, color: Colors.black)
+              //     ],
+              //   ),
+              // );
+            }),
       ),
       bottomSheet: Container(
         height: 55,
@@ -195,7 +132,7 @@ class _HelpScreenState extends State<HelpScreen> {
           //   topLeft: Radius.circular(10),
           //   topRight: Radius.circular(10),
           // ),
-          color: Colors.indigo,
+          color: Colors.red[300],
         ),
         child: Padding(
           padding: const EdgeInsets.all(8.0),

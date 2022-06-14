@@ -83,7 +83,10 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/cart', page: () => CartScreen()),
         GetPage(name: '/paymentoptions', page: () => PaymentOptionsScreen())
       ],
-      theme: ThemeData(fontFamily: 'Poppins-Regular'),
+      theme: ThemeData(
+        fontFamily: 'Poppins-Regular',
+        // primarySwatch: Colors.red,
+      ),
       //home: ThankuScreen(),
       home: SplashScreen(),
     );

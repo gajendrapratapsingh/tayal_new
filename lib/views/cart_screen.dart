@@ -66,6 +66,57 @@ class _CartScreenState extends State<CartScreen> {
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           backgroundColor: kBackgroundShapeColor,
+          appBar: AppBar(
+              backgroundColor: appbarcolor,
+              leading: GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Image.asset(
+                    "assets/images/back.png",
+                    scale: 20,
+                    color: Colors.white,
+                  )),
+              centerTitle: true,
+              title: Text("My Cart",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontStyle: FontStyle.normal,
+                      fontSize: 21,
+                      fontWeight: FontWeight.bold)),
+              actions: [
+                IconButton(
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                                title: Text("Empty Cart"),
+                                content: Text("Do you want to empty cart."),
+                                actionsAlignment: MainAxisAlignment.spaceAround,
+                                actions: [
+                                  ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.of(context,
+                                                rootNavigator: true)
+                                            .pop();
+                                      },
+                                      child: Text("Cancel")),
+                                  ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.of(context,
+                                                rootNavigator: true)
+                                            .pop();
+                                        _emptyCart();
+                                      },
+                                      child: Text("Empty"))
+                                ],
+                              ));
+                    },
+                    icon: Image.asset(
+                      "assets/images/emptycart.png",
+                      color: Colors.white,
+                    ))
+              ]),
           body: isLoading
               ? Center(
                   child: CircularProgressIndicator(),
@@ -76,62 +127,6 @@ class _CartScreenState extends State<CartScreen> {
                       child: SingleChildScrollView(
                         child: Column(
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                InkWell(
-                                  onTap: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: SvgPicture.asset(
-                                      'assets/images/back.svg',
-                                      fit: BoxFit.fill),
-                                ),
-                                // SizedBox(
-                                //     width: MediaQuery.of(context).size.width *
-                                //         0.14),
-                                const Text("My Cart",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        fontStyle: FontStyle.normal,
-                                        fontSize: 21,
-                                        fontWeight: FontWeight.bold)),
-                                IconButton(
-                                    onPressed: () {
-                                      showDialog(
-                                          context: context,
-                                          builder: (context) => AlertDialog(
-                                                title: Text("Empty Cart"),
-                                                content: Text(
-                                                    "Do you want to empty cart."),
-                                                actionsAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceAround,
-                                                actions: [
-                                                  ElevatedButton(
-                                                      onPressed: () {
-                                                        Navigator.of(context,
-                                                                rootNavigator:
-                                                                    true)
-                                                            .pop();
-                                                      },
-                                                      child: Text("Cancel")),
-                                                  ElevatedButton(
-                                                      onPressed: () {
-                                                        Navigator.of(context,
-                                                                rootNavigator:
-                                                                    true)
-                                                            .pop();
-                                                        _emptyCart();
-                                                      },
-                                                      child: Text("Empty"))
-                                                ],
-                                              ));
-                                    },
-                                    icon: Icon(Icons.delete))
-                              ],
-                            ),
                             Padding(
                               padding: const EdgeInsets.symmetric(
                                   vertical: 0.0, horizontal: 5.0),
@@ -223,12 +218,12 @@ class _CartScreenState extends State<CartScreen> {
                                             fontWeight: FontWeight.bold,
                                             color: Colors.black,
                                           )),
-                                      TextSpan(
-                                          text: ' (Swipe item left to delete)',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black,
-                                              fontSize: 10)),
+                                      // TextSpan(
+                                      //     text: ' (Swipe item left to delete)',
+                                      //     style: TextStyle(
+                                      //         fontWeight: FontWeight.bold,
+                                      //         color: Colors.black,
+                                      //         fontSize: 10)),
                                     ],
                                   ),
                                 ),
@@ -363,7 +358,7 @@ class _CartScreenState extends State<CartScreen> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Text("Discount",
+                                              Text("Cash Discount",
                                                   style: textStyle),
                                               Text("\u20B9 " + discount,
                                                   style: textStyle),
@@ -514,56 +509,23 @@ class _CartScreenState extends State<CartScreen> {
                         ),
                       ),
                     )
-                  : Stack(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(top: 30),
+                  : Container(
+                      height: size.height,
+                      width: size.width,
+                      child: Center(
                           child: Column(
-                            children: [
-                              Row(
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  InkWell(
-                                    onTap: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: SvgPicture.asset(
-                                        'assets/images/back.svg',
-                                        fit: BoxFit.fill),
-                                  ),
-                                  SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.14),
-                                  const Text("My Cart",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          fontStyle: FontStyle.normal,
-                                          fontSize: 21,
-                                          fontWeight: FontWeight.bold)),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                            height: size.height,
-                            width: size.width,
-                            child: Center(
-                                child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                  Container(
-                                    height: 90,
-                                    width: 90,
-                                    child: Image.asset(
-                                        'assets/images/empty_cart.png'),
-                                  ),
-                                  SizedBox(height: 10),
-                                  Text(nodata.toString().toUpperCase(),
-                                      textAlign: TextAlign.center)
-                                ])))
-                      ],
-                    ),
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                            Container(
+                              height: 90,
+                              width: 90,
+                              child:
+                                  Image.asset('assets/images/empty_cart.png'),
+                            ),
+                            SizedBox(height: 10),
+                            Text(nodata.toString().toUpperCase(),
+                                textAlign: TextAlign.center)
+                          ]))),
         ),
         onWillPop: () async {
           Navigator.of(context).pop();
@@ -606,244 +568,242 @@ class _CartScreenState extends State<CartScreen> {
       String description,
       String groupprice) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 7.0),
-      child: Container(
-        child: Slidable(
-          actionPane: SlidableDrawerActionPane(),
-          child: Row(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-                child: Container(
-                  width: 80,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                    //color: Colors.blue.shade200,
-                    border: Border.all(),
-
-                    //     image: DecorationImage(
-                    //         image: NetworkImage(productimage),
-                    //         fit: BoxFit.fitWidth),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Image.network(
-                      productimage,
-                      scale: 8,
-                      fit: BoxFit.fill,
-                    ),
-                  ),
-                ),
-                // child: Container(
-                //   width: 80,
-                //   height: 80,
-                //   decoration: BoxDecoration(
-                //     borderRadius: BorderRadius.all(Radius.circular(10)),
-                //     //color: Colors.blue.shade200,
-                //     border: Border.all(),
-
-                //     image: DecorationImage(
-                //         image: NetworkImage(productimage),
-                //         fit: BoxFit.fitWidth),
-                //   ),
-                // ),
-              ),
-              SizedBox(width: 10),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(productname,
-                      style: TextStyle(color: Colors.black, fontSize: 16)),
-                  SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.40,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          RichText(
-                            text: TextSpan(
-                              text: '',
-                              style: DefaultTextStyle.of(context).style,
-                              children: [
-                                TextSpan(
-                                    text:
-                                        '\u20B9 ${mainData[index]['rate'].toString()}',
-                                    style: TextStyle(
-                                        color: Colors.grey,
-                                        decoration: TextDecoration.lineThrough,
-                                        fontWeight: FontWeight.bold)),
-                                TextSpan(
-                                    text: ' MRP',
-                                    style: TextStyle(fontSize: 9)),
-                              ],
-                            ),
-                          ),
-                          mainData[index]['discount_price'] == null
-                              ? SizedBox()
-                              : RichText(
-                                  text: TextSpan(
-                                    text: '',
-                                    style: DefaultTextStyle.of(context).style,
-                                    children: [
-                                      TextSpan(
-                                          text:
-                                              '\u20B9 ${mainData[index]['discount_price'].toString()}',
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.bold)),
-                                      TextSpan(
-                                          text: ' DEALER PR.',
-                                          style: TextStyle(fontSize: 9)),
-                                    ],
-                                  ),
-                                ),
-                          mainData[index]['trade_price'] == null
-                              ? SizedBox()
-                              : RichText(
-                                  text: TextSpan(
-                                    text: '',
-                                    style: DefaultTextStyle.of(context).style,
-                                    children: [
-                                      TextSpan(
-                                          text:
-                                              '\u20B9 ${mainData[index]['trade_price'].toString()}',
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.bold)),
-                                      TextSpan(
-                                          text: ' SCHEME PR.',
-                                          style: TextStyle(fontSize: 9)),
-                                    ],
-                                  ),
-                                ),
-
-                          // Text(
-                          //     "\u20B9 " +
-                          //         mainData[index]['offer_price'].toString(),
-                          //     maxLines: 2,
-                          //     style:
-                          //         TextStyle(color: Colors.black, fontSize: 14)),
-                          // SizedBox(
-                          //   width: 10,
-                          // ),
-                          // Text("\u20B9 " + mainData[index]['rate'].toString(),
-                          //     maxLines: 2,
-                          //     style: TextStyle(
-                          //         color: Colors.grey,
-                          //         fontSize: 14,
-                          //         decoration: TextDecoration.lineThrough)),
-                        ],
-                      )),
-                  SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.40,
-                      child: Text(groupprice,
-                          maxLines: 2,
-                          style: TextStyle(color: Colors.black, fontSize: 10))),
-                ],
-              ),
-              // Expanded(
-              //     child: Text("x" + data[index]['quantity'].toString(),
-              //         style: const TextStyle(
-              //             color: Colors.black,
-              //             fontSize: 14,
-              //
-              // fontWeight: FontWeight.w700))),
-              SizedBox(
-                width: 20,
-              ),
-              Column(
-                children: [
-                  Text("\u20B9 " + data[index]['amount'].toString(),
-                      style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold)),
-                  Container(
+        padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 7.0),
+        child: Container(
+          child: Stack(alignment: Alignment.topRight, children: [
+            Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                  child: Container(
                     width: 80,
-                    child: TextFormField(
-                      keyboardType: TextInputType.number,
-                      controller: data[index]["controller"],
-                      onChanged: (val) {
-                        setState(() {
-                          data[index]['quantity'] = int.parse(val);
-                          data[index]['isChange'] = true;
-                        });
-                      },
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      maxLength: 5,
-                      decoration: InputDecoration(
+                    height: 80,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      //color: Colors.blue.shade200,
+                      border: Border.all(),
 
-                          // suffix: Icon(
-                          //     Icons.add),
-                          counterText: "",
-                          contentPadding: EdgeInsets.only(left: 5),
-                          isDense: true,
-                          isCollapsed: true,
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(0),
-                              borderSide:
-                                  BorderSide(color: Colors.black, width: 5))),
+                      //     image: DecorationImage(
+                      //         image: NetworkImage(productimage),
+                      //         fit: BoxFit.fitWidth),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Image.network(
+                        productimage,
+                        scale: 8,
+                        fit: BoxFit.fill,
+                      ),
                     ),
                   ),
-                  Container(
+                  // child: Container(
+                  //   width: 80,
+                  //   height: 80,
+                  //   decoration: BoxDecoration(
+                  //     borderRadius: BorderRadius.all(Radius.circular(10)),
+                  //     //color: Colors.blue.shade200,
+                  //     border: Border.all(),
+
+                  //     image: DecorationImage(
+                  //         image: NetworkImage(productimage),
+                  //         fit: BoxFit.fitWidth),
+                  //   ),
+                  // ),
+                ),
+                SizedBox(width: 10),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(productname,
+                        style: TextStyle(color: Colors.black, fontSize: 16)),
+                    SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.40,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            RichText(
+                              text: TextSpan(
+                                text: '',
+                                style: DefaultTextStyle.of(context).style,
+                                children: [
+                                  TextSpan(
+                                      text:
+                                          '\u20B9 ${mainData[index]['rate'].toString()}',
+                                      style: TextStyle(
+                                          color: Colors.grey,
+                                          decoration:
+                                              TextDecoration.lineThrough,
+                                          fontWeight: FontWeight.bold)),
+                                  TextSpan(
+                                      text: ' MRP',
+                                      style: TextStyle(fontSize: 9)),
+                                ],
+                              ),
+                            ),
+                            mainData[index]['discount_price'] == null
+                                ? SizedBox()
+                                : RichText(
+                                    text: TextSpan(
+                                      text: '',
+                                      style: DefaultTextStyle.of(context).style,
+                                      children: [
+                                        TextSpan(
+                                            text:
+                                                '\u20B9 ${mainData[index]['discount_price'].toString()}',
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.bold)),
+                                        TextSpan(
+                                            text: ' DEALER PR.',
+                                            style: TextStyle(fontSize: 9)),
+                                      ],
+                                    ),
+                                  ),
+                            mainData[index]['trade_price'] == null
+                                ? SizedBox()
+                                : RichText(
+                                    text: TextSpan(
+                                      text: '',
+                                      style: DefaultTextStyle.of(context).style,
+                                      children: [
+                                        TextSpan(
+                                            text:
+                                                '\u20B9 ${mainData[index]['trade_price'].toString()}',
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.bold)),
+                                        TextSpan(
+                                            text: ' SCHEME PR.',
+                                            style: TextStyle(fontSize: 9)),
+                                      ],
+                                    ),
+                                  ),
+
+                            // Text(
+                            //     "\u20B9 " +
+                            //         mainData[index]['offer_price'].toString(),
+                            //     maxLines: 2,
+                            //     style:
+                            //         TextStyle(color: Colors.black, fontSize: 14)),
+                            // SizedBox(
+                            //   width: 10,
+                            // ),
+                            // Text("\u20B9 " + mainData[index]['rate'].toString(),
+                            //     maxLines: 2,
+                            //     style: TextStyle(
+                            //         color: Colors.grey,
+                            //         fontSize: 14,
+                            //         decoration: TextDecoration.lineThrough)),
+                          ],
+                        )),
+                    SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.40,
+                        child: Text(groupprice,
+                            maxLines: 2,
+                            style:
+                                TextStyle(color: Colors.black, fontSize: 10))),
+                  ],
+                ),
+                // Expanded(
+                //     child: Text("x" + data[index]['quantity'].toString(),
+                //         style: const TextStyle(
+                //             color: Colors.black,
+                //             fontSize: 14,
+                //
+                // fontWeight: FontWeight.w700))),
+                SizedBox(
+                  width: 20,
+                ),
+                Column(
+                  children: [
+                    Text("\u20B9 " + data[index]['amount'].toString(),
+                        style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold)),
+                    Container(
                       width: 80,
-                      height: 20,
-                      child: ElevatedButton(
-                          style: ButtonStyle(
-                              backgroundColor: data[index]['isChange']
-                                  ? MaterialStateProperty.all(Colors.indigo)
-                                  : MaterialStateProperty.all(
-                                      Colors.indigo[300]),
-                              shape: MaterialStateProperty.all<
-                                      RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
+                      child: TextFormField(
+                        keyboardType: TextInputType.number,
+                        controller: data[index]["controller"],
+                        onChanged: (val) {
+                          setState(() {
+                            data[index]['quantity'] = int.parse(val);
+                            data[index]['isChange'] = true;
+                          });
+                        },
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
+                        maxLength: 5,
+                        decoration: InputDecoration(
+
+                            // suffix: Icon(
+                            //     Icons.add),
+                            counterText: "",
+                            contentPadding: EdgeInsets.only(left: 5),
+                            isDense: true,
+                            isCollapsed: true,
+                            border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(0),
-                              )),
-                              padding:
-                                  MaterialStateProperty.all(EdgeInsets.zero)),
-                          onPressed: () {
-                            if (data[index]['isChange']) {
-                              FocusScope.of(context).unfocus();
-                              if (data[index]['quantity'] <
-                                  data[index]['avaliable_stock']) {
-                                showLaoding(context);
-                                _addtocart(
-                                        data[index]['id'].toString(),
-                                        data[index]['offer_price'].toString(),
-                                        data[index]['quantity'].toString(),
-                                        data[index]['amount'].toString())
-                                    .then((value) {
-                                  Navigator.of(context, rootNavigator: true)
-                                      .pop();
-                                  _getCartData();
-                                });
-                              } else {
-                                Fluttertoast.showToast(msg: "Out of Stock");
+                                borderSide:
+                                    BorderSide(color: Colors.black, width: 5))),
+                      ),
+                    ),
+                    Container(
+                        width: 80,
+                        height: 20,
+                        child: ElevatedButton(
+                            style: ButtonStyle(
+                                backgroundColor: data[index]['isChange']
+                                    ? MaterialStateProperty.all(Colors.indigo)
+                                    : MaterialStateProperty.all(
+                                        Colors.indigo[300]),
+                                shape: MaterialStateProperty.all<
+                                        RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(0),
+                                )),
+                                padding:
+                                    MaterialStateProperty.all(EdgeInsets.zero)),
+                            onPressed: () {
+                              if (data[index]['isChange']) {
+                                FocusScope.of(context).unfocus();
+                                if (data[index]['quantity'] <
+                                    data[index]['avaliable_stock']) {
+                                  showLaoding(context);
+                                  _addtocart(
+                                          data[index]['id'].toString(),
+                                          data[index]['offer_price'].toString(),
+                                          data[index]['quantity'].toString(),
+                                          data[index]['amount'].toString())
+                                      .then((value) {
+                                    Navigator.of(context, rootNavigator: true)
+                                        .pop();
+                                    _getCartData();
+                                  });
+                                } else {
+                                  Fluttertoast.showToast(msg: "Out of Stock");
+                                }
                               }
-                            }
-                          },
-                          child: Text("UPDATE")))
-                ],
-              )
-            ],
-          ),
-          secondaryActions: <Widget>[
-            Container(
-              height: 100,
-              color: Colors.red,
-              alignment: Alignment.center,
-              child: IconButton(
-                  onPressed: () {
-                    showAlertDialog(context, cardid.toString());
-                  },
-                  icon: Icon(Icons.delete_outline,
-                      color: Colors.white, size: 32)),
+                            },
+                            child: Text("UPDATE")))
+                  ],
+                )
+              ],
             ),
-          ],
-        ),
-      ),
-    );
+            InkWell(
+              onTap: () {
+                showAlertDialog(context, cardid.toString());
+              },
+              child: Icon(
+                Icons.clear,
+                color: Colors.red,
+              ),
+            )
+          ]),
+        ));
   }
 
   List taxList = [];
@@ -999,7 +959,7 @@ class _CartScreenState extends State<CartScreen> {
     return true;
   }
 
-  showAlertDialog(BuildContext context, String itemid) {
+  void showAlertDialog(BuildContext context, String itemid) {
     Widget cancelButton = FlatButton(
       child: const Text("Cancel"),
       onPressed: () {

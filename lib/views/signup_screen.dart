@@ -114,31 +114,32 @@ class _SignupScreenState extends State<SignupScreen> {
       key: _scaffoldKey,
       resizeToAvoidBottomInset: false,
       backgroundColor: kBackgroundShapeColor,
+      appBar: AppBar(
+        backgroundColor: appbarcolor,
+        leading: GestureDetector(
+            onTap: () {
+              Navigator.of(context).pop();
+            },
+            child: Image.asset(
+              "assets/images/back.png",
+              scale: 20,
+              color: Colors.white,
+            )),
+        centerTitle: true,
+        title: Text("Sign Up",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontStyle: FontStyle.normal,
+                fontSize: 21,
+                fontWeight: FontWeight.bold)),
+      ),
       body: Padding(
-        padding: const EdgeInsets.only(top: 30),
+        padding: const EdgeInsets.only(top: 10),
         child: Column(
           children: [
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                InkWell(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: SvgPicture.asset('assets/images/back.svg',
-                        fit: BoxFit.fill)),
-                SizedBox(width: MediaQuery.of(context).size.width * 0.15),
-                const Text("Sign Up",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontStyle: FontStyle.normal,
-                        fontSize: 21,
-                        fontWeight: FontWeight.bold)),
-              ],
-            ),
             Expanded(
               child: Padding(
-                padding: EdgeInsets.only(bottom: 40),
+                padding: EdgeInsets.only(bottom: 10),
                 child: ListView(
                   shrinkWrap: true,
                   scrollDirection: Axis.vertical,
@@ -740,10 +741,10 @@ class _SignupScreenState extends State<SignupScreen> {
           var jsonData = jsonDecode(responseString);
           if (jsonData['ErrorCode'].toString() != "0") {
             pr.hide();
-            showToast(jsonData['Response'].toString());
+            // showToast(jsonData['Response'].toString());
           } else {
             pr.hide();
-            showToast(jsonData['Response'].toString());
+            // showToast(jsonData['Response'].toString());
             _sendOtp(phone);
             //Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MobileLoginScreen()));
           }
@@ -764,7 +765,7 @@ class _SignupScreenState extends State<SignupScreen> {
     if (res.statusCode == 200) {
       var data = json.decode(res.body);
       if (data['ErrorCode'].toString() == "100") {
-        showToast("OTP : ${data['Response']['otp'].toString().trim()}");
+        showToast("OTP Sent");
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(

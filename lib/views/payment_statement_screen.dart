@@ -12,6 +12,7 @@ import 'package:tayal/components/loader.dart';
 import 'package:tayal/models/profiledata.dart';
 import 'package:tayal/network/api.dart';
 import 'package:http/http.dart' as http;
+import 'package:tayal/themes/constant.dart';
 import 'package:tayal/wallet_tab_views/payment_statement_detail_screen.dart';
 import 'package:tayal/wallet_tab_views/transaction_list_screen.dart';
 import 'package:tayal/wallet_tab_views/wallet_statement_detail_screen.dart';
@@ -77,7 +78,7 @@ class _PaymentStatementScreenState extends State<PaymentStatementScreen>
           children: [
             Container(
               height: 145,
-              color: Colors.indigo,
+              color: appbarcolor,
               child: Column(
                 children: [
                   Padding(
@@ -157,7 +158,7 @@ class _PaymentStatementScreenState extends State<PaymentStatementScreen>
             ),
             Container(
               width: double.infinity,
-              color: Colors.indigo,
+              color: appbarcolor,
               child: TabBar(
                 isScrollable: true,
                 indicatorColor: Colors.white,
@@ -197,15 +198,14 @@ class _PaymentStatementScreenState extends State<PaymentStatementScreen>
                                   lastTenTrans.length == 0) {
                                 return Center(
                                     child: CircularProgressIndicator(
-                                        color: Colors.indigo));
+                                        color: appbarcolor));
                               } else {
                                 return ListTile(
                                   title: Text(
                                       lastTenTrans[index]['created_at']
                                           .toString(),
                                       style: TextStyle(
-                                          color: Colors.indigo.shade400,
-                                          fontSize: 16)),
+                                          color: appbarcolor, fontSize: 16)),
                                   subtitle: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -287,7 +287,7 @@ class _PaymentStatementScreenState extends State<PaymentStatementScreen>
             ? Container(
                 height: 50,
                 width: double.infinity,
-                color: Colors.indigo,
+                color: appbarcolor,
                 alignment: Alignment.center,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,

@@ -99,8 +99,10 @@ class _AccountVerifiedScreenState extends State<AccountVerifiedScreen> {
         style: TextStyle(color: Colors.white, fontSize: 18),
       ),
       onPressed: () async {
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => LoginScreen()));
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => LoginScreen()),
+            (route) => false);
       },
       style: ElevatedButton.styleFrom(
           primary: Colors.indigo,

@@ -95,7 +95,7 @@ class _SubCategoryProductScreenState extends State<SubCategoryProductScreen> {
                 Container(
                     height: 80,
                     decoration: BoxDecoration(
-                      color: Colors.indigo,
+                      color: appbarcolor,
                       border: Border(
                         bottom: BorderSide(width: 1.5, color: Colors.grey[400]),
                       ),
@@ -151,8 +151,8 @@ class _SubCategoryProductScreenState extends State<SubCategoryProductScreen> {
                 isLoading
                     ? Expanded(
                         child: Center(
-                            child: CircularProgressIndicator(
-                                color: Colors.indigo)))
+                            child:
+                                CircularProgressIndicator(color: appbarcolor)))
                     : _searchResult.length == 0 || _searchResult.isEmpty
                         ? Expanded(child: Center(child: Text("No Data Found")))
                         : Expanded(
@@ -735,7 +735,7 @@ class _SubCategoryProductScreenState extends State<SubCategoryProductScreen> {
           width: double.infinity,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-              color: Colors.indigo,
+              color: appbarcolor2,
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(15), topRight: Radius.circular(15))),
           child: Row(

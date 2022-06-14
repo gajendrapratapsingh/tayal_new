@@ -49,100 +49,86 @@ class _ReportIssuesState extends State<ReportIssues> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: kBackgroundShapeColor,
-      body: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.only(top: 30),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    InkWell(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: SvgPicture.asset('assets/images/back.svg',
-                            fit: BoxFit.fill)),
-                    SizedBox(width: MediaQuery.of(context).size.width * 0.18),
-                    // ignore: prefer_const_constructors
-                    Text("Issues List",
-                        textAlign: TextAlign.center,
-                        // ignore: prefer_const_constructors
-                        style: TextStyle(
-                            fontStyle: FontStyle.normal,
-                            fontSize: 21,
-                            fontWeight: FontWeight.bold)),
-                  ],
-                ),
-              ],
-            ),
+      appBar: AppBar(
+        backgroundColor: appbarcolor,
+        leading: GestureDetector(
+            onTap: () {
+              Navigator.of(context).pop();
+            },
+            child: Image.asset(
+              "assets/images/back.png",
+              scale: 20,
+              color: Colors.white,
+            )),
+        centerTitle: true,
+        title: Text("Issues List",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontStyle: FontStyle.normal,
+                fontSize: 21,
+                fontWeight: FontWeight.bold)),
+      ),
+      bottomSheet: InkWell(
+        onTap: () {
+          setState(() {
+            title.text = "";
+            details.text = "";
+          });
+          showOrderTracking();
+        },
+        child: Container(
+          height: 55,
+          // width: double.infinity,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: appbarcolor2,
           ),
-          Expanded(
-            flex: 12,
-            child: ListView.separated(
-              itemCount: raiesTicketList.length,
-              separatorBuilder: (BuildContext context, int index) =>
-                  const Divider(height: 2),
-              itemBuilder: (BuildContext context, int index) {
-                return Card(
-                  child: ListTile(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Conversation(
-                                    query_id: raiesTicketList[index]['query_id']
-                                        .toString(),
-                                  )));
-                    },
-                    trailing: Icon(
-                      Icons.arrow_forward_ios,
-                      size: 14,
-                    ),
-                    minLeadingWidth: 2,
-                    leading: Text((index + 1).toString() + ". "),
-                    title: Text(
-                      raiesTicketList[index]['title'].toString().toUpperCase(),
-                      style:
-                          TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
-                    ),
-                    subtitle: Text(
-                      raiesTicketList[index]['query'].toString(),
-                      style:
-                          TextStyle(fontWeight: FontWeight.w400, fontSize: 14),
-                    ),
-                  ),
-                );
-              },
-            ),
+          child: const Text("Raise Ticket",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18)),
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.only(bottom: 60),
+        child: ListView.separated(
+          itemCount: raiesTicketList.length,
+          separatorBuilder: (BuildContext context, int index) => const Divider(
+            height: 0,
+            color: Colors.grey,
           ),
-          Expanded(
-            child: InkWell(
-              onTap: () {
-                setState(() {
-                  title.text = "";
-                  details.text = "";
-                });
-                showOrderTracking();
-              },
-              child: Container(
-                height: 55,
-                // width: double.infinity,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: Colors.indigo,
+          itemBuilder: (BuildContext context, int index) {
+            return Card(
+              child: ListTile(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => Conversation(
+                                query_id: raiesTicketList[index]['query_id']
+                                    .toString(),
+                              )));
+                },
+                trailing: Icon(
+                  Icons.arrow_forward_ios,
+                  size: 14,
                 ),
-                child: const Text("Raise Ticket",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18)),
+                minLeadingWidth: 2,
+                leading: Text((index + 1).toString() + ". "),
+                title: Text(
+                  raiesTicketList[index]['title'].toString().toUpperCase(),
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                ),
+                subtitle: Text(
+                  raiesTicketList[index]['query'].toString(),
+                  style: TextStyle(fontWeight: FontWeight.w400, fontSize: 14),
+                ),
               ),
-            ),
-          )
-        ],
+            );
+          },
+        ),
       ),
     );
   }

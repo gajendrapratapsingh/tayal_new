@@ -59,280 +59,249 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: kBackgroundShapeColor,
+        appBar: AppBar(
+          backgroundColor: appbarcolor,
+          leading: GestureDetector(
+              onTap: () {
+                Navigator.of(context).pop();
+              },
+              child: Image.asset(
+                "assets/images/back.png",
+                scale: 20,
+                color: Colors.white,
+              )),
+          centerTitle: true,
+          title: Text("Profile",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontStyle: FontStyle.normal,
+                  fontSize: 21,
+                  fontWeight: FontWeight.bold)),
+        ),
         body: ModalProgressHUD(
           color: Colors.indigo,
           inAsyncCall: _loading,
-          child: Stack(
-            children: [
-              Padding(
-                padding: EdgeInsets.only(top: 30),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: SvgPicture.asset('assets/images/back.svg',
-                              fit: BoxFit.fill),
-                        ),
-                        SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.15),
-                        Text("Profile",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontStyle: FontStyle.normal,
-                                fontSize: 21,
-                                fontWeight: FontWeight.bold)),
-                      ],
-                    ),
-                    Expanded(
-                        child: SingleChildScrollView(
-                      child: Column(
-                        children: <Widget>[
-                          Align(
-                              alignment: Alignment.center,
-                              child: Card(
-                                  shape: RoundedRectangleBorder(
-                                    side: BorderSide(
-                                        color: Colors.white, width: 1),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 5.0, horizontal: 25.0),
-                                    child: Column(
-                                      children: [
-                                        SizedBox(height: 10.0),
-                                        InkWell(
-                                          onTap: () {
-                                            _showProfilePicker(context);
-                                          },
-                                          child: _profilepath.toString() ==
-                                                      "" ||
-                                                  _profilepath.toString() ==
-                                                      "null"
-                                              ? ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(40),
-                                                  child: Container(
-                                                    height: 80,
-                                                    width: 80,
-                                                    child: profileimage == "" ||
-                                                            profileimage == null
-                                                        ? Image.asset(
-                                                            'assets/images/logo_user.png',
-                                                            fit: BoxFit.fill)
-                                                        : Image.network(
-                                                            profileimage,
-                                                            fit: BoxFit.fill),
-                                                  ),
-                                                )
-                                              : ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(40),
-                                                  child: Container(
-                                                    height: 80,
-                                                    width: 80,
-                                                    decoration: BoxDecoration(
-                                                        image: DecorationImage(
-                                                            fit: BoxFit.cover,
-                                                            image: FileImage(File(
-                                                                _profilepath)))),
-                                                  ),
-                                                ),
-                                        ),
-                                        SizedBox(height: 15.0),
-                                        Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 3.0, horizontal: 15.0),
-                                          child: name == "" || name == null
-                                              ? Text("")
-                                              : Text(name,
-                                                  style: TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize: 18.0,
-                                                      fontWeight:
-                                                          FontWeight.bold)),
-                                        )
-                                      ],
-                                    ),
-                                  ))),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 10.0),
-                            child: Align(
-                                alignment: Alignment.center,
-                                child: InkWell(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                ProfileDetailScreen()));
-                                    /*setState(() {
-                                          FocusScope.of(context).requestFocus(focusNode);
-                                        });*/
-                                  },
-                                  child: Card(
-                                      shape: RoundedRectangleBorder(
-                                        side: BorderSide(
-                                            color: Colors.white, width: 1),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 10.0, horizontal: 15.0),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: const [
-                                            Icon(Icons.edit_outlined,
-                                                color: Colors.black, size: 24),
-                                            SizedBox(width: 5.0),
-                                            Text("Edit Profile",
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 18.0,
-                                                    fontWeight:
-                                                        FontWeight.w500))
-                                          ],
-                                        ),
-                                      )),
-                                )),
+          child: Padding(
+            padding: EdgeInsets.only(top: 30),
+            child: SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  Align(
+                      alignment: Alignment.center,
+                      child: Card(
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(color: Colors.white, width: 1),
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                          Padding(
-                            padding: EdgeInsets.all(20.0),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 5.0, horizontal: 25.0),
                             child: Column(
                               children: [
-                                const Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Text("Name",
-                                      style: TextStyle(
-                                          color: Colors.grey, fontSize: 14.0)),
-                                ),
-                                TextField(
-                                  keyboardType: TextInputType.text,
-                                  //focusNode: focusNode,
-                                  decoration: InputDecoration(
-                                    hintText:
-                                        name == "" || name == null ? "" : name,
-                                    enabledBorder: const UnderlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: Colors.white),
-                                    ),
-                                    focusedBorder: const UnderlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: Colors.blue),
-                                    ),
-                                  ),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      name = value.toString();
-                                    });
+                                SizedBox(height: 10.0),
+                                InkWell(
+                                  onTap: () {
+                                    _showProfilePicker(context);
                                   },
+                                  child: _profilepath.toString() == "" ||
+                                          _profilepath.toString() == "null"
+                                      ? ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(40),
+                                          child: Container(
+                                            height: 80,
+                                            width: 80,
+                                            child: profileimage == "" ||
+                                                    profileimage == null
+                                                ? Image.asset(
+                                                    'assets/images/logo_user.png',
+                                                    fit: BoxFit.fill)
+                                                : Image.network(profileimage,
+                                                    fit: BoxFit.fill),
+                                          ),
+                                        )
+                                      : ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(40),
+                                          child: Container(
+                                            height: 80,
+                                            width: 80,
+                                            decoration: BoxDecoration(
+                                                image: DecorationImage(
+                                                    fit: BoxFit.cover,
+                                                    image: FileImage(
+                                                        File(_profilepath)))),
+                                          ),
+                                        ),
                                 ),
-                                const SizedBox(height: 20),
-                                const Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Text("Phone Number",
-                                      style: TextStyle(
-                                          color: Colors.grey, fontSize: 14.0)),
-                                ),
-                                TextField(
-                                    keyboardType: TextInputType.number,
-                                    readOnly: true,
-                                    decoration: InputDecoration(
-                                      hintText: mobile == "" || mobile == null
-                                          ? ""
-                                          : mobile,
-                                      //suffix: Text("Edit", style: TextStyle(color: Colors.grey, fontSize: 14)),
-                                      enabledBorder: const UnderlineInputBorder(
-                                        borderSide:
-                                            BorderSide(color: Colors.white),
-                                      ),
-                                      focusedBorder: const UnderlineInputBorder(
-                                        borderSide:
-                                            BorderSide(color: Colors.blue),
-                                      ),
-                                    )),
-                                const SizedBox(height: 20),
-                                const Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Text("Email",
-                                      style: TextStyle(
-                                          color: Colors.grey, fontSize: 14.0)),
-                                ),
-                                TextField(
-                                  keyboardType: TextInputType.emailAddress,
-                                  decoration: InputDecoration(
-                                    hintText: email == "" || email == null
-                                        ? ""
-                                        : email,
-                                    enabledBorder: const UnderlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: Colors.white),
-                                    ),
-                                    focusedBorder: const UnderlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: Colors.blue),
-                                    ),
-                                  ),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      email = value.toString();
-                                    });
-                                  },
-                                ),
-                                const SizedBox(height: 20),
-                                const Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Text("Address",
-                                      style: TextStyle(
-                                          color: Colors.grey, fontSize: 14.0)),
-                                ),
-                                TextField(
-                                  decoration: InputDecoration(
-                                    hintText: address == "" || address == null
-                                        ? ""
-                                        : address,
-                                    //suffix: Text("Change", style: TextStyle(fontSize: 14)),
-                                    enabledBorder: const UnderlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: Colors.white),
-                                    ),
-                                    focusedBorder: const UnderlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: Colors.blue),
-                                    ),
-                                  ),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      address = value.toString();
-                                    });
-                                  },
-                                ),
-                                const SizedBox(height: 20),
-                                Container(
-                                  margin: EdgeInsets.symmetric(vertical: 10),
-                                  width: size.width * 0.9,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(29),
-                                    child: newElevatedButton(),
-                                  ),
-                                ),
+                                SizedBox(height: 15.0),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 3.0, horizontal: 15.0),
+                                  child: name == "" || name == null
+                                      ? Text("")
+                                      : Text(name,
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 18.0,
+                                              fontWeight: FontWeight.bold)),
+                                )
                               ],
                             ),
-                          )
-                        ],
-                      ),
-                    )),
-                  ],
-                ),
-              )
-            ],
+                          ))),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: Align(
+                        alignment: Alignment.center,
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        ProfileDetailScreen()));
+                            /*setState(() {
+                              FocusScope.of(context).requestFocus(focusNode);
+                            });*/
+                          },
+                          child: Card(
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(color: Colors.white, width: 1),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 10.0, horizontal: 15.0),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    Icon(Icons.edit_outlined,
+                                        color: Colors.black, size: 24),
+                                    SizedBox(width: 5.0),
+                                    Text("Edit Profile",
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 18.0,
+                                            fontWeight: FontWeight.w500))
+                                  ],
+                                ),
+                              )),
+                        )),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(20.0),
+                    child: Column(
+                      children: [
+                        const Align(
+                          alignment: Alignment.topLeft,
+                          child: Text("Name",
+                              style: TextStyle(
+                                  color: Colors.grey, fontSize: 14.0)),
+                        ),
+                        TextField(
+                          keyboardType: TextInputType.text,
+                          //focusNode: focusNode,
+                          decoration: InputDecoration(
+                            hintText: name == "" || name == null ? "" : name,
+                            enabledBorder: const UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                            focusedBorder: const UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.blue),
+                            ),
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              name = value.toString();
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                        const Align(
+                          alignment: Alignment.topLeft,
+                          child: Text("Phone Number",
+                              style: TextStyle(
+                                  color: Colors.grey, fontSize: 14.0)),
+                        ),
+                        TextField(
+                            keyboardType: TextInputType.number,
+                            readOnly: true,
+                            decoration: InputDecoration(
+                              hintText:
+                                  mobile == "" || mobile == null ? "" : mobile,
+                              //suffix: Text("Edit", style: TextStyle(color: Colors.grey, fontSize: 14)),
+                              enabledBorder: const UnderlineInputBorder(
+                                borderSide: BorderSide(color: Colors.white),
+                              ),
+                              focusedBorder: const UnderlineInputBorder(
+                                borderSide: BorderSide(color: Colors.blue),
+                              ),
+                            )),
+                        const SizedBox(height: 20),
+                        const Align(
+                          alignment: Alignment.topLeft,
+                          child: Text("Email",
+                              style: TextStyle(
+                                  color: Colors.grey, fontSize: 14.0)),
+                        ),
+                        TextField(
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: InputDecoration(
+                            hintText: email == "" || email == null ? "" : email,
+                            enabledBorder: const UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                            focusedBorder: const UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.blue),
+                            ),
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              email = value.toString();
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                        const Align(
+                          alignment: Alignment.topLeft,
+                          child: Text("Address",
+                              style: TextStyle(
+                                  color: Colors.grey, fontSize: 14.0)),
+                        ),
+                        TextField(
+                          decoration: InputDecoration(
+                            hintText:
+                                address == "" || address == null ? "" : address,
+                            //suffix: Text("Change", style: TextStyle(fontSize: 14)),
+                            enabledBorder: const UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                            focusedBorder: const UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.blue),
+                            ),
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              address = value.toString();
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                        Container(
+                          margin: EdgeInsets.symmetric(vertical: 10),
+                          width: size.width * 0.9,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(29),
+                            child: newElevatedButton(),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
           ),
         ),
       ),

@@ -48,7 +48,7 @@ class _ChangeAddressPageState extends State<ChangeAddressPage> {
           headers: {
             'Authorization': 'Bearer $mytoken',
             'Content-Type': 'application/json'
-      });
+          });
       if (response.statusCode == 200) {
         setState(() {
           _loading = false;
@@ -57,7 +57,8 @@ class _ChangeAddressPageState extends State<ChangeAddressPage> {
         var errorCode = data['ErrorCode'];
         var errorMessage = data['ErrorMessage'];
         if (errorCode == 0) {
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CartScreen()));
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => CartScreen()));
         } else {
           showAlertDialog(context, "Alert", errorMessage);
         }
@@ -67,7 +68,7 @@ class _ChangeAddressPageState extends State<ChangeAddressPage> {
 
   _getUserAddresses() async {
     setState(() {
-       _addressList = _futureAddress();
+      _addressList = _futureAddress();
     });
   }
 
@@ -104,10 +105,11 @@ class _ChangeAddressPageState extends State<ChangeAddressPage> {
                       return Padding(
                         padding: const EdgeInsets.only(top: 10, bottom: 10),
                         child: RadioListTile(
-                          activeColor: Colors.indigo,
+                          activeColor: appbarcolor,
                           groupValue: id,
                           title: snapshot.data[index]['is_default'] == 1
-                              ? Text(snapshot.data[index]['name'] + ' (Default)')
+                              ? Text(
+                                  snapshot.data[index]['name'] + ' (Default)')
                               : Text(snapshot.data[index]['name']),
                           subtitle: Text(snapshot.data[index]['address']),
                           //subtitle: snapshot.data[index]['city'].toString() != "" || snapshot.data[index]['city'].toString() != null || snapshot.data[index]['city'].toString() != "null" ? Text(snapshot.data[index]['address'].toString() + ', ' + snapshot.data[index]['city'].toString() + ', ' + snapshot.data[index]['state'].toString() + ' , PIN Code: ' + snapshot.data[index]['pincode'].toString()) : Text(snapshot.data[index]['address']),
@@ -116,28 +118,42 @@ class _ChangeAddressPageState extends State<ChangeAddressPage> {
                             width: MediaQuery.of(context).size.width * 0.27,
                             child: Row(
                               children: [
-                                IconButton(onPressed:(){
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => AddAddressPage(
-                                    addressid : snapshot.data[index]['id'].toString(),
-                                  )));
-                                }, icon: Icon(Icons.edit_outlined, size: 20, color: Colors.grey)),
-                                IconButton(onPressed:(){
-                                  showdeleteaddressAlertDialog(context, snapshot.data[index]['id'].toString());
-                                }, icon: Icon(Icons.delete_outline, size: 20, color: Colors.grey))
+                                IconButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  AddAddressPage(
+                                                    addressid: snapshot
+                                                        .data[index]['id']
+                                                        .toString(),
+                                                  )));
+                                    },
+                                    icon: Icon(Icons.edit_outlined,
+                                        size: 20, color: Colors.grey)),
+                                IconButton(
+                                    onPressed: () {
+                                      showdeleteaddressAlertDialog(
+                                          context,
+                                          snapshot.data[index]['id']
+                                              .toString());
+                                    },
+                                    icon: Icon(Icons.delete_outline,
+                                        size: 20, color: Colors.grey))
                               ],
                             ),
                           ),
                           onChanged: (val) {
-                            if(snapshot.data[index]['is_servicable'] == 0){
-                              showAlertDialog(context, "Alert", "We don't provide service at this pincode.");
-                            }
-                            else{
+                            if (snapshot.data[index]['is_servicable'] == 0) {
+                              showAlertDialog(context, "Alert",
+                                  "We don't provide service at this pincode.");
+                            } else {
                               setState(() {
                                 id = val;
                                 _buttonDisabled = false;
                               });
                             }
-
                           },
                         ),
                       );
@@ -160,9 +176,12 @@ class _ChangeAddressPageState extends State<ChangeAddressPage> {
   Widget _addNewButton() {
     return GestureDetector(
       onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => AddAddressPage(
-          addressid : null,
-        )));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => AddAddressPage(
+                      addressid: null,
+                    )));
       },
       child: Ink(
         color: Colors.white,
@@ -208,7 +227,7 @@ class _ChangeAddressPageState extends State<ChangeAddressPage> {
     );
   }
 
-  Future _deleteAddress(String addressid) async{
+  Future _deleteAddress(String addressid) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String mytoken = prefs.getString('token').toString();
     final body = {
@@ -250,7 +269,9 @@ class _ChangeAddressPageState extends State<ChangeAddressPage> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8.0),
             ),
-            child: const Text("SUBMIT", style: TextStyle(color: Colors.white),
+            child: const Text(
+              "SUBMIT",
+              style: TextStyle(color: Colors.white),
             ),
           ),
         ),
@@ -260,21 +281,20 @@ class _ChangeAddressPageState extends State<ChangeAddressPage> {
 
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Change Address'),
-        backgroundColor: Colors.indigo,
-        leading: IconButton(
-          onPressed: (){
-             Navigator.pop(context);
-            //Navigator.of(context).pop();
-          },
-          icon: Icon(Icons.arrow_back, color: Colors.white),
+        appBar: AppBar(
+          title: const Text('Change Address'),
+          backgroundColor: appbarcolor,
+          leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+              //Navigator.of(context).pop();
+            },
+            icon: Icon(Icons.arrow_back, color: Colors.white),
+          ),
         ),
-      ),
-      body: ModalProgressHUD(
-        inAsyncCall: _loading,
-        child: _addressBuilder(),
-      )
-    );
+        body: ModalProgressHUD(
+          inAsyncCall: _loading,
+          child: _addressBuilder(),
+        ));
   }
 }
